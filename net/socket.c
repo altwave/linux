@@ -1798,6 +1798,7 @@ SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
 SYSCALL_DEFINE3(accept, int, fd, struct sockaddr __user *, upeer_sockaddr,
 		int __user *, upeer_addrlen)
 {
+	printk(KERN_INFO "Entering accept system call\n");	
 	return __sys_accept4(fd, upeer_sockaddr, upeer_addrlen, 0);
 }
 
@@ -1842,6 +1843,7 @@ out:
 SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
 		int, addrlen)
 {
+	printk(KERN_INFO "Entering connect system call\n");	
 	return __sys_connect(fd, uservaddr, addrlen);
 }
 
