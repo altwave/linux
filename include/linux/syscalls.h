@@ -996,8 +996,9 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
 				       siginfo_t __user *info,
 				       unsigned int flags);
 
-/* New custom syscall */
+/* New custom syscall to encrypt string using key */
 asmlinkage long sys_s2_encrypt(const char __user *str, int key);
+
 /*
  * Architecture-specific system calls
  */
