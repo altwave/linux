@@ -17,6 +17,9 @@
 #include <linux/memremap.h>
 #include <linux/completion.h>
 #include <linux/mmu_notifier.h>
+#include <linux/bpf-cgroup.h>
+
+#define HMM_POLICY_NAME_MAX	16
 
 /*
  * hmm_pfn_flag_e - HMM flag enums
@@ -94,6 +97,14 @@ struct hmm_range {
 	void			*dev_private_owner;
 };
 
+struct hmm_policy {
+	long (*fault)(struct hmm_range * range);
+	char 		name[HMM_POLICY_NAME_MAX];
+};
+
+int hmm_register_policy(struct hmm_policy *policy);
+void hmm_unregister_policy(struct hmm_policy *policy);
+
 /*
  * hmm_device_entry_to_page() - return struct page pointed to by a device entry
  * @range: range use to decode device entry value
@@ -121,6 +132,7 @@ static inline struct page *hmm_device_entry_to_page(const struct hmm_range *rang
  * Please see Documentation/vm/hmm.rst for how to use the range API.
  */
 long hmm_range_fault(struct hmm_range *range);
+
 
 /*
  * HMM_RANGE_DEFAULT_TIMEOUT - default timeout (ms) when waiting for a range

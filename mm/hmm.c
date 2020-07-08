@@ -26,6 +26,13 @@
 #include <linux/mmu_notifier.h>
 #include <linux/memory_hotplug.h>
 
+static struct hmm_policy default_policy = {
+	.fault = hmm_range_fault,
+	.name = "hmm_policy",
+};	
+
+static struct hmm_policy * current_policy = &default_policy;
+
 struct hmm_vma_walk {
 	struct hmm_range	*range;
 	unsigned long		last;
@@ -597,3 +604,15 @@ long hmm_range_fault(struct hmm_range *range)
 	return (hmm_vma_walk.last - range->start) >> PAGE_SHIFT;
 }
 EXPORT_SYMBOL(hmm_range_fault);
+
+
+int hmm_register_policy(struct hmm_policy *policy) {
+	current_policy = policy;
+	return 0;
+}
+
+void hmm_unregister_policy(struct hmm_policy *policy) {
+	current_policy = &default_policy;
+	return;
+}
+
