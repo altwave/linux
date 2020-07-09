@@ -12,7 +12,7 @@ char _license[] SEC("license") = "GPL";
 SEC("struct_ops/bpf_hmm_range_fault")
 long BPF_PROG(bpf_hmm_range_fault, struct hmm_range * range) {
 	char fmt[] = "new bpf hmm_range_fault called\n";
-	bpf_trace_printk(fmt, sizeof(fmt));
+//	bpf_trace_printk(fmt, sizeof(fmt));
 	return 0; 
 };
 

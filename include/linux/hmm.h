@@ -88,7 +88,7 @@ struct hmm_range {
 };
 
 struct hmm_policy {
-	long (*fault)(struct hmm_range * range);
+	int (*fault)(struct hmm_range * range);
 	char 		name[HMM_POLICY_NAME_MAX];
 };
 
