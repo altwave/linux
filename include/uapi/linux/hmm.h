@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
 /*
  * Copyright 2013 Red Hat Inc.
  *
@@ -6,20 +6,23 @@
  *
  * See Documentation/vm/hmm.rst for reasons and overview of what HMM is.
  */
-#ifndef LINUX_HMM_H
-#define LINUX_HMM_H
+#ifndef LINUX_UAPI_HMM_H
+#define LINUX_UAPI_HMM_H
 
-#include <linux/kconfig.h>
-#include <linux/pgtable.h>
-
+#include <linux/mmu_notifier.h>
 #include <linux/pagewalk.h>
+
+//#include <linux/kconfig.h>
+//#include <linux/pgtable.h>
+/*
 #include <linux/device.h>
 #include <linux/migrate.h>
 #include <linux/memremap.h>
 #include <linux/completion.h>
-#include <linux/mmu_notifier.h>
 #include <linux/bpf-cgroup.h>
+*/
 
+#define BITS_PER_LONG 64
 #define HMM_POLICY_NAME_MAX	16
 
 /*
@@ -40,18 +43,18 @@
  * HMM_PFN_REQ_WRITE - The output must have HMM_PFN_WRITE or hmm_range_fault()
  *                     will fail. Must be combined with HMM_PFN_REQ_FAULT.
  */
-enum hmm_pfn_flags {
+//enum hmm_pfn_flags {
 	/* Output flags */
-	HMM_PFN_VALID = 1UL << (BITS_PER_LONG - 1),
-	HMM_PFN_WRITE = 1UL << (BITS_PER_LONG - 2),
-	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
+//	HMM_PFN_VALID = 1UL << (BITS_PER_LONG - 1),
+//	HMM_PFN_WRITE = 1UL << (BITS_PER_LONG - 2),
+//	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
 
 	/* Input flags */
-	HMM_PFN_REQ_FAULT = HMM_PFN_VALID,
-	HMM_PFN_REQ_WRITE = HMM_PFN_WRITE,
+//	HMM_PFN_REQ_FAULT = HMM_PFN_VALID,
+//	HMM_PFN_REQ_WRITE = HMM_PFN_WRITE,
 
-	HMM_PFN_FLAGS = HMM_PFN_VALID | HMM_PFN_WRITE | HMM_PFN_ERROR,
-};
+//	HMM_PFN_FLAGS = HMM_PFN_VALID | HMM_PFN_WRITE | HMM_PFN_ERROR,
+//};
 
 /*
  * hmm_pfn_to_page() - return struct page pointed to by a device entry
@@ -60,11 +63,11 @@ enum hmm_pfn_flags {
  * mmu_interval_read_begin(). The caller must have tested for HMM_PFN_VALID
  * already.
  */
-static inline struct page *hmm_pfn_to_page(unsigned long hmm_pfn)
+/*static inline struct page *hmm_pfn_to_page(unsigned long hmm_pfn)
 {
 	return pfn_to_page(hmm_pfn & ~HMM_PFN_FLAGS);
 }
-
+*/
 /*
  * struct hmm_range - track invalidation lock on virtual address range
  *
@@ -77,6 +80,19 @@ static inline struct page *hmm_pfn_to_page(unsigned long hmm_pfn)
  * @pfn_flags_mask: allows to mask pfn flags so that only default_flags matter
  * @dev_private_owner: owner of device private pages
  */
+enum hmm_pfn_flags {
+		/* Output flags */
+	HMM_PFN_VALID = 1UL << (BITS_PER_LONG - 1),
+	HMM_PFN_WRITE = 1UL << (BITS_PER_LONG - 2),
+	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
+
+	/* Input flags */
+	HMM_PFN_REQ_FAULT = HMM_PFN_VALID,
+	HMM_PFN_REQ_WRITE = HMM_PFN_WRITE,
+
+	HMM_PFN_FLAGS = HMM_PFN_VALID | HMM_PFN_WRITE | HMM_PFN_ERROR,
+};
+
 struct hmm_range {
 	struct mmu_interval_notifier *notifier;
 	unsigned long		notifier_seq;
@@ -93,20 +109,27 @@ struct hmm_policy {
 	char 		name[HMM_POLICY_NAME_MAX];
 };
 
+struct hmm_vma_walk {
+	struct hmm_range	*range;
+	unsigned long		last;
+};
+
+static inline unsigned long pmd_to_hmm_pfn_flags(struct hmm_range *range,
+								 pmd_t pmd)
+{
+		if (pmd_protnone(pmd))
+			return 0;
+		return pmd_write(pmd) ? (HMM_PFN_VALID | HMM_PFN_WRITE) : HMM_PFN_VALID;
+}
+
+/*
 int hmm_register_policy(struct hmm_policy *policy);
 void hmm_unregister_policy(struct hmm_policy *policy);
-
-
-int hmm_vma_walk_hole(unsigned long addr, unsigned long end, int depth, struct mm_walk *walk);
-int hmm_vma_walk_pmd(pmd_t *pmdp, unsigned long start,unsigned long end,struct mm_walk *walk);
-int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,struct mm_walk *walk);
-int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask, unsigned long start, unsigned long end, struct mm_walk *walk);
-int hmm_vma_walk_test(unsigned long start, unsigned long end, struct mm_walk *walk);
-
+*/
 /*
  * Please see Documentation/vm/hmm.rst for how to use the range API.
  */
-int hmm_range_fault(struct hmm_range *range);
+//int hmm_range_fault(struct hmm_range *range);
 
 
 /*
@@ -118,4 +141,4 @@ int hmm_range_fault(struct hmm_range *range);
  */
 #define HMM_RANGE_DEFAULT_TIMEOUT 1000
 
-#endif /* LINUX_HMM_H */
+#endif /* LINUX_UAPI_HMM_H */

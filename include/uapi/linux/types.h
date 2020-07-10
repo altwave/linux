@@ -4,6 +4,10 @@
 
 #include <asm/types.h>
 
+#ifndef BITS_PER_LONG
+	#define BITS_PER_LONG 64
+#endif
+
 #ifndef __ASSEMBLY__
 #ifndef	__KERNEL__
 #ifndef __EXPORTED_HEADERS__
@@ -52,4 +56,7 @@ typedef __u32 __bitwise __wsum;
 typedef unsigned __bitwise __poll_t;
 
 #endif /*  __ASSEMBLY__ */
+
+#define pgoff_t unsigned long
+
 #endif /* _UAPI_LINUX_TYPES_H */

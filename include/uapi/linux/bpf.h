@@ -3252,7 +3252,14 @@ union bpf_attr {
  * 		case of **BPF_CSUM_LEVEL_QUERY**, the current skb->csum_level
  * 		is returned or the error code -EACCES in case the skb is not
  * 		subject to CHECKSUM_UNNECESSARY.
+ *
+ * int bpf_walk_page_range(struct mm_struct *mm, unsigned long start, unsigned long end, const struct mm_walk_ops *ops, void *private)
+ *	Description
+ *		Walk page range
+ *	Return
+ *		0 on success, negative if error
  */
+
 #define __BPF_FUNC_MAPPER(FN)		\
 	FN(unspec),			\
 	FN(map_lookup_elem),		\
@@ -3389,7 +3396,14 @@ union bpf_attr {
 	FN(ringbuf_submit),		\
 	FN(ringbuf_discard),		\
 	FN(ringbuf_query),		\
-	FN(csum_level),
+	FN(csum_level),			\
+ 	FN(walk_page_range),		\
+ 	FN(handle_mm_fault),		\
+ 	FN(hmm_vma_walk_pud),	        \
+ 	FN(hmm_vma_walk_pmd),		\
+ 	FN(hmm_vma_walk_hole),		\
+ 	FN(hmm_vma_walk_hugetlb_entry), \
+ 	FN(hmm_vma_walk_test),			
 
 /* integer value in 'imm' field of BPF_CALL instruction selects which helper
  * function eBPF program intends to call

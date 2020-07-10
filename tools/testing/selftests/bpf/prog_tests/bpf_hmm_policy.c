@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 /* Copyright (c) 2019 Facebook */
 
+#include <stdlib.h>
 #include <linux/err.h>
 #include <test_progs.h>
 #include "bpf_hmm_policy.skel.h"
@@ -12,6 +13,7 @@ static void test_hmm_policy(void)
 	struct bpf_hmm_policy *hmm_policy_skel;
 	struct bpf_link *link;
 
+	
 	hmm_policy_skel = bpf_hmm_policy__open_and_load();
 	if (CHECK(!hmm_policy_skel, "bpf_hmm_policy__open_and_load", "failed\n"))
 		return;
@@ -23,6 +25,10 @@ static void test_hmm_policy(void)
 		return;
 	}
 
+	// Execute HMM tests
+	int status = system("sudo /home/cat/repos/linux/tools/testing/selftests/vm/test_hmm.sh smoke");
+	printf("HMM test status returned %d\n", status);
+
 	/*do_test("bpf_hmm_policy");
 	CHECK(dctcp_skel->bss->stg_result != expected_stg,
 	      "Unexpected stg_result", "stg_result (%x) != expected_stg (%x)\n",
@@ -32,6 +38,7 @@ static void test_hmm_policy(void)
 	bpf_link__destroy(link);
 	bpf_hmm_policy__destroy(hmm_policy_skel);
 }
+
 
 void test_bpf_hmm_policy(void)
 {

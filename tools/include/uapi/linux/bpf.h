@@ -3389,7 +3389,14 @@ union bpf_attr {
 	FN(ringbuf_submit),		\
 	FN(ringbuf_discard),		\
 	FN(ringbuf_query),		\
-	FN(csum_level),
+	FN(csum_level),			\
+ 	FN(walk_page_range),		\
+ 	FN(handle_mm_fault),		\
+ 	FN(hmm_vma_walk_pud),	        \
+ 	FN(hmm_vma_walk_pmd),		\
+ 	FN(hmm_vma_walk_hole),		\
+ 	FN(hmm_vma_walk_hugetlb_entry), \
+ 	FN(hmm_vma_walk_test),			
 
 /* integer value in 'imm' field of BPF_CALL instruction selects which helper
  * function eBPF program intends to call
