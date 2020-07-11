@@ -3254,10 +3254,11 @@ union bpf_attr {
  * 		subject to CHECKSUM_UNNECESSARY.
  *
  * int bpf_walk_page_range(struct mm_struct *mm, unsigned long start, unsigned long end, const struct mm_walk_ops *ops, void *private)
- *	Description
+ * 	 Description
  *		Walk page range
- *	Return
+ * 	 Return
  *		0 on success, negative if error
+ *
  */
 
 #define __BPF_FUNC_MAPPER(FN)		\
