@@ -74,6 +74,11 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_EXT, bpf_extension,
 BPF_PROG_TYPE(BPF_PROG_TYPE_LSM, lsm,
 	       void *, void *)
 #endif /* CONFIG_BPF_LSM */
+/*BPF_PROG_TYPE(BPF_PROG_TYPE_MM_WALK, walk,
+		struct bpf_mm_walk, struct mm_walk)
+BPF_PROG_TYPE(BPF_PROG_TYPE_VMA, vma,
+		struct bpf_vm_area_struct, struct vm_area_struct)
+*/
 #endif
 
 BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)

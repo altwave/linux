@@ -247,6 +247,7 @@ static int dmirror_range_fault(struct dmirror *dmirror,
 		range->notifier_seq = mmu_interval_read_begin(range->notifier);
 		mmap_read_lock(mm);
 		ret = hmm_range_fault(range);
+		printk(KERN_INFO "hmm_range_fault from driver returned %d\n", ret);
 		mmap_read_unlock(mm);
 		if (ret) {
 			if (ret == -EBUSY)
@@ -826,6 +827,7 @@ static int dmirror_range_snapshot(struct dmirror *dmirror,
 
 		mmap_read_lock(mm);
 		ret = hmm_range_fault(range);
+		printk(KERN_INFO "hmm_range_fault from driver returned %d\n", ret);
 		mmap_read_unlock(mm);
 		if (ret) {
 			if (ret == -EBUSY)

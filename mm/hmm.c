@@ -26,19 +26,30 @@
 #include <linux/mmu_notifier.h>
 #include <linux/memory_hotplug.h>
 
-static int _hmm_range_fault(struct hmm_range * range);
+static DEFINE_SPINLOCK(hmm_policy_list_lock);
+static LIST_HEAD(hmm_policy_list);
 
+/* Simple linear search, don't expect many entries! */
+struct hmm_policy *hmm_policy_find(const char *name)
+{
+	struct hmm_policy *e;
+
+	list_for_each_entry_rcu(e, &hmm_policy_list, list) {
+		if (strcmp(e->name, name) == 0)
+			return e;
+	}
+
+	return NULL;
+}
+
+/*
 static struct hmm_policy default_policy = {
 	.fault = _hmm_range_fault,
 	.name = "hmm_policy",
 };	
+*/
 
-static struct hmm_policy * current_policy = &default_policy;
-
-struct hmm_vma_walk {
-	struct hmm_range	*range;
-	unsigned long		last;
-};
+//static struct hmm_policy * current_policy = &default_policy;
 
 enum {
 	HMM_NEED_FAULT = 1 << 0,
@@ -536,13 +547,15 @@ int hmm_vma_walk_test(unsigned long start, unsigned long end,
 	return 1;
 }
 
-static const struct mm_walk_ops hmm_walk_ops = {
+static const struct mm_walk_ops default_hmm_walk_ops = {
 	.pud_entry	= hmm_vma_walk_pud,
 	.pmd_entry	= hmm_vma_walk_pmd,
 	.pte_hole	= hmm_vma_walk_hole,
 	.hugetlb_entry	= hmm_vma_walk_hugetlb_entry,
 	.test_walk	= hmm_vma_walk_test,
 };
+
+//struct mm_walk_ops * hmm_walk_ops_policy = &default_hmm_walk_ops; 
 
 /**
  * hmm_range_fault - try to fault some address in a virtual address range
@@ -563,7 +576,7 @@ static const struct mm_walk_ops hmm_walk_ops = {
  * This is similar to get_user_pages(), except that it can read the page tables
  * without mutating them (ie causing faults).
  */
-static int _hmm_range_fault(struct hmm_range *range)
+int _hmm_range_fault(struct hmm_range *range)
 {
 	struct hmm_vma_walk hmm_vma_walk = {
 		.range = range,
@@ -572,6 +585,7 @@ static int _hmm_range_fault(struct hmm_range *range)
 	struct mm_struct *mm = range->notifier->mm;
 	int ret;
 
+
 	mmap_assert_locked(mm);
 
 	do {
@@ -579,8 +593,7 @@ static int _hmm_range_fault(struct hmm_range *range)
 		if (mmu_interval_check_retry(range->notifier,
 					     range->notifier_seq))
 			return -EBUSY;
-		ret = walk_page_range(mm, hmm_vma_walk.last, range->end,
-				      &hmm_walk_ops, &hmm_vma_walk);
+		ret = walk_page_range(mm, hmm_vma_walk.last, range->end, &default_hmm_walk_ops, &hmm_vma_walk);
 		/*
 		 * When -EBUSY is returned the loop restarts with
 		 * hmm_vma_walk.last set to an address that has not been stored
@@ -591,20 +604,73 @@ static int _hmm_range_fault(struct hmm_range *range)
 	return ret;
 }
 
-int hmm_range_fault(struct hmm_range *range) {
-	return current_policy->fault(range);
+int hmm_range_fault(struct hmm_range *range) 
+{
+	//int ret = current_policy->fault(range);
+	int ret;
+	int key = 0;
+	spin_lock(&hmm_policy_list_lock);
+	
+	struct hmm_policy * policy = hmm_policy_find("bpf_hmm_policy");
+	if (!policy) {
+		ret = 0;
+		printk(KERN_INFO "Could not find policy\n");
+	}
+	else {
+		policy->fault(range);
+		printk(KERN_INFO "current_policy->fault(range) returned %d\n", range->ret_val);
+	}
+	
+	spin_unlock(&hmm_policy_list_lock);
+	return range->ret_val;
 }
 
 EXPORT_SYMBOL(hmm_range_fault);
 
-
-int hmm_register_policy(struct hmm_policy *policy) {
-	current_policy = policy;
+/*
+int hmm_register_walk_ops(struct mm_walk_ops * ops) {
+	hmm_walk_ops = policy;
 	return 0;
 }
 
-void hmm_unregister_policy(struct hmm_policy *policy) {
-	current_policy = &default_policy;
+void hmm_unregister_walk_ops(void) {
+	hmm_walk_ops = &default_hmm_walk_ops;
 	return;
 }
+*/
+
+int hmm_register_policy(struct hmm_policy *policy) {
+	int ret = 0;
+	//current_policy = policy;
+	spin_lock(&hmm_policy_list_lock);
+/*	if (tcp_ca_find_key(pol->key)) {
+		pr_notice("%s already registered or non-unique key\n", ca->name);
+		ret = -EEXIST;
+	} else { */
+	list_add_tail_rcu(&policy->list, &hmm_policy_list);
+	printk(KERN_INFO "%s registered\n", policy->name);
+//	}
+	spin_unlock(&hmm_policy_list_lock);
+
+	return ret;
+}
+EXPORT_SYMBOL_GPL(hmm_register_policy);
+
+void hmm_unregister_policy(struct hmm_policy *policy) {
+	//current_policy = &default_policy;
+	spin_lock(&hmm_policy_list_lock);
+	list_del_rcu(&policy->list);
+	spin_unlock(&hmm_policy_list_lock);
+
+	/* Wait for outstanding readers to complete before the
+	 * module gets removed entirely.
+	 *
+	 * A try_module_get() should fail by now as our module is
+	 * in "going" state since no refs are held anymore and
+	 * module_exit() handler being called.
+	 */
+	synchronize_rcu();
+	return;
+}
+EXPORT_SYMBOL_GPL(hmm_unregister_policy);
 

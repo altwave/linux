@@ -421,10 +421,16 @@ class PrinterHelpers(Printer):
             'struct sockaddr',
             'struct tcphdr',
             'struct seq_file',
-
+            'struct bpf_mm_struct',
+            'struct mm_walk',
+            'struct hmm_range',
+            'struct hmm_vma_walk',
+            'struct mmu_interval_notifier',
+            
             'struct __sk_buff',
             'struct sk_msg_md',
             'struct xdp_md',
+            'struct vm_area_struct',
     ]
     known_types = {
             '...',
@@ -435,6 +441,7 @@ class PrinterHelpers(Printer):
             'int',
             'long',
             'unsigned long',
+            'unsigned int',
 
             '__be16',
             '__be32',
@@ -458,8 +465,13 @@ class PrinterHelpers(Printer):
             'struct sockaddr',
             'struct tcphdr',
             'struct seq_file',
-            'struct mm_struct',
-            'const struct mm_walk_ops'
+            'struct bpf_mm_struct',
+            'struct mm_walk',
+            'struct hmm_range',
+            'struct hmm_vma_walk',
+            'const struct hmm_vma_walk',
+            'struct mmu_interval_notifier',
+            'struct vm_area_struct'
     }
     mapped_types = {
             'u8': '__u8',

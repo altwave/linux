@@ -4,6 +4,8 @@
 
 #include <linux/mm.h>
 
+#define MM_WALK_OPS_NAME_MAX 16
+
 struct mm_walk;
 
 /**
@@ -55,6 +57,7 @@ struct mm_walk_ops {
 	int (*pre_vma)(unsigned long start, unsigned long end,
 		       struct mm_walk *walk);
 	void (*post_vma)(struct mm_walk *walk);
+	char 		name[MM_WALK_OPS_NAME_MAX];
 };
 
 /*

@@ -3521,6 +3521,8 @@ btf_get_prog_ctx_type(struct bpf_verifier_log *log, struct btf *btf,
 	const struct btf_member *ctx_type;
 	const char *tname, *ctx_tname;
 
+	bpf_log(log, "Called btf_get_prog_ctx_type, prog_type=%d\n", prog_type);
+
 	conv_struct = bpf_ctx_convert.t;
 	if (!conv_struct) {
 		bpf_log(log, "btf_vmlinux is malformed\n");
@@ -4376,6 +4378,8 @@ int btf_check_func_arg_match(struct bpf_verifier_env *env, int subprog,
 	const struct btf_type *t;
 	u32 i, nargs, btf_id;
 	const char *tname;
+	
+	bpf_log(log, "Called check_func_arg_match\n");
 
 	if (!prog->aux->func_info)
 		return -EINVAL;

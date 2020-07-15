@@ -5,16 +5,34 @@
 #include <linux/btf.h>
 #include <linux/filter.h>
 #include <linux/hmm.h>
+#include <uapi/linux/btf.h>
 
 extern struct btf *btf_vmlinux;
 
 static const struct bpf_func_proto bpf_walk_page_range_proto __read_mostly;
-static const struct bpf_func_proto bpf_handle_mm_fault_proto __read_mostly;
+static const struct bpf_func_proto bpf_hmm_vma_fault_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_vma_walk_pud_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_vma_walk_pmd_proto __read_mostly;
-static const struct bpf_func_proto bpf_hmm_vma_walk_hole_proto __read_mostly;
+/*static const struct bpf_func_proto bpf_hmm_vma_walk_hole_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_vma_walk_hugetlb_entry_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_vma_walk_test_proto __read_mostly;
+*/
+static const struct bpf_func_proto bpf_get_mm_walk_vma_proto __read_mostly;
+static const struct bpf_func_proto bpf_get_hmm_vma_walk_proto __read_mostly;
+static const struct bpf_func_proto bpf_hmm_range_proto __read_mostly;
+static const struct bpf_func_proto bpf_hmm_pfns_fill_proto __read_mostly;
+//static const struct bpf_func_proto bpf_hmm_range_nr_pfns __read_mostly;
+
+static const struct bpf_func_proto bpf_hmm_range_fault_proto __read_mostly;
+
+static const struct btf_type *mm_struct_type;
+static u32 mm_struct_id;
+
+enum {
+	HMM_NEED_FAULT = 1 << 0,
+	HMM_NEED_WRITE_FAULT = 1 << 1,
+	HMM_NEED_ALL_BITS = HMM_NEED_FAULT | HMM_NEED_WRITE_FAULT,
+};
 
 static bool bpf_hmm_policy_is_valid_access(int off, int size, 
 		enum bpf_access_type type, const struct bpf_prog *prog, 
@@ -28,37 +46,97 @@ static const struct bpf_func_proto * bpf_hmm_policy_get_func_proto(enum bpf_func
 	switch (func_id) {	
 	case BPF_FUNC_walk_page_range:
 		return &bpf_walk_page_range_proto;
-	case BPF_FUNC_handle_mm_fault:
-		return &bpf_handle_mm_fault_proto;
+	case BPF_FUNC_hmm_vma_fault:
+		return &bpf_hmm_vma_fault_proto;
+	case BPF_FUNC_get_mm_walk_vma:
+		return &bpf_get_mm_walk_vma_proto;
+	case BPF_FUNC_get_hmm_vma_walk:
+		return &bpf_get_hmm_vma_walk_proto;
+	case BPF_FUNC_hmm_range:
+		return &bpf_hmm_range_proto;
+	case BPF_FUNC_hmm_pfns_fill:
+		return &bpf_hmm_pfns_fill_proto;
 	case BPF_FUNC_hmm_vma_walk_pud:
 		return &bpf_hmm_vma_walk_pud_proto;
 	case BPF_FUNC_hmm_vma_walk_pmd:
 		return &bpf_hmm_vma_walk_pmd_proto;
-	case BPF_FUNC_hmm_vma_walk_hole:
-		return &bpf_hmm_vma_walk_hole_proto;
-	case BPF_FUNC_hmm_vma_walk_hugetlb_entry:
-		return &bpf_hmm_vma_walk_hugetlb_entry_proto;
-	case BPF_FUNC_hmm_vma_walk_test:
-		return &bpf_hmm_vma_walk_test_proto;
+	case BPF_FUNC_hmm_range_fault:
+		return &bpf_hmm_range_fault_proto;
 	default:
 		return bpf_base_func_proto(func_id);
-	}
-	
-	return bpf_base_func_proto(func_id);
+	}	
 }
 
 static int bpf_hmm_policy_btf_struct_access(struct bpf_verifier_log *log, const struct btf_type *t, int off,
 					int size, enum bpf_access_type atype, u32 *next_btf_id)
 {
 	return btf_struct_access(log, t, off, size, atype, next_btf_id);
+	/*
+	size_t end;
+	printk(KERN_INFO "Called bpf_struct_access\n");
+	
+	if (atype == BPF_READ)
+		return btf_struct_access(log, t, off, size, atype, next_btf_id);
+
+	switch (off) {
+	case offsetof(struct mm_walk, vma):
+		end = offsetofend(struct mm_walk, vma);
+		break;
+	case offsetof(struct vm_area_struct, vm_flags):
+		end = offsetofend(struct vm_area_struct, vm_flags);
+		break;
+	default:
+		bpf_log(log, "no write support to mm_walk at off %d\n", off);
+		return -EACCES;
+
+	}
+
+	if (off + size > end) {
+		bpf_log(log,
+			"write access at off %d with size %d beyond the member of tcp_sock ended at %zu\n",
+			off, size, end);
+		return -EACCES;
+	}
+	
+	return NOT_INIT;
+	*/
 }
 
-
-BPF_CALL_5(bpf_walk_page_range, struct mm_struct *, mm, unsigned long, start,
+/*
+	, struct mm_struct *, mm, unsigned long, start,
 		unsigned long, end, const struct mm_walk_ops *, ops,
 		void *, private)
+*/
+
+BPF_CALL_1(bpf_hmm_range_fault, struct hmm_range*, range)
 {
-	return walk_page_range(mm, start, end, ops, private);
+	printk(KERN_INFO "Called bpf_hmm_range_fault\n");
+	//printk(KERN_INFO "range->start=%016lx, range->end=%016lx\n", a->start, a->end);
+	int kern_ret = _hmm_range_fault(range);
+	range->ret_val = kern_ret;
+//	bpf_map_update_elem(map, key, &kern_ret, BPF_ANY);
+
+//	copy_to_user_nofault(user_ret, &kern_ret, sizeof(kern_ret));
+	printk(KERN_INFO "bpf_hmm_range_fault returning %d\n", range->ret_val);
+	return 0;
+}
+
+static const struct bpf_func_proto bpf_hmm_range_fault_proto = {
+	.func		= bpf_hmm_range_fault,
+	.gpl_only	= false,
+	/* In case we want to report error later */
+	.ret_type	= RET_VOID,
+	.arg1_type	= ARG_ANYTHING,
+/*	.arg4_type	= ARG_ANYTHING,
+	.arg5_type	= ARG_ANYTHING, */
+	//.btf_id		= &mm_struct_id,
+};
+
+BPF_CALL_1(bpf_walk_page_range, struct mmu_interval_notifier*, a)
+{
+	printk(KERN_INFO "Called bpf_walk_page_range\n");
+	//printk(KERN_INFO "range->start=%016lx, range->end=%016lx\n", a->start, a->end);
+	return 0; //walk_page_range(mm, start, end, ops, private);
 }
 
 static const struct bpf_func_proto bpf_walk_page_range_proto = {
@@ -67,28 +145,125 @@ static const struct bpf_func_proto bpf_walk_page_range_proto = {
 	/* In case we want to report error later */
 	.ret_type	= RET_INTEGER,
 	.arg1_type	= ARG_ANYTHING,
-	.arg2_type	= ARG_ANYTHING,
+	/*.arg2_type	= ARG_ANYTHING,
 	.arg3_type	= ARG_ANYTHING,
 	.arg4_type	= ARG_ANYTHING,
-	.arg5_type	= ARG_ANYTHING,
-//	.btf_id		= &tcp_sock_id,
+	.arg5_type	= ARG_ANYTHING, */
+	//.btf_id		= &mm_struct_id,
 };
 
-BPF_CALL_3(bpf_handle_mm_fault, struct vm_area_struct *, vma, unsigned long, address,
-					unsigned int, flags) {
-	return handle_mm_fault(vma, address, flags);	
+static int hmm_vma_fault(unsigned long addr, unsigned long end,
+			 unsigned int required_fault, struct mm_walk *walk)
+{
+	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+	struct vm_area_struct *vma = walk->vma;
+	unsigned int fault_flags = FAULT_FLAG_REMOTE;
+
+	WARN_ON_ONCE(!required_fault);
+	hmm_vma_walk->last = addr;
+
+	if (required_fault & HMM_NEED_WRITE_FAULT) {
+		if (!(vma->vm_flags & VM_WRITE))
+			return -EPERM;
+		fault_flags |= FAULT_FLAG_WRITE;
+	}
+
+	for (; addr < end; addr += PAGE_SIZE)
+		if (handle_mm_fault(vma, addr, fault_flags) & VM_FAULT_ERROR)
+			return -EFAULT;
+	return -EBUSY;
 }
 
 
-static const struct bpf_func_proto bpf_handle_mm_fault_proto = {
-	.func		= bpf_handle_mm_fault,
+BPF_CALL_4(bpf_hmm_vma_fault, unsigned long, addr, unsigned long, end,
+			 unsigned int, required_fault, struct mm_walk *, walk) {
+	return hmm_vma_fault(addr, end, required_fault, walk);	
+}
+
+
+static const struct bpf_func_proto bpf_hmm_vma_fault_proto = {
+	.func		= bpf_hmm_vma_fault,
 	.gpl_only	= false,
 	/* In case we want to report error later */
-	.ret_type	= RET_PTR_TO_ALLOC_MEM_OR_NULL,
+	.ret_type	= RET_INTEGER,
 	.arg1_type	= ARG_ANYTHING,
 	.arg2_type	= ARG_ANYTHING,
 	.arg3_type	= ARG_ANYTHING,
+	.arg4_type	= ARG_ANYTHING,
 };
+
+BPF_CALL_1(bpf_get_mm_walk_vma, struct mm_walk *, walk) {
+	return (long) walk->vma;
+}
+static const struct bpf_func_proto bpf_get_mm_walk_vma_proto = {
+	.func		= bpf_get_mm_walk_vma,
+	.gpl_only	= false,
+	/* In case we want to report error later */
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_ANYTHING,
+	/*.arg3_type	= ARG_ANYTHING,
+	.arg4_type	= ARG_ANYTHING,
+	.arg5_type	= ARG_ANYTHING, */
+	//.btf_id		= &mm_struct_id,
+};
+
+BPF_CALL_1(bpf_get_hmm_vma_walk, struct mm_walk *, walk) {
+	return (long) walk->private;
+}
+
+static const struct bpf_func_proto bpf_get_hmm_vma_walk_proto = {
+	.func		= bpf_get_hmm_vma_walk,
+	.gpl_only	= false,
+	/* In case we want to report error later */
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_ANYTHING,
+	/*.arg3_type	= ARG_ANYTHING,
+	.arg4_type	= ARG_ANYTHING,
+	.arg5_type	= ARG_ANYTHING, */
+	//.btf_id		= &mm_struct_id,
+};
+BPF_CALL_1(bpf_hmm_range, struct mm_walk *, walk) {
+	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+	return (long) hmm_vma_walk->range;
+}
+static const struct bpf_func_proto bpf_hmm_range_proto = {
+	.func		= bpf_hmm_range,
+	.gpl_only	= false,
+	/* In case we want to report error later */
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_ANYTHING,
+	/*.arg3_type	= ARG_ANYTHING,
+	.arg4_type	= ARG_ANYTHING,
+	.arg5_type	= ARG_ANYTHING, */
+	//.btf_id		= &mm_struct_id,
+};
+static int hmm_pfns_fill(unsigned long addr, unsigned long end,
+			 struct hmm_range *range, unsigned long cpu_flags)
+{
+	unsigned long i = (addr - range->start) >> PAGE_SHIFT;
+
+	for (; addr < end; addr += PAGE_SIZE, i++)
+		range->hmm_pfns[i] = cpu_flags;
+	return 0;
+}
+
+BPF_CALL_4(bpf_hmm_pfns_fill, unsigned long, addr, unsigned long, end,
+			 struct hmm_range *, range, unsigned long, cpu_flags) {
+	return hmm_pfns_fill(addr, end, range, cpu_flags);
+}
+static const struct bpf_func_proto bpf_hmm_pfns_fill_proto = {
+	.func		= bpf_hmm_pfns_fill,
+	.gpl_only	= false,
+	/* In case we want to report error later */
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_ANYTHING,
+	.arg2_type	= ARG_ANYTHING,
+	.arg3_type	= ARG_ANYTHING,
+	.arg4_type	= ARG_ANYTHING,
+	/*.arg5_type	= ARG_ANYTHING, */
+	//.btf_id		= &mm_struct_id,
+};
+
 /*
 BPF_CALL_1(bpf_pud_write, pud_t, pud) {
 	return pud_write(pud);
@@ -113,14 +288,13 @@ static const struct bpf_pud_present_proto = {
 };
 */
 
-BPF_CALL_4(bpf_hmm_vma_walk_pud, pud_t *, pudp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
-	return hmm_vma_walk_pud(pudp, start, end, walk);
+BPF_CALL_4(bpf_hmm_vma_walk_pud, void *, pudp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
+	return hmm_vma_walk_pud((pud_t *)pudp, start, end, walk);
 }
 
 static const struct bpf_func_proto bpf_hmm_vma_walk_pud_proto = {
 	.func		= bpf_hmm_vma_walk_pud,
 	.gpl_only	= false,
-	/* In case we want to report error later */
 	.ret_type	= RET_INTEGER,
 	.arg1_type	= ARG_ANYTHING,
 	.arg2_type	= ARG_ANYTHING,
@@ -130,14 +304,13 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_pud_proto = {
 
 
 
-BPF_CALL_4(bpf_hmm_vma_walk_pmd, pmd_t *, pmdp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
-	return hmm_vma_walk_pmd(pmdp, start, end, walk);
+BPF_CALL_4(bpf_hmm_vma_walk_pmd, void *, pmdp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
+	return hmm_vma_walk_pmd((pmd_t *)pmdp, start, end, walk);
 }
 
 static const struct bpf_func_proto bpf_hmm_vma_walk_pmd_proto = {
 	.func		= bpf_hmm_vma_walk_pmd,
 	.gpl_only	= false,
-	/* In case we want to report error later */
 	.ret_type	= RET_INTEGER,
 	.arg1_type	= ARG_ANYTHING,
 	.arg2_type	= ARG_ANYTHING,
@@ -145,8 +318,19 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_pmd_proto = {
 	.arg4_type	= ARG_ANYTHING,
 };
 
+/*
+BPF_CALL_1(bpf_hmm_range_nr_pfns, struct hmm_range * range) {
+	return 0;	
+}
 
-
+static const struct bpf_func_proto bpf_hmm_range_nr_pfns_proto = {
+	.func		= bpf_hmm_vma_walk_pmd,
+	.gpl_only	= false,
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_ANYTHING,
+};
+*/
+/*
 BPF_CALL_4(bpf_hmm_vma_walk_hole, unsigned long, addr, unsigned long, end,
 					     int, depth, struct mm_walk *,walk) {
 	return hmm_vma_walk_hole(addr, end, depth, walk);
@@ -155,7 +339,6 @@ BPF_CALL_4(bpf_hmm_vma_walk_hole, unsigned long, addr, unsigned long, end,
 static const struct bpf_func_proto bpf_hmm_vma_walk_hole_proto = {
 	.func		= bpf_hmm_vma_walk_hole,
 	.gpl_only	= false,
-	/* In case we want to report error later */
 	.ret_type	= RET_INTEGER,
 	.arg1_type	= ARG_ANYTHING,
 	.arg2_type	= ARG_ANYTHING,
@@ -171,7 +354,6 @@ BPF_CALL_5(bpf_hmm_vma_walk_hugetlb_entry, pte_t *, pte, unsigned long, hmask, u
 static const struct bpf_func_proto bpf_hmm_vma_walk_hugetlb_entry_proto = {
 	.func		= bpf_hmm_vma_walk_hugetlb_entry,
 	.gpl_only	= false,
-	/* In case we want to report error later */
 	.ret_type	= RET_INTEGER,
 	.arg1_type	= ARG_ANYTHING,
 	.arg2_type	= ARG_ANYTHING,
@@ -190,12 +372,12 @@ BPF_CALL_3(bpf_hmm_vma_walk_test, unsigned long, start, unsigned long, end,
 static const struct bpf_func_proto bpf_hmm_vma_walk_test_proto = {
 	.func		= bpf_hmm_vma_walk_test,
 	.gpl_only	= false,
-	/* In case we want to report error later */
 	.ret_type	= RET_INTEGER,
 	.arg1_type	= ARG_ANYTHING,
 	.arg2_type	= ARG_ANYTHING,
 	.arg3_type	= ARG_ANYTHING,
 };
+*/
 
 static const struct bpf_verifier_ops bpf_hmm_policy_verifier_ops = {
 	.get_func_proto		= bpf_hmm_policy_get_func_proto,
@@ -224,6 +406,7 @@ static int bpf_hmm_policy_init_member(const struct btf_type *t,
 		khmm_policy->flags = uhmm_policy->flags;
 		return 1;
 	*/
+		
 	case offsetof(struct hmm_policy, name):
 		if (bpf_obj_name_cpy(khmm_policy->name, uhmm_policy->name, sizeof(khmm_policy->name)) <= 0)
 			return -EINVAL;
@@ -237,6 +420,7 @@ static int bpf_hmm_policy_init_member(const struct btf_type *t,
 
 	/* Ensure bpf_prog is provided for compulsory func ptr */
 	prog_fd = (int)(*(unsigned long *)(udata + moff));
+	//All mm_walk_ops function pointers are optional
 	if (!prog_fd) // && !is_optional(moff) && !is_unsupported(moff))
 		return -EINVAL;
 	
@@ -245,6 +429,16 @@ static int bpf_hmm_policy_init_member(const struct btf_type *t,
 }
 
 static int bpf_hmm_policy_init(struct btf *btf) {
+//	s32 type_id;
+/*
+	type_id = btf_find_by_name_kind(btf, "hmm_policy", BTF_KIND_STRUCT);
+	if (type_id < 0)
+		return -EINVAL;
+*/	
+	/*
+	mm_struct_id = type_id;	
+	mm_struct_type = btf_type_by_id(btf, mm_struct_id);
+*/
 	return 0;
 }
 
@@ -255,15 +449,29 @@ static int bpf_hmm_policy_check_member(const struct btf_type *t, const struct bt
 
 static int bpf_hmm_policy_reg(void *kdata)
 {
-		return hmm_register_policy(kdata);
+	printk(KERN_INFO "Calling to register policy\n");
+	return hmm_register_policy(kdata);
 }
 
 static void bpf_hmm_policy_unreg(void *kdata)
 {
-		hmm_unregister_policy(kdata);
+	printk(KERN_INFO "Calling to unregister policy\n");
+	hmm_unregister_policy(kdata);
 }
 
+/*
+extern struct bpf_struct_ops bpf_mm_walk_ops;
 
+struct bpf_struct_ops bpf_mm_walk_ops = {
+	.verifier_ops = &bpf_hmm_policy_verifier_ops,
+	.reg = bpf_hmm_policy_reg,
+	.unreg = bpf_hmm_policy_unreg,
+	.check_member = bpf_hmm_policy_check_member,
+	.init_member = bpf_hmm_policy_init_member,
+	.init = bpf_hmm_policy_init,
+	.name = "mm_walk_ops",
+};
+*/
 extern struct bpf_struct_ops bpf_hmm_policy;
 
 struct bpf_struct_ops bpf_hmm_policy = {

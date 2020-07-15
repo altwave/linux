@@ -8,6 +8,8 @@
 
 struct mm_walk;
 
+#define MM_WALK_OPS_NAME_MAX 16
+
 typedef unsigned long	pteval_t;
 typedef unsigned long	pmdval_t;
 typedef unsigned long	pudval_t;
@@ -67,6 +69,7 @@ struct mm_walk_ops {
 	int (*pre_vma)(unsigned long start, unsigned long end,
 		       struct mm_walk *walk);
 	void (*post_vma)(struct mm_walk *walk);
+	char 		name[MM_WALK_OPS_NAME_MAX];
 };
 
 /*

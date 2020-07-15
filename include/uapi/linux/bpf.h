@@ -189,6 +189,7 @@ enum bpf_prog_type {
 	BPF_PROG_TYPE_STRUCT_OPS,
 	BPF_PROG_TYPE_EXT,
 	BPF_PROG_TYPE_LSM,
+	BPF_PROG_TYPE_MM_WALK,
 };
 
 enum bpf_attach_type {
@@ -3253,12 +3254,95 @@ union bpf_attr {
  * 		is returned or the error code -EACCES in case the skb is not
  * 		subject to CHECKSUM_UNNECESSARY.
  *
- * int bpf_walk_page_range(struct mm_struct *mm, unsigned long start, unsigned long end, const struct mm_walk_ops *ops, void *private)
- * 	 Description
- *		Walk page range
- * 	 Return
- *		0 on success, negative if error
+ * u64 bpf_get_mm_walk_vma(struct mm_walk *mm_walk)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
  *
+ * u64 bpf_get_hmm_vma_walk(struct mm_walk *mm_walk)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
+ *
+ * u64 bpf_hmm_range(struct mm_walk *walk)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
+ *
+ * int bpf_hmm_pfns_fill(unsigned long addr, unsigned long end, struct hmm_range *range, unsigned long cpu_flags)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
+ * 		
+ * int bpf_walk_page_range(struct mmu_interval_notifier *a)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
+ *
+ * int bpf_hmm_vma_fault(unsigned long addr, unsigned long end, unsigned int required_fault, struct mm_walk *walk)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
+ *
+ * int bpf_hmm_vma_walk_pud(void *pudp, unsigned long start, unsigned long end, struct mm_walk *walk)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
+ *
+ * int bpf_hmm_vma_walk_pmd(void *pmdp, unsigned long start, unsigned long end, struct mm_walk *walk)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
+ *
+ * void bpf_hmm_range_fault(struct hmm_range *range)
+ * 	Description
+ * 		Discard reserved ring buffer sample, pointed to by *data*.
+ * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
+ * 		new data availability is sent.
+ * 		IF BPF_RB_FORCE_WAKEUP is specified in *flags*, notification of
+ * 		new data availability is sent unconditionally.
+ * 	Return
+ * 		Nothing. Always succeeds.
  */
 
 #define __BPF_FUNC_MAPPER(FN)		\
@@ -3398,13 +3482,15 @@ union bpf_attr {
 	FN(ringbuf_discard),		\
 	FN(ringbuf_query),		\
 	FN(csum_level),			\
+	FN(get_mm_walk_vma),		\
+	FN(get_hmm_vma_walk),		\
+	FN(hmm_range),			\
+	FN(hmm_pfns_fill),		\
  	FN(walk_page_range),		\
- 	FN(handle_mm_fault),		\
- 	FN(hmm_vma_walk_pud),	        \
+ 	FN(hmm_vma_fault),		\
+ 	FN(hmm_vma_walk_pud),		\
  	FN(hmm_vma_walk_pmd),		\
- 	FN(hmm_vma_walk_hole),		\
- 	FN(hmm_vma_walk_hugetlb_entry), \
- 	FN(hmm_vma_walk_test),			
+	FN(hmm_range_fault), 
 
 /* integer value in 'imm' field of BPF_CALL instruction selects which helper
  * function eBPF program intends to call
@@ -3746,6 +3832,7 @@ struct bpf_sock_tuple {
 struct bpf_xdp_sock {
 	__u32 queue_id;
 };
+
 
 #define XDP_PACKET_HEADROOM 256
 

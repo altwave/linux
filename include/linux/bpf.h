@@ -33,6 +33,8 @@ struct btf;
 struct btf_type;
 struct exception_table_entry;
 struct seq_operations;
+struct mm_walk;
+struct vm_area_struct;
 
 extern struct idr btf_idr;
 extern spinlock_t btf_idr_lock;

@@ -9,8 +9,8 @@
 #ifndef LINUX_UAPI_HMM_H
 #define LINUX_UAPI_HMM_H
 
-#include <linux/mmu_notifier.h>
-#include <linux/pagewalk.h>
+//#include <linux/mmu_notifier.h>
+//#include <linux/pagewalk.h>
 
 //#include <linux/kconfig.h>
 //#include <linux/pgtable.h>
@@ -93,6 +93,7 @@ enum hmm_pfn_flags {
 	HMM_PFN_FLAGS = HMM_PFN_VALID | HMM_PFN_WRITE | HMM_PFN_ERROR,
 };
 
+/*
 struct hmm_range {
 	struct mmu_interval_notifier *notifier;
 	unsigned long		notifier_seq;
@@ -103,8 +104,10 @@ struct hmm_range {
 	unsigned long		pfn_flags_mask;
 	void			*dev_private_owner;
 };
+*/
 
 struct hmm_policy {
+//	struct list_head	list;
 	int (*fault)(struct hmm_range * range);
 	char 		name[HMM_POLICY_NAME_MAX];
 };
@@ -114,6 +117,7 @@ struct hmm_vma_walk {
 	unsigned long		last;
 };
 
+/*
 static inline unsigned long pmd_to_hmm_pfn_flags(struct hmm_range *range,
 								 pmd_t pmd)
 {
@@ -121,7 +125,7 @@ static inline unsigned long pmd_to_hmm_pfn_flags(struct hmm_range *range,
 			return 0;
 		return pmd_write(pmd) ? (HMM_PFN_VALID | HMM_PFN_WRITE) : HMM_PFN_VALID;
 }
-
+*/
 /*
 int hmm_register_policy(struct hmm_policy *policy);
 void hmm_unregister_policy(struct hmm_policy *policy);

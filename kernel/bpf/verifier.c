@@ -4341,6 +4341,7 @@ static void clear_caller_saved_regs(struct bpf_verifier_env *env,
 static int check_func_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
 			   int *insn_idx)
 {
+	printk(KERN_INFO "Called bpf check_func_call\n");
 	struct bpf_verifier_state *state = env->cur_state;
 	struct bpf_func_info_aux *func_info_aux;
 	struct bpf_func_state *caller, *callee;
@@ -10415,6 +10416,7 @@ static void sanitize_insn_aux_data(struct bpf_verifier_env *env)
 
 static int do_check_common(struct bpf_verifier_env *env, int subprog)
 {
+	printk(KERN_INFO "Called do check common\n");
 	bool pop_log = !(env->log.level & BPF_LOG_LEVEL2);
 	struct bpf_verifier_state *state;
 	struct bpf_reg_state *regs;

@@ -21,6 +21,7 @@
 #include <linux/if_vlan.h>
 #include <linux/vmalloc.h>
 #include <crypto/sha.h>
+#include <linux/mm_types.h>
 
 #include <net/sch_generic.h>
 
@@ -37,6 +38,7 @@ struct xdp_buff;
 struct sock_reuseport;
 struct ctl_table;
 struct ctl_table_header;
+struct mm_struct;
 
 /* ArgX, context and stack frame pointer register positions. Note,
  * Arg1, Arg2, Arg3, etc are used as argument mappings of function

@@ -86,15 +86,23 @@ struct hmm_range {
 	unsigned long		default_flags;
 	unsigned long		pfn_flags_mask;
 	void			*dev_private_owner;
+	int 			ret_val;
 };
 
+struct hmm_vma_walk {
+	struct hmm_range	*range;
+	unsigned long		last;
+};
+
+
 struct hmm_policy {
-	int (*fault)(struct hmm_range * range);
+	struct list_head	list;
+	void (*fault)(struct hmm_range * range);
 	char 		name[HMM_POLICY_NAME_MAX];
 };
 
-int hmm_register_policy(struct hmm_policy *policy);
-void hmm_unregister_policy(struct hmm_policy *policy);
+int hmm_register_policy(struct hmm_policy * policy);
+void hmm_unregister_policy(struct hmm_policy * policy);
 
 
 int hmm_vma_walk_hole(unsigned long addr, unsigned long end, int depth, struct mm_walk *walk);
@@ -103,6 +111,7 @@ int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,struct 
 int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask, unsigned long start, unsigned long end, struct mm_walk *walk);
 int hmm_vma_walk_test(unsigned long start, unsigned long end, struct mm_walk *walk);
 
+int _hmm_range_fault(struct hmm_range *range);
 /*
  * Please see Documentation/vm/hmm.rst for how to use the range API.
  */
