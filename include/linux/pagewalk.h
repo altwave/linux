@@ -43,20 +43,33 @@ struct mm_walk_ops {
 			 unsigned long next, struct mm_walk *walk);
 	int (*pud_entry)(pud_t *pud, unsigned long addr,
 			 unsigned long next, struct mm_walk *walk);
+	int (*pud_entry2)(pud_t *pud, unsigned long addr,
+			 unsigned long next, struct mm_walk *walk, int *ret);
 	int (*pmd_entry)(pmd_t *pmd, unsigned long addr,
 			 unsigned long next, struct mm_walk *walk);
+	int (*pmd_entry2)(pmd_t *pmd, unsigned long addr,
+			 unsigned long next, struct mm_walk *walk, int *ret);
 	int (*pte_entry)(pte_t *pte, unsigned long addr,
 			 unsigned long next, struct mm_walk *walk);
 	int (*pte_hole)(unsigned long addr, unsigned long next,
 			int depth, struct mm_walk *walk);
+	int (*pte_hole2)(unsigned long addr, unsigned long next,
+			int depth, struct mm_walk *walk, int *ret);
 	int (*hugetlb_entry)(pte_t *pte, unsigned long hmask,
 			     unsigned long addr, unsigned long next,
 			     struct mm_walk *walk);
+	int (*hugetlb_entry2)(pte_t *pte, unsigned long hmask,
+			     unsigned long addr, unsigned long next,
+			     struct mm_walk *walk, int *ret);
 	int (*test_walk)(unsigned long addr, unsigned long next,
 			struct mm_walk *walk);
+	int (*test_walk2)(unsigned long addr, unsigned long next,
+			struct mm_walk *walk, int *ret);
 	int (*pre_vma)(unsigned long start, unsigned long end,
 		       struct mm_walk *walk);
 	void (*post_vma)(struct mm_walk *walk);
+	void (*start_hook)(void *private);
+	void (*end_hook)(void *private);
 	char 		name[MM_WALK_OPS_NAME_MAX];
 };
 

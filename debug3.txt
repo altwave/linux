@@ -1,0 +1,2811 @@
+
+lib/test_hmm.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <dmirror_fops_release>:
+	filp->private_data = dmirror;
+	return 0;
+}
+
+static int dmirror_fops_release(struct inode *inode, struct file *filp)
+{
+       0:	53                   	push   %rbx
+	struct dmirror *dmirror = filp->private_data;
+       1:	48 8b 9e c8 00 00 00 	mov    0xc8(%rsi),%rbx
+
+	mmu_interval_notifier_remove(&dmirror->notifier);
+       8:	48 8d 7b 18          	lea    0x18(%rbx),%rdi
+       c:	e8 00 00 00 00       	callq  11 <dmirror_fops_release+0x11>
+	xa_destroy(&dmirror->pt);
+      11:	48 8d 7b 08          	lea    0x8(%rbx),%rdi
+      15:	e8 00 00 00 00       	callq  1a <dmirror_fops_release+0x1a>
+	kfree(dmirror);
+      1a:	48 89 df             	mov    %rbx,%rdi
+      1d:	e8 00 00 00 00       	callq  22 <dmirror_fops_release+0x22>
+	return 0;
+}
+      22:	31 c0                	xor    %eax,%eax
+      24:	5b                   	pop    %rbx
+      25:	c3                   	retq   
+      26:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+      2d:	00 00 00 
+
+0000000000000030 <dmirror_snapshot_invalidate>:
+}
+
+static bool dmirror_snapshot_invalidate(struct mmu_interval_notifier *mni,
+				const struct mmu_notifier_range *range,
+				unsigned long cur_seq)
+{
+      30:	41 54                	push   %r12
+      32:	49 89 d4             	mov    %rdx,%r12
+      35:	55                   	push   %rbp
+      36:	48 89 fd             	mov    %rdi,%rbp
+      39:	53                   	push   %rbx
+      3a:	48 8b 47 58          	mov    0x58(%rdi),%rax
+      3e:	48 8d 58 70          	lea    0x70(%rax),%rbx
+	struct dmirror_interval *dmi =
+		container_of(mni, struct dmirror_interval, notifier);
+	struct dmirror *dmirror = dmi->dmirror;
+
+	if (mmu_notifier_range_blockable(range))
+		mutex_lock(&dmirror->mutex);
+      42:	48 89 df             	mov    %rbx,%rdi
+	if (mmu_notifier_range_blockable(range))
+      45:	f6 46 20 01          	testb  $0x1,0x20(%rsi)
+      49:	74 1b                	je     66 <dmirror_snapshot_invalidate+0x36>
+		mutex_lock(&dmirror->mutex);
+      4b:	e8 00 00 00 00       	callq  50 <dmirror_snapshot_invalidate+0x20>
+ */
+static inline void
+mmu_interval_set_seq(struct mmu_interval_notifier *interval_sub,
+		     unsigned long cur_seq)
+{
+	WRITE_ONCE(interval_sub->invalidate_seq, cur_seq);
+      50:	4c 89 65 50          	mov    %r12,0x50(%rbp)
+	 * Snapshots only need to set the sequence number since any
+	 * invalidation in the interval invalidates the whole snapshot.
+	 */
+	mmu_interval_set_seq(mni, cur_seq);
+
+	mutex_unlock(&dmirror->mutex);
+      54:	48 89 df             	mov    %rbx,%rdi
+      57:	e8 00 00 00 00       	callq  5c <dmirror_snapshot_invalidate+0x2c>
+	return true;
+      5c:	b8 01 00 00 00       	mov    $0x1,%eax
+}
+      61:	5b                   	pop    %rbx
+      62:	5d                   	pop    %rbp
+      63:	41 5c                	pop    %r12
+      65:	c3                   	retq   
+	else if (!mutex_trylock(&dmirror->mutex))
+      66:	e8 00 00 00 00       	callq  6b <dmirror_snapshot_invalidate+0x3b>
+      6b:	89 c2                	mov    %eax,%edx
+		return false;
+      6d:	31 c0                	xor    %eax,%eax
+	else if (!mutex_trylock(&dmirror->mutex))
+      6f:	85 d2                	test   %edx,%edx
+      71:	75 dd                	jne    50 <dmirror_snapshot_invalidate+0x20>
+}
+      73:	5b                   	pop    %rbx
+      74:	5d                   	pop    %rbp
+      75:	41 5c                	pop    %r12
+      77:	c3                   	retq   
+      78:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+      7f:	00 
+
+0000000000000080 <dmirror_do_update>:
+{
+      80:	55                   	push   %rbp
+	xa_for_each_range(&dmirror->pt, pfn, entry, start >> PAGE_SHIFT,
+      81:	48 c1 ee 0c          	shr    $0xc,%rsi
+      85:	48 c1 ea 0c          	shr    $0xc,%rdx
+      89:	b9 08 00 00 00       	mov    $0x8,%ecx
+{
+      8e:	53                   	push   %rbx
+	xa_for_each_range(&dmirror->pt, pfn, entry, start >> PAGE_SHIFT,
+      8f:	48 8d 5f 08          	lea    0x8(%rdi),%rbx
+      93:	48 89 d5             	mov    %rdx,%rbp
+      96:	48 89 df             	mov    %rbx,%rdi
+{
+      99:	48 83 ec 10          	sub    $0x10,%rsp
+      9d:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+      a4:	00 00 
+      a6:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+      ab:	31 c0                	xor    %eax,%eax
+	xa_for_each_range(&dmirror->pt, pfn, entry, start >> PAGE_SHIFT,
+      ad:	48 89 34 24          	mov    %rsi,(%rsp)
+      b1:	48 89 e6             	mov    %rsp,%rsi
+      b4:	e8 00 00 00 00       	callq  b9 <dmirror_do_update+0x39>
+      b9:	48 85 c0             	test   %rax,%rax
+      bc:	74 24                	je     e2 <dmirror_do_update+0x62>
+		xa_erase(&dmirror->pt, pfn);
+      be:	48 8b 34 24          	mov    (%rsp),%rsi
+      c2:	48 89 df             	mov    %rbx,%rdi
+      c5:	e8 00 00 00 00       	callq  ca <dmirror_do_update+0x4a>
+	xa_for_each_range(&dmirror->pt, pfn, entry, start >> PAGE_SHIFT,
+      ca:	b9 08 00 00 00       	mov    $0x8,%ecx
+      cf:	48 89 ea             	mov    %rbp,%rdx
+      d2:	48 89 df             	mov    %rbx,%rdi
+      d5:	48 89 e6             	mov    %rsp,%rsi
+      d8:	e8 00 00 00 00       	callq  dd <dmirror_do_update+0x5d>
+      dd:	48 85 c0             	test   %rax,%rax
+      e0:	75 dc                	jne    be <dmirror_do_update+0x3e>
+}
+      e2:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+      e7:	65 48 33 04 25 28 00 	xor    %gs:0x28,%rax
+      ee:	00 00 
+      f0:	75 07                	jne    f9 <dmirror_do_update+0x79>
+      f2:	48 83 c4 10          	add    $0x10,%rsp
+      f6:	5b                   	pop    %rbx
+      f7:	5d                   	pop    %rbp
+      f8:	c3                   	retq   
+      f9:	e8 00 00 00 00       	callq  fe <dmirror_do_update+0x7e>
+      fe:	66 90                	xchg   %ax,%ax
+
+0000000000000100 <dmirror_interval_invalidate>:
+{
+     100:	41 56                	push   %r14
+     102:	49 89 d6             	mov    %rdx,%r14
+     105:	41 55                	push   %r13
+	struct dmirror *dmirror = container_of(mni, struct dmirror, notifier);
+     107:	4c 8d 6f e8          	lea    -0x18(%rdi),%r13
+{
+     10b:	41 54                	push   %r12
+     10d:	4c 8d 67 58          	lea    0x58(%rdi),%r12
+     111:	55                   	push   %rbp
+     112:	48 89 f5             	mov    %rsi,%rbp
+     115:	53                   	push   %rbx
+     116:	48 89 fb             	mov    %rdi,%rbx
+		mutex_lock(&dmirror->mutex);
+     119:	4c 89 e7             	mov    %r12,%rdi
+	if (mmu_notifier_range_blockable(range))
+     11c:	f6 46 20 01          	testb  $0x1,0x20(%rsi)
+     120:	74 2f                	je     151 <dmirror_interval_invalidate+0x51>
+		mutex_lock(&dmirror->mutex);
+     122:	e8 00 00 00 00       	callq  127 <dmirror_interval_invalidate+0x27>
+     127:	4c 89 73 50          	mov    %r14,0x50(%rbx)
+	dmirror_do_update(dmirror, range->start, range->end);
+     12b:	48 8b 55 18          	mov    0x18(%rbp),%rdx
+     12f:	4c 89 ef             	mov    %r13,%rdi
+     132:	48 8b 75 10          	mov    0x10(%rbp),%rsi
+     136:	e8 45 ff ff ff       	callq  80 <dmirror_do_update>
+	mutex_unlock(&dmirror->mutex);
+     13b:	4c 89 e7             	mov    %r12,%rdi
+     13e:	e8 00 00 00 00       	callq  143 <dmirror_interval_invalidate+0x43>
+	return true;
+     143:	b8 01 00 00 00       	mov    $0x1,%eax
+}
+     148:	5b                   	pop    %rbx
+     149:	5d                   	pop    %rbp
+     14a:	41 5c                	pop    %r12
+     14c:	41 5d                	pop    %r13
+     14e:	41 5e                	pop    %r14
+     150:	c3                   	retq   
+	else if (!mutex_trylock(&dmirror->mutex))
+     151:	e8 00 00 00 00       	callq  156 <dmirror_interval_invalidate+0x56>
+     156:	89 c2                	mov    %eax,%edx
+		return false;
+     158:	31 c0                	xor    %eax,%eax
+	else if (!mutex_trylock(&dmirror->mutex))
+     15a:	85 d2                	test   %edx,%edx
+     15c:	75 c9                	jne    127 <dmirror_interval_invalidate+0x27>
+}
+     15e:	5b                   	pop    %rbx
+     15f:	5d                   	pop    %rbp
+     160:	41 5c                	pop    %r12
+     162:	41 5d                	pop    %r13
+     164:	41 5e                	pop    %r14
+     166:	c3                   	retq   
+     167:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     16e:	00 00 
+
+0000000000000170 <dmirror_fops_open>:
+{
+     170:	41 54                	push   %r12
+		index = kmalloc_index(size);
+
+		if (!index)
+			return ZERO_SIZE_PTR;
+
+		return kmem_cache_alloc_trace(
+     172:	ba 90 00 00 00       	mov    $0x90,%edx
+     177:	49 89 f4             	mov    %rsi,%r12
+     17a:	be c0 0d 00 00       	mov    $0xdc0,%esi
+     17f:	55                   	push   %rbp
+     180:	53                   	push   %rbx
+     181:	48 83 ec 08          	sub    $0x8,%rsp
+	struct cdev *cdev = inode->i_cdev;
+     185:	48 8b af 28 02 00 00 	mov    0x228(%rdi),%rbp
+     18c:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 193 <dmirror_fops_open+0x23>
+     193:	e8 00 00 00 00       	callq  198 <dmirror_fops_open+0x28>
+	if (dmirror == NULL)
+     198:	48 85 c0             	test   %rax,%rax
+     19b:	0f 84 84 00 00 00    	je     225 <dmirror_fops_open+0xb5>
+	dmirror->mdevice = container_of(cdev, struct dmirror_device, cdevice);
+     1a1:	48 89 28             	mov    %rbp,(%rax)
+     1a4:	48 89 c3             	mov    %rax,%rbx
+	mutex_init(&dmirror->mutex);
+     1a7:	48 8d 78 70          	lea    0x70(%rax),%rdi
+     1ab:	48 c7 c2 00 00 00 00 	mov    $0x0,%rdx
+     1b2:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+     1b9:	e8 00 00 00 00       	callq  1be <dmirror_fops_open+0x4e>
+ *
+ * Context: Any context.
+ */
+static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
+{
+	spin_lock_init(&xa->xa_lock);
+     1be:	48 c7 43 08 00 00 00 	movq   $0x0,0x8(%rbx)
+     1c5:	00 
+	ret = mmu_interval_notifier_insert(&dmirror->notifier, current->mm,
+     1c6:	31 d2                	xor    %edx,%edx
+     1c8:	48 8d 7b 18          	lea    0x18(%rbx),%rdi
+	xa->xa_flags = flags;
+	xa->xa_head = NULL;
+     1cc:	48 c7 43 10 00 00 00 	movq   $0x0,0x10(%rbx)
+     1d3:	00 
+     1d4:	49 c7 c0 00 00 00 00 	mov    $0x0,%r8
+     1db:	48 c7 c1 00 f0 ff ff 	mov    $0xfffffffffffff000,%rcx
+
+DECLARE_PER_CPU(struct task_struct *, current_task);
+
+static __always_inline struct task_struct *get_current(void)
+{
+	return this_cpu_read_stable(current_task);
+     1e2:	65 48 8b 04 25 00 00 	mov    %gs:0x0,%rax
+     1e9:	00 00 
+     1eb:	48 8b b0 48 04 00 00 	mov    0x448(%rax),%rsi
+     1f2:	e8 00 00 00 00       	callq  1f7 <dmirror_fops_open+0x87>
+	if (ret) {
+     1f7:	85 c0                	test   %eax,%eax
+     1f9:	75 11                	jne    20c <dmirror_fops_open+0x9c>
+	filp->private_data = dmirror;
+     1fb:	49 89 9c 24 c8 00 00 	mov    %rbx,0xc8(%r12)
+     202:	00 
+}
+     203:	48 83 c4 08          	add    $0x8,%rsp
+     207:	5b                   	pop    %rbx
+     208:	5d                   	pop    %rbp
+     209:	41 5c                	pop    %r12
+     20b:	c3                   	retq   
+		kfree(dmirror);
+     20c:	48 89 df             	mov    %rbx,%rdi
+     20f:	89 44 24 04          	mov    %eax,0x4(%rsp)
+     213:	e8 00 00 00 00       	callq  218 <dmirror_fops_open+0xa8>
+		return ret;
+     218:	8b 44 24 04          	mov    0x4(%rsp),%eax
+}
+     21c:	48 83 c4 08          	add    $0x8,%rsp
+     220:	5b                   	pop    %rbx
+     221:	5d                   	pop    %rbp
+     222:	41 5c                	pop    %r12
+     224:	c3                   	retq   
+		return -ENOMEM;
+     225:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
+     22a:	eb d7                	jmp    203 <dmirror_fops_open+0x93>
+     22c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000000230 <dmirror_do_read>:
+{
+     230:	41 56                	push   %r14
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+     232:	48 c1 ea 0c          	shr    $0xc,%rdx
+{
+     236:	41 55                	push   %r13
+     238:	41 54                	push   %r12
+	ptr = bounce->ptr + ((start - bounce->addr) & PAGE_MASK);
+     23a:	49 89 f4             	mov    %rsi,%r12
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+     23d:	48 c1 ee 0c          	shr    $0xc,%rsi
+{
+     241:	55                   	push   %rbp
+     242:	53                   	push   %rbx
+	ptr = bounce->ptr + ((start - bounce->addr) & PAGE_MASK);
+     243:	4c 2b 61 10          	sub    0x10(%rcx),%r12
+     247:	49 81 e4 00 f0 ff ff 	and    $0xfffffffffffff000,%r12
+     24e:	4c 03 21             	add    (%rcx),%r12
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+     251:	48 39 d6             	cmp    %rdx,%rsi
+     254:	0f 83 91 00 00 00    	jae    2eb <dmirror_do_read+0xbb>
+     25a:	49 89 ce             	mov    %rcx,%r14
+     25d:	49 89 f5             	mov    %rsi,%r13
+     260:	48 8d 6f 08          	lea    0x8(%rdi),%rbp
+     264:	48 89 d3             	mov    %rdx,%rbx
+     267:	eb 63                	jmp    2cc <dmirror_do_read+0x9c>
+ */
+#include <linux/vmstat.h>
+
+static __always_inline void *lowmem_page_address(const struct page *page)
+{
+	return page_to_virt(page);
+     269:	48 2b 05 00 00 00 00 	sub    0x0(%rip),%rax        # 270 <dmirror_do_read+0x40>
+		if (q_size < size)
+			__read_overflow2();
+	}
+	if (p_size < size || q_size < size)
+		fortify_panic(__func__);
+	return __underlying_memcpy(p, q, size);
+     270:	49 8d 7c 24 08       	lea    0x8(%r12),%rdi
+     275:	4c 89 e1             	mov    %r12,%rcx
+     278:	49 83 c5 01          	add    $0x1,%r13
+     27c:	48 c1 f8 06          	sar    $0x6,%rax
+     280:	48 83 e7 f8          	and    $0xfffffffffffffff8,%rdi
+		ptr += PAGE_SIZE;
+     284:	49 81 c4 00 10 00 00 	add    $0x1000,%r12
+     28b:	48 89 c6             	mov    %rax,%rsi
+     28e:	48 29 f9             	sub    %rdi,%rcx
+     291:	48 c1 e6 0c          	shl    $0xc,%rsi
+     295:	48 03 35 00 00 00 00 	add    0x0(%rip),%rsi        # 29c <dmirror_do_read+0x6c>
+     29c:	48 8b 06             	mov    (%rsi),%rax
+     29f:	49 89 84 24 00 f0 ff 	mov    %rax,-0x1000(%r12)
+     2a6:	ff 
+     2a7:	48 8b 86 f8 0f 00 00 	mov    0xff8(%rsi),%rax
+     2ae:	48 29 ce             	sub    %rcx,%rsi
+     2b1:	81 c1 00 10 00 00    	add    $0x1000,%ecx
+     2b7:	c1 e9 03             	shr    $0x3,%ecx
+     2ba:	49 89 44 24 f8       	mov    %rax,-0x8(%r12)
+     2bf:	f3 48 a5             	rep movsq %ds:(%rsi),%es:(%rdi)
+		bounce->cpages++;
+     2c2:	49 83 46 18 01       	addq   $0x1,0x18(%r14)
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+     2c7:	49 39 dd             	cmp    %rbx,%r13
+     2ca:	74 1f                	je     2eb <dmirror_do_read+0xbb>
+		entry = xa_load(&dmirror->pt, pfn);
+     2cc:	4c 89 ee             	mov    %r13,%rsi
+     2cf:	48 89 ef             	mov    %rbp,%rdi
+     2d2:	e8 00 00 00 00       	callq  2d7 <dmirror_do_read+0xa7>
+		if (!page)
+     2d7:	48 83 e0 fc          	and    $0xfffffffffffffffc,%rax
+     2db:	75 8c                	jne    269 <dmirror_do_read+0x39>
+}
+     2dd:	5b                   	pop    %rbx
+			return -ENOENT;
+     2de:	b8 fe ff ff ff       	mov    $0xfffffffe,%eax
+}
+     2e3:	5d                   	pop    %rbp
+     2e4:	41 5c                	pop    %r12
+     2e6:	41 5d                	pop    %r13
+     2e8:	41 5e                	pop    %r14
+     2ea:	c3                   	retq   
+     2eb:	5b                   	pop    %rbx
+	return 0;
+     2ec:	31 c0                	xor    %eax,%eax
+}
+     2ee:	5d                   	pop    %rbp
+     2ef:	41 5c                	pop    %r12
+     2f1:	41 5d                	pop    %r13
+     2f3:	41 5e                	pop    %r14
+     2f5:	c3                   	retq   
+     2f6:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+     2fd:	00 00 00 
+
+0000000000000300 <dmirror_devmem_free>:
+	.llseek		= default_llseek,
+	.owner		= THIS_MODULE,
+};
+
+static void dmirror_devmem_free(struct page *page)
+{
+     300:	41 54                	push   %r12
+     302:	55                   	push   %rbp
+     303:	48 89 fd             	mov    %rdi,%rbp
+     306:	53                   	push   %rbx
+	struct page *rpage = page->zone_device_data;
+     307:	48 8b 7f 10          	mov    0x10(%rdi),%rdi
+	struct dmirror_device *mdevice;
+
+	if (rpage)
+     30b:	48 85 ff             	test   %rdi,%rdi
+     30e:	74 07                	je     317 <dmirror_devmem_free+0x17>
+		__free_page(rpage);
+     310:	31 f6                	xor    %esi,%esi
+     312:	e8 00 00 00 00       	callq  317 <dmirror_devmem_free+0x17>
+			    pagemap)->mdevice;
+     317:	48 8b 45 08          	mov    0x8(%rbp),%rax
+     31b:	48 8b 98 e8 00 00 00 	mov    0xe8(%rax),%rbx
+
+#endif
+
+static __always_inline void spin_lock(spinlock_t *lock)
+{
+	raw_spin_lock(&lock->rlock);
+     322:	4c 8d a3 b8 00 00 00 	lea    0xb8(%rbx),%r12
+     329:	4c 89 e7             	mov    %r12,%rdi
+     32c:	e8 00 00 00 00       	callq  331 <dmirror_devmem_free+0x31>
+
+	mdevice = dmirror_page_to_device(page);
+
+	spin_lock(&mdevice->lock);
+	mdevice->cfree++;
+	page->zone_device_data = mdevice->free_pages;
+     331:	48 8b 83 b0 00 00 00 	mov    0xb0(%rbx),%rax
+	mdevice->cfree++;
+     338:	48 83 83 a8 00 00 00 	addq   $0x1,0xa8(%rbx)
+     33f:	01 
+	raw_spin_lock_irqsave_nested(spinlock_check(lock), flags, subclass); \
+} while (0)
+
+static __always_inline void spin_unlock(spinlock_t *lock)
+{
+	raw_spin_unlock(&lock->rlock);
+     340:	4c 89 e7             	mov    %r12,%rdi
+	page->zone_device_data = mdevice->free_pages;
+     343:	48 89 45 10          	mov    %rax,0x10(%rbp)
+	mdevice->free_pages = page;
+     347:	48 89 ab b0 00 00 00 	mov    %rbp,0xb0(%rbx)
+	spin_unlock(&mdevice->lock);
+}
+     34e:	5b                   	pop    %rbx
+     34f:	5d                   	pop    %rbp
+     350:	41 5c                	pop    %r12
+     352:	e9 00 00 00 00       	jmpq   357 <dmirror_devmem_free+0x57>
+     357:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     35e:	00 00 
+
+0000000000000360 <dmirror_allocate_chunk>:
+{
+     360:	41 57                	push   %r15
+     362:	41 56                	push   %r14
+     364:	49 89 f6             	mov    %rsi,%r14
+     367:	41 55                	push   %r13
+	mutex_lock(&mdevice->devmem_lock);
+     369:	4c 8d af 80 00 00 00 	lea    0x80(%rdi),%r13
+{
+     370:	41 54                	push   %r12
+     372:	55                   	push   %rbp
+     373:	48 89 fd             	mov    %rdi,%rbp
+	mutex_lock(&mdevice->devmem_lock);
+     376:	4c 89 ef             	mov    %r13,%rdi
+{
+     379:	53                   	push   %rbx
+	mutex_lock(&mdevice->devmem_lock);
+     37a:	e8 00 00 00 00       	callq  37f <dmirror_allocate_chunk+0x1f>
+	if (mdevice->devmem_count == mdevice->devmem_capacity) {
+     37f:	8b 45 70             	mov    0x70(%rbp),%eax
+     382:	39 45 74             	cmp    %eax,0x74(%rbp)
+     385:	0f 84 fd 00 00 00    	je     488 <dmirror_allocate_chunk+0x128>
+	res = request_free_mem_region(&iomem_resource, DEVMEM_CHUNK_SIZE,
+     38b:	48 c7 c2 00 00 00 00 	mov    $0x0,%rdx
+     392:	be 00 00 00 10       	mov    $0x10000000,%esi
+     397:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     39e:	e8 00 00 00 00       	callq  3a3 <dmirror_allocate_chunk+0x43>
+     3a3:	48 89 c3             	mov    %rax,%rbx
+	if (IS_ERR(res))
+     3a6:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+     3ac:	76 15                	jbe    3c3 <dmirror_allocate_chunk+0x63>
+	mutex_unlock(&mdevice->devmem_lock);
+     3ae:	4c 89 ef             	mov    %r13,%rdi
+     3b1:	e8 00 00 00 00       	callq  3b6 <dmirror_allocate_chunk+0x56>
+	return false;
+     3b6:	31 c0                	xor    %eax,%eax
+}
+     3b8:	5b                   	pop    %rbx
+     3b9:	5d                   	pop    %rbp
+     3ba:	41 5c                	pop    %r12
+     3bc:	41 5d                	pop    %r13
+     3be:	41 5e                	pop    %r14
+     3c0:	41 5f                	pop    %r15
+     3c2:	c3                   	retq   
+     3c3:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 3ca <dmirror_allocate_chunk+0x6a>
+     3ca:	ba f0 00 00 00       	mov    $0xf0,%edx
+     3cf:	be c0 0d 00 00       	mov    $0xdc0,%esi
+     3d4:	e8 00 00 00 00       	callq  3d9 <dmirror_allocate_chunk+0x79>
+     3d9:	49 89 c4             	mov    %rax,%r12
+	if (!devmem)
+     3dc:	48 85 c0             	test   %rax,%rax
+     3df:	0f 84 84 00 00 00    	je     469 <dmirror_allocate_chunk+0x109>
+	devmem->pagemap.type = MEMORY_DEVICE_PRIVATE;
+     3e5:	c7 80 d0 00 00 00 01 	movl   $0x1,0xd0(%rax)
+     3ec:	00 00 00 
+	devmem->pagemap.res = *res;
+     3ef:	48 8b 03             	mov    (%rbx),%rax
+	ptr = memremap_pages(&devmem->pagemap, numa_node_id());
+     3f2:	4c 89 e7             	mov    %r12,%rdi
+
+#ifndef numa_node_id
+/* Returns the number of the current Node. */
+static inline int numa_node_id(void)
+{
+	return raw_cpu_read(numa_node);
+     3f5:	65 8b 35 00 00 00 00 	mov    %gs:0x0(%rip),%esi        # 3fc <dmirror_allocate_chunk+0x9c>
+	devmem->pagemap.res = *res;
+     3fc:	49 89 44 24 30       	mov    %rax,0x30(%r12)
+     401:	48 8b 43 08          	mov    0x8(%rbx),%rax
+     405:	49 89 44 24 38       	mov    %rax,0x38(%r12)
+     40a:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     40e:	49 89 44 24 40       	mov    %rax,0x40(%r12)
+     413:	48 8b 43 18          	mov    0x18(%rbx),%rax
+     417:	49 89 44 24 48       	mov    %rax,0x48(%r12)
+     41c:	48 8b 43 20          	mov    0x20(%rbx),%rax
+     420:	49 89 44 24 50       	mov    %rax,0x50(%r12)
+     425:	48 8b 43 28          	mov    0x28(%rbx),%rax
+     429:	49 89 44 24 58       	mov    %rax,0x58(%r12)
+     42e:	48 8b 43 30          	mov    0x30(%rbx),%rax
+     432:	49 89 44 24 60       	mov    %rax,0x60(%r12)
+     437:	48 8b 43 38          	mov    0x38(%rbx),%rax
+	devmem->pagemap.ops = &dmirror_devmem_ops;
+     43b:	49 c7 84 24 d8 00 00 	movq   $0x0,0xd8(%r12)
+     442:	00 00 00 00 00 
+	devmem->pagemap.res = *res;
+     447:	49 89 44 24 68       	mov    %rax,0x68(%r12)
+	devmem->pagemap.owner = mdevice;
+     44c:	49 89 ac 24 e0 00 00 	mov    %rbp,0xe0(%r12)
+     453:	00 
+	ptr = memremap_pages(&devmem->pagemap, numa_node_id());
+     454:	e8 00 00 00 00       	callq  459 <dmirror_allocate_chunk+0xf9>
+	if (IS_ERR(ptr))
+     459:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+     45f:	76 54                	jbe    4b5 <dmirror_allocate_chunk+0x155>
+	kfree(devmem);
+     461:	4c 89 e7             	mov    %r12,%rdi
+     464:	e8 00 00 00 00       	callq  469 <dmirror_allocate_chunk+0x109>
+int adjust_resource(struct resource *res, resource_size_t start,
+		    resource_size_t size);
+resource_size_t resource_alignment(struct resource *res);
+static inline resource_size_t resource_size(const struct resource *res)
+{
+	return res->end - res->start + 1;
+     469:	48 8b 53 08          	mov    0x8(%rbx),%rdx
+	release_mem_region(res->start, resource_size(res));
+     46d:	48 8b 33             	mov    (%rbx),%rsi
+     470:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     477:	48 83 c2 01          	add    $0x1,%rdx
+     47b:	48 29 f2             	sub    %rsi,%rdx
+     47e:	e8 00 00 00 00       	callq  483 <dmirror_allocate_chunk+0x123>
+     483:	e9 26 ff ff ff       	jmpq   3ae <dmirror_allocate_chunk+0x4e>
+		new_capacity = mdevice->devmem_capacity +
+     488:	8d 70 10             	lea    0x10(%rax),%esi
+		new_chunks = krealloc(mdevice->devmem_chunks,
+     48b:	48 8b 7d 78          	mov    0x78(%rbp),%rdi
+     48f:	ba c0 0c 00 00       	mov    $0xcc0,%edx
+		new_capacity = mdevice->devmem_capacity +
+     494:	48 89 f3             	mov    %rsi,%rbx
+		new_chunks = krealloc(mdevice->devmem_chunks,
+     497:	48 c1 e6 03          	shl    $0x3,%rsi
+     49b:	e8 00 00 00 00       	callq  4a0 <dmirror_allocate_chunk+0x140>
+		if (!new_chunks)
+     4a0:	48 85 c0             	test   %rax,%rax
+     4a3:	0f 84 05 ff ff ff    	je     3ae <dmirror_allocate_chunk+0x4e>
+		mdevice->devmem_capacity = new_capacity;
+     4a9:	89 5d 70             	mov    %ebx,0x70(%rbp)
+		mdevice->devmem_chunks = new_chunks;
+     4ac:	48 89 45 78          	mov    %rax,0x78(%rbp)
+     4b0:	e9 d6 fe ff ff       	jmpq   38b <dmirror_allocate_chunk+0x2b>
+     4b5:	49 8b 4c 24 38       	mov    0x38(%r12),%rcx
+	pfn_first = devmem->pagemap.res.start >> PAGE_SHIFT;
+     4ba:	49 8b 44 24 30       	mov    0x30(%r12),%rax
+	mutex_unlock(&mdevice->devmem_lock);
+     4bf:	4c 89 ef             	mov    %r13,%rdi
+	devmem->mdevice = mdevice;
+     4c2:	49 89 ac 24 e8 00 00 	mov    %rbp,0xe8(%r12)
+     4c9:	00 
+	mdevice->devmem_chunks[mdevice->devmem_count++] = devmem;
+     4ca:	48 8b 55 78          	mov    0x78(%rbp),%rdx
+     4ce:	48 8d 59 01          	lea    0x1(%rcx),%rbx
+	pfn_first = devmem->pagemap.res.start >> PAGE_SHIFT;
+     4d2:	49 89 c7             	mov    %rax,%r15
+     4d5:	48 29 c3             	sub    %rax,%rbx
+	mdevice->devmem_chunks[mdevice->devmem_count++] = devmem;
+     4d8:	8b 45 74             	mov    0x74(%rbp),%eax
+	pfn_first = devmem->pagemap.res.start >> PAGE_SHIFT;
+     4db:	49 c1 ef 0c          	shr    $0xc,%r15
+		(resource_size(&devmem->pagemap.res) >> PAGE_SHIFT);
+     4df:	48 c1 eb 0c          	shr    $0xc,%rbx
+	mdevice->devmem_chunks[mdevice->devmem_count++] = devmem;
+     4e3:	8d 48 01             	lea    0x1(%rax),%ecx
+	pfn_last = pfn_first +
+     4e6:	4c 01 fb             	add    %r15,%rbx
+	mdevice->devmem_chunks[mdevice->devmem_count++] = devmem;
+     4e9:	89 4d 74             	mov    %ecx,0x74(%rbp)
+     4ec:	4c 89 24 c2          	mov    %r12,(%rdx,%rax,8)
+	raw_spin_lock(&lock->rlock);
+     4f0:	4c 8d a5 b8 00 00 00 	lea    0xb8(%rbp),%r12
+	mutex_unlock(&mdevice->devmem_lock);
+     4f7:	e8 00 00 00 00       	callq  4fc <dmirror_allocate_chunk+0x19c>
+	pr_info("added new %u MB chunk (total %u chunks, %u MB) PFNs [0x%lx 0x%lx)\n",
+     4fc:	8b 55 74             	mov    0x74(%rbp),%edx
+     4ff:	49 89 d9             	mov    %rbx,%r9
+     502:	4d 89 f8             	mov    %r15,%r8
+     505:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     50c:	be 00 01 00 00       	mov    $0x100,%esi
+     511:	89 d1                	mov    %edx,%ecx
+     513:	c1 e1 08             	shl    $0x8,%ecx
+     516:	e8 00 00 00 00       	callq  51b <dmirror_allocate_chunk+0x1bb>
+     51b:	4c 89 e7             	mov    %r12,%rdi
+     51e:	e8 00 00 00 00       	callq  523 <dmirror_allocate_chunk+0x1c3>
+	for (pfn = pfn_first; pfn < pfn_last; pfn++) {
+     523:	49 39 df             	cmp    %rbx,%r15
+     526:	73 36                	jae    55e <dmirror_allocate_chunk+0x1fe>
+		struct page *page = pfn_to_page(pfn);
+     528:	48 8b 0d 00 00 00 00 	mov    0x0(%rip),%rcx        # 52f <dmirror_allocate_chunk+0x1cf>
+     52f:	4c 89 f8             	mov    %r15,%rax
+     532:	48 89 da             	mov    %rbx,%rdx
+     535:	48 c1 e0 06          	shl    $0x6,%rax
+     539:	48 c1 e2 06          	shl    $0x6,%rdx
+     53d:	48 01 c8             	add    %rcx,%rax
+     540:	48 01 ca             	add    %rcx,%rdx
+		page->zone_device_data = mdevice->free_pages;
+     543:	48 8b 8d b0 00 00 00 	mov    0xb0(%rbp),%rcx
+     54a:	48 89 48 10          	mov    %rcx,0x10(%rax)
+		mdevice->free_pages = page;
+     54e:	48 89 85 b0 00 00 00 	mov    %rax,0xb0(%rbp)
+	for (pfn = pfn_first; pfn < pfn_last; pfn++) {
+     555:	48 83 c0 40          	add    $0x40,%rax
+     559:	48 39 c2             	cmp    %rax,%rdx
+     55c:	75 e5                	jne    543 <dmirror_allocate_chunk+0x1e3>
+	if (ppage) {
+     55e:	4d 85 f6             	test   %r14,%r14
+     561:	74 1d                	je     580 <dmirror_allocate_chunk+0x220>
+		*ppage = mdevice->free_pages;
+     563:	48 8b 85 b0 00 00 00 	mov    0xb0(%rbp),%rax
+     56a:	49 89 06             	mov    %rax,(%r14)
+		mdevice->free_pages = (*ppage)->zone_device_data;
+     56d:	48 8b 40 10          	mov    0x10(%rax),%rax
+		mdevice->calloc++;
+     571:	48 83 85 a0 00 00 00 	addq   $0x1,0xa0(%rbp)
+     578:	01 
+		mdevice->free_pages = (*ppage)->zone_device_data;
+     579:	48 89 85 b0 00 00 00 	mov    %rax,0xb0(%rbp)
+	raw_spin_unlock(&lock->rlock);
+     580:	4c 89 e7             	mov    %r12,%rdi
+     583:	e8 00 00 00 00       	callq  588 <dmirror_allocate_chunk+0x228>
+	return true;
+     588:	b8 01 00 00 00       	mov    $0x1,%eax
+     58d:	e9 26 fe ff ff       	jmpq   3b8 <dmirror_allocate_chunk+0x58>
+     592:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     599:	00 00 00 00 
+     59d:	0f 1f 00             	nopl   (%rax)
+
+00000000000005a0 <dmirror_devmem_fault>:
+	dmirror_do_update(dmirror, args->start, args->end);
+	mutex_unlock(&dmirror->mutex);
+}
+
+static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+{
+     5a0:	41 57                	push   %r15
+     5a2:	41 56                	push   %r14
+     5a4:	41 55                	push   %r13
+     5a6:	41 54                	push   %r12
+     5a8:	55                   	push   %rbp
+     5a9:	53                   	push   %rbx
+     5aa:	48 83 ec 68          	sub    $0x68,%rsp
+     5ae:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+     5b5:	00 00 
+     5b7:	48 89 44 24 60       	mov    %rax,0x60(%rsp)
+     5bc:	31 c0                	xor    %eax,%eax
+	/*
+	 * Normally, a device would use the page->zone_device_data to point to
+	 * the mirror but here we use it to hold the page for the simulated
+	 * device memory and that page holds the pointer to the mirror.
+	 */
+	rpage = vmf->page->zone_device_data;
+     5be:	48 8b 47 40          	mov    0x40(%rdi),%rax
+	dmirror = rpage->zone_device_data;
+     5c2:	48 8b 40 10          	mov    0x10(%rax),%rax
+     5c6:	4c 8b 70 10          	mov    0x10(%rax),%r14
+
+	/* FIXME demonstrate how we can adjust migrate range */
+	args.vma = vmf->vma;
+     5ca:	48 8b 07             	mov    (%rdi),%rax
+     5cd:	48 89 44 24 20       	mov    %rax,0x20(%rsp)
+	args.start = vmf->address;
+     5d2:	48 8b 47 18          	mov    0x18(%rdi),%rax
+	args.end = args.start + PAGE_SIZE;
+	args.src = &src_pfns;
+	args.dst = &dst_pfns;
+	args.src_owner = dmirror->mdevice;
+
+	if (migrate_vma_setup(&args))
+     5d6:	48 8d 7c 24 20       	lea    0x20(%rsp),%rdi
+	args.start = vmf->address;
+     5db:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
+	args.end = args.start + PAGE_SIZE;
+     5e0:	48 05 00 10 00 00    	add    $0x1000,%rax
+     5e6:	48 89 44 24 50       	mov    %rax,0x50(%rsp)
+	args.src = &src_pfns;
+     5eb:	48 8d 44 24 10       	lea    0x10(%rsp),%rax
+     5f0:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
+	args.dst = &dst_pfns;
+     5f5:	48 8d 44 24 18       	lea    0x18(%rsp),%rax
+     5fa:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+	args.src_owner = dmirror->mdevice;
+     5ff:	49 8b 06             	mov    (%r14),%rax
+     602:	48 89 44 24 58       	mov    %rax,0x58(%rsp)
+	if (migrate_vma_setup(&args))
+     607:	e8 00 00 00 00       	callq  60c <dmirror_devmem_fault+0x6c>
+     60c:	ba 02 00 00 00       	mov    $0x2,%edx
+     611:	85 c0                	test   %eax,%eax
+     613:	0f 85 ce 01 00 00    	jne    7e7 <dmirror_devmem_fault+0x247>
+	unsigned long end = args->end;
+     619:	48 8b 44 24 50       	mov    0x50(%rsp),%rax
+	unsigned long start = args->start;
+     61e:	48 8b 6c 24 48       	mov    0x48(%rsp),%rbp
+	const unsigned long *src = args->src;
+     623:	4c 8b 6c 24 30       	mov    0x30(%rsp),%r13
+	unsigned long *dst = args->dst;
+     628:	4c 8b 64 24 28       	mov    0x28(%rsp),%r12
+	unsigned long end = args->end;
+     62d:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+	for (addr = start; addr < end; addr += PAGE_SIZE,
+     632:	48 39 c5             	cmp    %rax,%rbp
+     635:	0f 83 70 01 00 00    	jae    7ab <dmirror_devmem_fault+0x20b>
+		spage = migrate_pfn_to_page(*src);
+     63b:	49 8b 55 00          	mov    0x0(%r13),%rdx
+#define MIGRATE_PFN_WRITE	(1UL << 3)
+#define MIGRATE_PFN_SHIFT	6
+
+static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
+{
+	if (!(mpfn & MIGRATE_PFN_VALID))
+     63f:	f6 c2 01             	test   $0x1,%dl
+     642:	0f 84 49 01 00 00    	je     791 <dmirror_devmem_fault+0x1f1>
+		return NULL;
+	return pfn_to_page(mpfn >> MIGRATE_PFN_SHIFT);
+     648:	48 89 d0             	mov    %rdx,%rax
+     64b:	48 83 e0 c0          	and    $0xffffffffffffffc0,%rax
+		if (!spage || !(*src & MIGRATE_PFN_MIGRATE))
+     64f:	48 03 05 00 00 00 00 	add    0x0(%rip),%rax        # 656 <dmirror_devmem_fault+0xb6>
+     656:	0f 84 35 01 00 00    	je     791 <dmirror_devmem_fault+0x1f1>
+     65c:	83 e2 02             	and    $0x2,%edx
+     65f:	0f 84 2c 01 00 00    	je     791 <dmirror_devmem_fault+0x1f1>
+		spage = spage->zone_device_data;
+     665:	48 8b 40 10          	mov    0x10(%rax),%rax
+		dpage = alloc_page_vma(GFP_HIGHUSER_MOVABLE, args->vma, addr);
+     669:	48 8b 54 24 20       	mov    0x20(%rsp),%rdx
+     66e:	45 31 c9             	xor    %r9d,%r9d
+     671:	48 89 e9             	mov    %rbp,%rcx
+     674:	31 f6                	xor    %esi,%esi
+     676:	bf ca 0c 10 00       	mov    $0x100cca,%edi
+		spage = spage->zone_device_data;
+     67b:	48 89 04 24          	mov    %rax,(%rsp)
+     67f:	65 44 8b 05 00 00 00 	mov    %gs:0x0(%rip),%r8d        # 687 <dmirror_devmem_fault+0xe7>
+     686:	00 
+		dpage = alloc_page_vma(GFP_HIGHUSER_MOVABLE, args->vma, addr);
+     687:	e8 00 00 00 00       	callq  68c <dmirror_devmem_fault+0xec>
+     68c:	48 89 c3             	mov    %rax,%rbx
+		if (!dpage)
+     68f:	48 85 c0             	test   %rax,%rax
+     692:	0f 84 f9 00 00 00    	je     791 <dmirror_devmem_fault+0x1f1>
+
+struct page;	/* forward declaration */
+
+static inline struct page *compound_head(struct page *page)
+{
+	unsigned long head = READ_ONCE(page->compound_head);
+     698:	48 8b 50 08          	mov    0x8(%rax),%rdx
+
+	if (unlikely(head & 1))
+		return (struct page *) (head - 1);
+     69c:	48 8d 42 ff          	lea    -0x1(%rdx),%rax
+     6a0:	83 e2 01             	and    $0x1,%edx
+     6a3:	48 0f 44 c3          	cmove  %rbx,%rax
+}
+
+static __always_inline bool
+arch_test_and_set_bit(long nr, volatile unsigned long *addr)
+{
+	return GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(bts), *addr, c, "Ir", nr);
+     6a7:	f0 48 0f ba 28 00    	lock btsq $0x0,(%rax)
+ * lock_page may only be called if we have the page's inode pinned.
+ */
+static inline void lock_page(struct page *page)
+{
+	might_sleep();
+	if (!trylock_page(page))
+     6ad:	0f 82 55 01 00 00    	jb     808 <dmirror_devmem_fault+0x268>
+#endif
+}
+
+static inline void *kmap_atomic(struct page *page)
+{
+	preempt_disable();
+     6b3:	bf 01 00 00 00       	mov    $0x1,%edi
+     6b8:	e8 00 00 00 00       	callq  6bd <dmirror_devmem_fault+0x11d>
+     6bd:	65 4c 8b 3c 25 00 00 	mov    %gs:0x0,%r15
+     6c4:	00 00 
+}
+#endif
+
+static __always_inline void pagefault_disabled_inc(void)
+{
+	current->pagefault_disabled++;
+     6c6:	41 83 87 c8 19 00 00 	addl   $0x1,0x19c8(%r15)
+     6cd:	01 
+     6ce:	48 8b 34 24          	mov    (%rsp),%rsi
+     6d2:	48 2b 35 00 00 00 00 	sub    0x0(%rip),%rsi        # 6d9 <dmirror_devmem_fault+0x139>
+     6d9:	bf 01 00 00 00       	mov    $0x1,%edi
+     6de:	48 c1 fe 06          	sar    $0x6,%rsi
+     6e2:	48 c1 e6 0c          	shl    $0xc,%rsi
+     6e6:	48 03 35 00 00 00 00 	add    0x0(%rip),%rsi        # 6ed <dmirror_devmem_fault+0x14d>
+     6ed:	48 89 34 24          	mov    %rsi,(%rsp)
+     6f1:	e8 00 00 00 00       	callq  6f6 <dmirror_devmem_fault+0x156>
+     6f6:	41 83 87 c8 19 00 00 	addl   $0x1,0x19c8(%r15)
+     6fd:	01 
+     6fe:	48 89 df             	mov    %rbx,%rdi
+     701:	48 2b 3d 00 00 00 00 	sub    0x0(%rip),%rdi        # 708 <dmirror_devmem_fault+0x168>
+{
+	char *vfrom, *vto;
+
+	vfrom = kmap_atomic(from);
+	vto = kmap_atomic(to);
+	copy_page(vto, vfrom);
+     708:	48 8b 34 24          	mov    (%rsp),%rsi
+     70c:	48 c1 ff 06          	sar    $0x6,%rdi
+     710:	48 c1 e7 0c          	shl    $0xc,%rdi
+     714:	48 03 3d 00 00 00 00 	add    0x0(%rip),%rdi        # 71b <dmirror_devmem_fault+0x17b>
+     71b:	e8 00 00 00 00       	callq  720 <dmirror_devmem_fault+0x180>
+}
+
+static __always_inline void pagefault_disabled_dec(void)
+{
+	current->pagefault_disabled--;
+     720:	41 83 af c8 19 00 00 	subl   $0x1,0x19c8(%r15)
+     727:	01 
+	kunmap_atomic(vto);
+     728:	bf 01 00 00 00       	mov    $0x1,%edi
+     72d:	e8 00 00 00 00       	callq  732 <dmirror_devmem_fault+0x192>
+/*
+ * Returns true when we need to resched and can (barring IRQ state).
+ */
+static __always_inline bool should_resched(int preempt_offset)
+{
+	return unlikely(raw_cpu_read_4(__preempt_count) == preempt_offset);
+     732:	65 8b 05 00 00 00 00 	mov    %gs:0x0(%rip),%eax        # 739 <dmirror_devmem_fault+0x199>
+     739:	85 c0                	test   %eax,%eax
+     73b:	0f 84 de 00 00 00    	je     81f <dmirror_devmem_fault+0x27f>
+     741:	65 48 8b 04 25 00 00 	mov    %gs:0x0,%rax
+     748:	00 00 
+     74a:	83 a8 c8 19 00 00 01 	subl   $0x1,0x19c8(%rax)
+	kunmap_atomic(vfrom);
+     751:	bf 01 00 00 00       	mov    $0x1,%edi
+     756:	e8 00 00 00 00       	callq  75b <dmirror_devmem_fault+0x1bb>
+     75b:	65 8b 05 00 00 00 00 	mov    %gs:0x0(%rip),%eax        # 762 <dmirror_devmem_fault+0x1c2>
+     762:	85 c0                	test   %eax,%eax
+     764:	0f 84 ab 00 00 00    	je     815 <dmirror_devmem_fault+0x275>
+		*dst = migrate_pfn(page_to_pfn(dpage)) | MIGRATE_PFN_LOCKED;
+     76a:	48 2b 1d 00 00 00 00 	sub    0x0(%rip),%rbx        # 771 <dmirror_devmem_fault+0x1d1>
+}
+
+static inline unsigned long migrate_pfn(unsigned long pfn)
+{
+	return (pfn << MIGRATE_PFN_SHIFT) | MIGRATE_PFN_VALID;
+     771:	48 83 e3 c0          	and    $0xffffffffffffffc0,%rbx
+     775:	48 89 d8             	mov    %rbx,%rax
+			*dst |= MIGRATE_PFN_WRITE;
+     778:	48 83 cb 0d          	or     $0xd,%rbx
+		*dst = migrate_pfn(page_to_pfn(dpage)) | MIGRATE_PFN_LOCKED;
+     77c:	48 83 c8 05          	or     $0x5,%rax
+     780:	49 89 04 24          	mov    %rax,(%r12)
+			*dst |= MIGRATE_PFN_WRITE;
+     784:	41 f6 45 00 08       	testb  $0x8,0x0(%r13)
+     789:	48 0f 44 d8          	cmove  %rax,%rbx
+     78d:	49 89 1c 24          	mov    %rbx,(%r12)
+	for (addr = start; addr < end; addr += PAGE_SIZE,
+     791:	48 81 c5 00 10 00 00 	add    $0x1000,%rbp
+				       src++, dst++) {
+     798:	49 83 c5 08          	add    $0x8,%r13
+     79c:	49 83 c4 08          	add    $0x8,%r12
+	for (addr = start; addr < end; addr += PAGE_SIZE,
+     7a0:	48 39 6c 24 08       	cmp    %rbp,0x8(%rsp)
+     7a5:	0f 87 90 fe ff ff    	ja     63b <dmirror_devmem_fault+0x9b>
+		return VM_FAULT_SIGBUS;
+
+	ret = dmirror_devmem_fault_alloc_and_copy(&args, dmirror->mdevice);
+	if (ret)
+		return ret;
+	migrate_vma_pages(&args);
+     7ab:	48 8d 7c 24 20       	lea    0x20(%rsp),%rdi
+	mutex_lock(&dmirror->mutex);
+     7b0:	49 8d 5e 70          	lea    0x70(%r14),%rbx
+	migrate_vma_pages(&args);
+     7b4:	e8 00 00 00 00       	callq  7b9 <dmirror_devmem_fault+0x219>
+	mutex_lock(&dmirror->mutex);
+     7b9:	48 89 df             	mov    %rbx,%rdi
+     7bc:	e8 00 00 00 00       	callq  7c1 <dmirror_devmem_fault+0x221>
+	dmirror_do_update(dmirror, args->start, args->end);
+     7c1:	48 8b 54 24 50       	mov    0x50(%rsp),%rdx
+     7c6:	48 8b 74 24 48       	mov    0x48(%rsp),%rsi
+     7cb:	4c 89 f7             	mov    %r14,%rdi
+     7ce:	e8 ad f8 ff ff       	callq  80 <dmirror_do_update>
+	mutex_unlock(&dmirror->mutex);
+     7d3:	48 89 df             	mov    %rbx,%rdi
+     7d6:	e8 00 00 00 00       	callq  7db <dmirror_devmem_fault+0x23b>
+	dmirror_devmem_fault_finalize_and_map(&args, dmirror);
+	migrate_vma_finalize(&args);
+     7db:	48 8d 7c 24 20       	lea    0x20(%rsp),%rdi
+     7e0:	e8 00 00 00 00       	callq  7e5 <dmirror_devmem_fault+0x245>
+	return 0;
+     7e5:	31 d2                	xor    %edx,%edx
+}
+     7e7:	48 8b 4c 24 60       	mov    0x60(%rsp),%rcx
+     7ec:	65 48 33 0c 25 28 00 	xor    %gs:0x28,%rcx
+     7f3:	00 00 
+     7f5:	89 d0                	mov    %edx,%eax
+     7f7:	75 30                	jne    829 <dmirror_devmem_fault+0x289>
+     7f9:	48 83 c4 68          	add    $0x68,%rsp
+     7fd:	5b                   	pop    %rbx
+     7fe:	5d                   	pop    %rbp
+     7ff:	41 5c                	pop    %r12
+     801:	41 5d                	pop    %r13
+     803:	41 5e                	pop    %r14
+     805:	41 5f                	pop    %r15
+     807:	c3                   	retq   
+		__lock_page(page);
+     808:	48 89 df             	mov    %rbx,%rdi
+     80b:	e8 00 00 00 00       	callq  810 <dmirror_devmem_fault+0x270>
+     810:	e9 9e fe ff ff       	jmpq   6b3 <dmirror_devmem_fault+0x113>
+     815:	e8 00 00 00 00       	callq  81a <dmirror_devmem_fault+0x27a>
+     81a:	e9 4b ff ff ff       	jmpq   76a <dmirror_devmem_fault+0x1ca>
+	kunmap_atomic(vto);
+     81f:	e8 00 00 00 00       	callq  824 <dmirror_devmem_fault+0x284>
+     824:	e9 18 ff ff ff       	jmpq   741 <dmirror_devmem_fault+0x1a1>
+     829:	e8 00 00 00 00       	callq  82e <dmirror_devmem_fault+0x28e>
+     82e:	66 90                	xchg   %ax,%ax
+
+0000000000000830 <dmirror_migrate>:
+{
+     830:	41 57                	push   %r15
+     832:	41 56                	push   %r14
+     834:	41 55                	push   %r13
+     836:	41 54                	push   %r12
+     838:	55                   	push   %rbp
+     839:	53                   	push   %rbx
+     83a:	48 81 ec b8 04 00 00 	sub    $0x4b8,%rsp
+	struct mm_struct *mm = dmirror->notifier.mm;
+     841:	48 8b 4f 50          	mov    0x50(%rdi),%rcx
+{
+     845:	48 89 74 24 40       	mov    %rsi,0x40(%rsp)
+     84a:	48 89 3c 24          	mov    %rdi,(%rsp)
+     84e:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+     855:	00 00 
+     857:	48 89 84 24 b0 04 00 	mov    %rax,0x4b0(%rsp)
+     85e:	00 
+     85f:	31 c0                	xor    %eax,%eax
+	unsigned long size = cmd->npages << PAGE_SHIFT;
+     861:	48 8b 46 10          	mov    0x10(%rsi),%rax
+	start = cmd->addr;
+     865:	48 8b 36             	mov    (%rsi),%rsi
+	struct mm_struct *mm = dmirror->notifier.mm;
+     868:	48 89 4c 24 20       	mov    %rcx,0x20(%rsp)
+	unsigned long size = cmd->npages << PAGE_SHIFT;
+     86d:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+     872:	48 c1 e0 0c          	shl    $0xc,%rax
+     876:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
+	start = cmd->addr;
+     87b:	48 01 f0             	add    %rsi,%rax
+     87e:	48 89 74 24 30       	mov    %rsi,0x30(%rsp)
+	end = start + size;
+     883:	48 89 44 24 10       	mov    %rax,0x10(%rsp)
+     888:	0f 82 8e 05 00 00    	jb     e1c <dmirror_migrate+0x5ec>
+{
+	/*
+	 * Note for KASAN: we deliberately don't use READ_ONCE_NOCHECK() here,
+	 * it's non-inlined function that increases binary size and stack usage.
+	 */
+	return __READ_ONCE((v)->counter);
+     88e:	8b 41 5c             	mov    0x5c(%rcx),%eax
+arch_atomic_fetch_add_unless(atomic_t *v, int a, int u)
+{
+	int c = arch_atomic_read(v);
+
+	do {
+		if (unlikely(c == u))
+     891:	85 c0                	test   %eax,%eax
+     893:	0f 84 83 05 00 00    	je     e1c <dmirror_migrate+0x5ec>
+}
+#define arch_atomic_cmpxchg arch_atomic_cmpxchg
+
+static __always_inline bool arch_atomic_try_cmpxchg(atomic_t *v, int *old, int new)
+{
+	return try_cmpxchg(&v->counter, old, new);
+     899:	48 8b 74 24 20       	mov    0x20(%rsp),%rsi
+			break;
+	} while (!arch_atomic_try_cmpxchg(v, &c, c + a));
+     89e:	8d 48 01             	lea    0x1(%rax),%ecx
+     8a1:	48 8d 56 5c          	lea    0x5c(%rsi),%rdx
+     8a5:	f0 0f b1 4e 5c       	lock cmpxchg %ecx,0x5c(%rsi)
+     8aa:	0f 85 fa 02 00 00    	jne    baa <dmirror_migrate+0x37a>
+	downgrade_write(&mm->mmap_lock);
+}
+
+static inline void mmap_read_lock(struct mm_struct *mm)
+{
+	down_read(&mm->mmap_lock);
+     8b0:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
+     8b5:	48 83 c0 78          	add    $0x78,%rax
+     8b9:	48 89 c7             	mov    %rax,%rdi
+     8bc:	48 89 44 24 38       	mov    %rax,0x38(%rsp)
+     8c1:	e8 00 00 00 00       	callq  8c6 <dmirror_migrate+0x96>
+	for (addr = start; addr < end; addr = next) {
+     8c6:	48 8b 44 24 30       	mov    0x30(%rsp),%rax
+     8cb:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
+     8d0:	48 89 c3             	mov    %rax,%rbx
+     8d3:	48 39 f0             	cmp    %rsi,%rax
+     8d6:	0f 83 87 04 00 00    	jae    d63 <dmirror_migrate+0x533>
+		vma = find_vma(mm, addr);
+     8dc:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
+     8e1:	48 89 de             	mov    %rbx,%rsi
+     8e4:	e8 00 00 00 00       	callq  8e9 <dmirror_migrate+0xb9>
+		if (!vma || addr < vma->vm_start ||
+     8e9:	48 85 c0             	test   %rax,%rax
+     8ec:	0f 84 5a 05 00 00    	je     e4c <dmirror_migrate+0x61c>
+     8f2:	48 39 18             	cmp    %rbx,(%rax)
+     8f5:	0f 87 51 05 00 00    	ja     e4c <dmirror_migrate+0x61c>
+     8fb:	f6 40 50 01          	testb  $0x1,0x50(%rax)
+     8ff:	0f 84 47 05 00 00    	je     e4c <dmirror_migrate+0x61c>
+		if (next > vma->vm_end)
+     905:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+		args.vma = vma;
+     90a:	48 89 44 24 70       	mov    %rax,0x70(%rsp)
+		ret = migrate_vma_setup(&args);
+     90f:	48 8d 7c 24 70       	lea    0x70(%rsp),%rdi
+		next = min(end, addr + (ARRAY_SIZE(src_pfns) << PAGE_SHIFT));
+     914:	48 8d 93 00 00 04 00 	lea    0x40000(%rbx),%rdx
+     91b:	48 39 50 08          	cmp    %rdx,0x8(%rax)
+     91f:	48 0f 46 50 08       	cmovbe 0x8(%rax),%rdx
+		args.src = src_pfns;
+     924:	48 8d 84 24 b0 00 00 	lea    0xb0(%rsp),%rax
+     92b:	00 
+		args.start = addr;
+     92c:	48 89 9c 24 98 00 00 	mov    %rbx,0x98(%rsp)
+     933:	00 
+		args.src = src_pfns;
+     934:	48 89 84 24 80 00 00 	mov    %rax,0x80(%rsp)
+     93b:	00 
+		args.dst = dst_pfns;
+     93c:	48 8d 84 24 b0 02 00 	lea    0x2b0(%rsp),%rax
+     943:	00 
+     944:	48 39 ca             	cmp    %rcx,%rdx
+     947:	48 89 d6             	mov    %rdx,%rsi
+     94a:	48 89 44 24 78       	mov    %rax,0x78(%rsp)
+		args.src_owner = NULL;
+     94f:	48 c7 84 24 a8 00 00 	movq   $0x0,0xa8(%rsp)
+     956:	00 00 00 00 00 
+     95b:	48 0f 47 f1          	cmova  %rcx,%rsi
+     95f:	48 89 74 24 28       	mov    %rsi,0x28(%rsp)
+		args.end = next;
+     964:	48 89 b4 24 a0 00 00 	mov    %rsi,0xa0(%rsp)
+     96b:	00 
+		ret = migrate_vma_setup(&args);
+     96c:	e8 00 00 00 00       	callq  971 <dmirror_migrate+0x141>
+		if (ret)
+     971:	85 c0                	test   %eax,%eax
+     973:	0f 85 ee 04 00 00    	jne    e67 <dmirror_migrate+0x637>
+	struct dmirror_device *mdevice = dmirror->mdevice;
+     979:	48 8b 04 24          	mov    (%rsp),%rax
+	const unsigned long *src = args->src;
+     97d:	4c 8b b4 24 80 00 00 	mov    0x80(%rsp),%r14
+     984:	00 
+	unsigned long *dst = args->dst;
+     985:	4c 8b 6c 24 78       	mov    0x78(%rsp),%r13
+	struct dmirror_device *mdevice = dmirror->mdevice;
+     98a:	4c 8b 20             	mov    (%rax),%r12
+	for (addr = args->start; addr < args->end; addr += PAGE_SIZE,
+     98d:	48 8b 84 24 98 00 00 	mov    0x98(%rsp),%rax
+     994:	00 
+     995:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+     99a:	48 3b 84 24 a0 00 00 	cmp    0xa0(%rsp),%rax
+     9a1:	00 
+     9a2:	0f 82 dd 01 00 00    	jb     b85 <dmirror_migrate+0x355>
+     9a8:	e9 d9 02 00 00       	jmpq   c86 <dmirror_migrate+0x456>
+	return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
+     9ad:	48 8b 03             	mov    (%rbx),%rax
+     9b0:	48 c1 e8 38          	shr    $0x38,%rax
+     9b4:	83 e0 07             	and    $0x7,%eax
+		if (spage && is_zone_device_page(spage))
+     9b7:	83 f8 04             	cmp    $0x4,%eax
+     9ba:	0f 84 a1 01 00 00    	je     b61 <dmirror_migrate+0x331>
+	struct page *dpage = NULL;
+     9c0:	48 c7 44 24 50 00 00 	movq   $0x0,0x50(%rsp)
+     9c7:	00 00 
+extern struct page *alloc_pages_current(gfp_t gfp_mask, unsigned order);
+
+static inline struct page *
+alloc_pages(gfp_t gfp_mask, unsigned int order)
+{
+	return alloc_pages_current(gfp_mask, order);
+     9c9:	31 f6                	xor    %esi,%esi
+     9cb:	bf c2 0c 10 00       	mov    $0x100cc2,%edi
+     9d0:	e8 00 00 00 00       	callq  9d5 <dmirror_migrate+0x1a5>
+     9d5:	48 89 c5             	mov    %rax,%rbp
+	if (!rpage)
+     9d8:	48 85 c0             	test   %rax,%rax
+     9db:	0f 84 80 01 00 00    	je     b61 <dmirror_migrate+0x331>
+	raw_spin_lock(&lock->rlock);
+     9e1:	4d 8d bc 24 b8 00 00 	lea    0xb8(%r12),%r15
+     9e8:	00 
+     9e9:	4c 89 ff             	mov    %r15,%rdi
+     9ec:	e8 00 00 00 00       	callq  9f1 <dmirror_migrate+0x1c1>
+	if (mdevice->free_pages) {
+     9f1:	49 8b 84 24 b0 00 00 	mov    0xb0(%r12),%rax
+     9f8:	00 
+     9f9:	48 85 c0             	test   %rax,%rax
+     9fc:	0f 84 4e 02 00 00    	je     c50 <dmirror_migrate+0x420>
+		dpage = mdevice->free_pages;
+     a02:	48 89 44 24 50       	mov    %rax,0x50(%rsp)
+		mdevice->free_pages = dpage->zone_device_data;
+     a07:	48 8b 40 10          	mov    0x10(%rax),%rax
+	raw_spin_unlock(&lock->rlock);
+     a0b:	4c 89 ff             	mov    %r15,%rdi
+		mdevice->calloc++;
+     a0e:	49 83 84 24 a0 00 00 	addq   $0x1,0xa0(%r12)
+     a15:	00 01 
+		mdevice->free_pages = dpage->zone_device_data;
+     a17:	49 89 84 24 b0 00 00 	mov    %rax,0xb0(%r12)
+     a1e:	00 
+     a1f:	e8 00 00 00 00       	callq  a24 <dmirror_migrate+0x1f4>
+	dpage->zone_device_data = rpage;
+     a24:	48 8b 44 24 50       	mov    0x50(%rsp),%rax
+	unsigned long head = READ_ONCE(page->compound_head);
+     a29:	48 8b 50 08          	mov    0x8(%rax),%rdx
+     a2d:	48 89 68 10          	mov    %rbp,0x10(%rax)
+		return (struct page *) (head - 1);
+     a31:	48 8d 4a ff          	lea    -0x1(%rdx),%rcx
+     a35:	83 e2 01             	and    $0x1,%edx
+     a38:	48 0f 45 c1          	cmovne %rcx,%rax
+	asm volatile(LOCK_PREFIX "incl %0"
+     a3c:	f0 ff 40 34          	lock incl 0x34(%rax)
+	lock_page(dpage);
+     a40:	48 8b 7c 24 50       	mov    0x50(%rsp),%rdi
+	unsigned long head = READ_ONCE(page->compound_head);
+     a45:	48 8b 57 08          	mov    0x8(%rdi),%rdx
+		return (struct page *) (head - 1);
+     a49:	48 8d 42 ff          	lea    -0x1(%rdx),%rax
+     a4d:	83 e2 01             	and    $0x1,%edx
+     a50:	48 0f 44 c7          	cmove  %rdi,%rax
+     a54:	f0 48 0f ba 28 00    	lock btsq $0x0,(%rax)
+	if (!trylock_page(page))
+     a5a:	0f 82 1c 02 00 00    	jb     c7c <dmirror_migrate+0x44c>
+	return dpage;
+     a60:	48 8b 6c 24 50       	mov    0x50(%rsp),%rbp
+		if (!dpage)
+     a65:	48 85 ed             	test   %rbp,%rbp
+     a68:	0f 84 f3 00 00 00    	je     b61 <dmirror_migrate+0x331>
+		rpage = dpage->zone_device_data;
+     a6e:	4c 8b 7d 10          	mov    0x10(%rbp),%r15
+	preempt_disable();
+     a72:	bf 01 00 00 00       	mov    $0x1,%edi
+		if (spage)
+     a77:	48 85 db             	test   %rbx,%rbx
+     a7a:	0f 84 41 01 00 00    	je     bc1 <dmirror_migrate+0x391>
+     a80:	e8 00 00 00 00       	callq  a85 <dmirror_migrate+0x255>
+     a85:	65 48 8b 04 25 00 00 	mov    %gs:0x0,%rax
+     a8c:	00 00 
+	current->pagefault_disabled++;
+     a8e:	83 80 c8 19 00 00 01 	addl   $0x1,0x19c8(%rax)
+     a95:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+	return page_to_virt(page);
+     a9a:	48 2b 1d 00 00 00 00 	sub    0x0(%rip),%rbx        # aa1 <dmirror_migrate+0x271>
+     aa1:	bf 01 00 00 00       	mov    $0x1,%edi
+     aa6:	48 c1 fb 06          	sar    $0x6,%rbx
+     aaa:	48 c1 e3 0c          	shl    $0xc,%rbx
+     aae:	48 03 1d 00 00 00 00 	add    0x0(%rip),%rbx        # ab5 <dmirror_migrate+0x285>
+     ab5:	e8 00 00 00 00       	callq  aba <dmirror_migrate+0x28a>
+     aba:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+     abf:	83 80 c8 19 00 00 01 	addl   $0x1,0x19c8(%rax)
+     ac6:	4c 89 ff             	mov    %r15,%rdi
+     ac9:	48 2b 3d 00 00 00 00 	sub    0x0(%rip),%rdi        # ad0 <dmirror_migrate+0x2a0>
+	copy_page(vto, vfrom);
+     ad0:	48 89 de             	mov    %rbx,%rsi
+     ad3:	48 c1 ff 06          	sar    $0x6,%rdi
+     ad7:	48 c1 e7 0c          	shl    $0xc,%rdi
+     adb:	48 03 3d 00 00 00 00 	add    0x0(%rip),%rdi        # ae2 <dmirror_migrate+0x2b2>
+     ae2:	e8 00 00 00 00       	callq  ae7 <dmirror_migrate+0x2b7>
+	current->pagefault_disabled--;
+     ae7:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+     aec:	83 a8 c8 19 00 00 01 	subl   $0x1,0x19c8(%rax)
+	kunmap_atomic(vto);
+     af3:	bf 01 00 00 00       	mov    $0x1,%edi
+     af8:	e8 00 00 00 00       	callq  afd <dmirror_migrate+0x2cd>
+     afd:	65 8b 05 00 00 00 00 	mov    %gs:0x0(%rip),%eax        # b04 <dmirror_migrate+0x2d4>
+     b04:	85 c0                	test   %eax,%eax
+     b06:	0f 84 fc 02 00 00    	je     e08 <dmirror_migrate+0x5d8>
+     b0c:	65 48 8b 04 25 00 00 	mov    %gs:0x0,%rax
+     b13:	00 00 
+     b15:	83 a8 c8 19 00 00 01 	subl   $0x1,0x19c8(%rax)
+	kunmap_atomic(vfrom);
+     b1c:	bf 01 00 00 00       	mov    $0x1,%edi
+     b21:	e8 00 00 00 00       	callq  b26 <dmirror_migrate+0x2f6>
+     b26:	65 8b 05 00 00 00 00 	mov    %gs:0x0(%rip),%eax        # b2d <dmirror_migrate+0x2fd>
+     b2d:	85 c0                	test   %eax,%eax
+     b2f:	0f 84 c9 02 00 00    	je     dfe <dmirror_migrate+0x5ce>
+		rpage->zone_device_data = dmirror;
+     b35:	48 8b 04 24          	mov    (%rsp),%rax
+		*dst = migrate_pfn(page_to_pfn(dpage)) |
+     b39:	48 2b 2d 00 00 00 00 	sub    0x0(%rip),%rbp        # b40 <dmirror_migrate+0x310>
+     b40:	48 83 e5 c0          	and    $0xffffffffffffffc0,%rbp
+		rpage->zone_device_data = dmirror;
+     b44:	49 89 47 10          	mov    %rax,0x10(%r15)
+		*dst = migrate_pfn(page_to_pfn(dpage)) |
+     b48:	48 89 e8             	mov    %rbp,%rax
+     b4b:	48 83 c8 05          	or     $0x5,%rax
+     b4f:	49 89 45 00          	mov    %rax,0x0(%r13)
+		if ((*src & MIGRATE_PFN_WRITE) ||
+     b53:	41 f6 06 08          	testb  $0x8,(%r14)
+     b57:	74 08                	je     b61 <dmirror_migrate+0x331>
+			*dst |= MIGRATE_PFN_WRITE;
+     b59:	48 83 cd 0d          	or     $0xd,%rbp
+     b5d:	49 89 6d 00          	mov    %rbp,0x0(%r13)
+	for (addr = args->start; addr < args->end; addr += PAGE_SIZE,
+     b61:	48 81 44 24 08 00 10 	addq   $0x1000,0x8(%rsp)
+     b68:	00 00 
+						   src++, dst++) {
+     b6a:	49 83 c6 08          	add    $0x8,%r14
+	for (addr = args->start; addr < args->end; addr += PAGE_SIZE,
+     b6e:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+						   src++, dst++) {
+     b73:	49 83 c5 08          	add    $0x8,%r13
+	for (addr = args->start; addr < args->end; addr += PAGE_SIZE,
+     b77:	48 3b 84 24 a0 00 00 	cmp    0xa0(%rsp),%rax
+     b7e:	00 
+     b7f:	0f 83 01 01 00 00    	jae    c86 <dmirror_migrate+0x456>
+		if (!(*src & MIGRATE_PFN_MIGRATE))
+     b85:	49 8b 1e             	mov    (%r14),%rbx
+     b88:	f6 c3 02             	test   $0x2,%bl
+     b8b:	74 d4                	je     b61 <dmirror_migrate+0x331>
+	if (!(mpfn & MIGRATE_PFN_VALID))
+     b8d:	f6 c3 01             	test   $0x1,%bl
+     b90:	74 11                	je     ba3 <dmirror_migrate+0x373>
+	return pfn_to_page(mpfn >> MIGRATE_PFN_SHIFT);
+     b92:	48 83 e3 c0          	and    $0xffffffffffffffc0,%rbx
+		if (spage && is_zone_device_page(spage))
+     b96:	48 03 1d 00 00 00 00 	add    0x0(%rip),%rbx        # b9d <dmirror_migrate+0x36d>
+     b9d:	0f 85 0a fe ff ff    	jne    9ad <dmirror_migrate+0x17d>
+		return NULL;
+     ba3:	31 db                	xor    %ebx,%ebx
+     ba5:	e9 16 fe ff ff       	jmpq   9c0 <dmirror_migrate+0x190>
+		if (unlikely(c == u))
+     baa:	85 c0                	test   %eax,%eax
+     bac:	0f 84 6a 02 00 00    	je     e1c <dmirror_migrate+0x5ec>
+	} while (!arch_atomic_try_cmpxchg(v, &c, c + a));
+     bb2:	8d 48 01             	lea    0x1(%rax),%ecx
+	return try_cmpxchg(&v->counter, old, new);
+     bb5:	f0 0f b1 0a          	lock cmpxchg %ecx,(%rdx)
+     bb9:	0f 84 f1 fc ff ff    	je     8b0 <dmirror_migrate+0x80>
+     bbf:	eb e9                	jmp    baa <dmirror_migrate+0x37a>
+	preempt_disable();
+     bc1:	e8 00 00 00 00       	callq  bc6 <dmirror_migrate+0x396>
+     bc6:	65 48 8b 14 25 00 00 	mov    %gs:0x0,%rdx
+     bcd:	00 00 
+	current->pagefault_disabled++;
+     bcf:	83 82 c8 19 00 00 01 	addl   $0x1,0x19c8(%rdx)
+     bd6:	4c 89 ff             	mov    %r15,%rdi
+     bd9:	48 2b 3d 00 00 00 00 	sub    0x0(%rip),%rdi        # be0 <dmirror_migrate+0x3b0>
+     be0:	48 c1 ff 06          	sar    $0x6,%rdi
+     be4:	48 c1 e7 0c          	shl    $0xc,%rdi
+     be8:	48 03 3d 00 00 00 00 	add    0x0(%rip),%rdi        # bef <dmirror_migrate+0x3bf>
+void clear_page_rep(void *page);
+void clear_page_erms(void *page);
+
+static inline void clear_page(void *page)
+{
+	alternative_call_2(clear_page_orig,
+     bef:	e8 00 00 00 00       	callq  bf4 <dmirror_migrate+0x3c4>
+	current->pagefault_disabled--;
+     bf4:	83 aa c8 19 00 00 01 	subl   $0x1,0x19c8(%rdx)
+	kunmap_atomic(kaddr);
+     bfb:	bf 01 00 00 00       	mov    $0x1,%edi
+     c00:	e8 00 00 00 00       	callq  c05 <dmirror_migrate+0x3d5>
+     c05:	65 8b 05 00 00 00 00 	mov    %gs:0x0(%rip),%eax        # c0c <dmirror_migrate+0x3dc>
+     c0c:	85 c0                	test   %eax,%eax
+     c0e:	0f 84 fe 01 00 00    	je     e12 <dmirror_migrate+0x5e2>
+		rpage->zone_device_data = dmirror;
+     c14:	48 8b 04 24          	mov    (%rsp),%rax
+		*dst = migrate_pfn(page_to_pfn(dpage)) |
+     c18:	48 2b 2d 00 00 00 00 	sub    0x0(%rip),%rbp        # c1f <dmirror_migrate+0x3ef>
+	return (pfn << MIGRATE_PFN_SHIFT) | MIGRATE_PFN_VALID;
+     c1f:	48 83 e5 c0          	and    $0xffffffffffffffc0,%rbp
+		rpage->zone_device_data = dmirror;
+     c23:	49 89 47 10          	mov    %rax,0x10(%r15)
+		*dst = migrate_pfn(page_to_pfn(dpage)) |
+     c27:	48 89 e8             	mov    %rbp,%rax
+     c2a:	48 83 c8 05          	or     $0x5,%rax
+     c2e:	49 89 45 00          	mov    %rax,0x0(%r13)
+		if ((*src & MIGRATE_PFN_WRITE) ||
+     c32:	41 f6 06 08          	testb  $0x8,(%r14)
+     c36:	0f 85 1d ff ff ff    	jne    b59 <dmirror_migrate+0x329>
+		    (!spage && args->vma->vm_flags & VM_WRITE))
+     c3c:	48 8b 44 24 70       	mov    0x70(%rsp),%rax
+     c41:	f6 40 50 02          	testb  $0x2,0x50(%rax)
+     c45:	0f 84 16 ff ff ff    	je     b61 <dmirror_migrate+0x331>
+     c4b:	e9 09 ff ff ff       	jmpq   b59 <dmirror_migrate+0x329>
+     c50:	4c 89 ff             	mov    %r15,%rdi
+     c53:	e8 00 00 00 00       	callq  c58 <dmirror_migrate+0x428>
+		if (!dmirror_allocate_chunk(mdevice, &dpage))
+     c58:	4c 89 e7             	mov    %r12,%rdi
+     c5b:	48 8d 74 24 50       	lea    0x50(%rsp),%rsi
+     c60:	e8 fb f6 ff ff       	callq  360 <dmirror_allocate_chunk>
+     c65:	84 c0                	test   %al,%al
+     c67:	0f 85 b7 fd ff ff    	jne    a24 <dmirror_migrate+0x1f4>
+	__free_page(rpage);
+     c6d:	31 f6                	xor    %esi,%esi
+     c6f:	48 89 ef             	mov    %rbp,%rdi
+     c72:	e8 00 00 00 00       	callq  c77 <dmirror_migrate+0x447>
+		if (!dpage)
+     c77:	e9 e5 fe ff ff       	jmpq   b61 <dmirror_migrate+0x331>
+		__lock_page(page);
+     c7c:	e8 00 00 00 00       	callq  c81 <dmirror_migrate+0x451>
+     c81:	e9 da fd ff ff       	jmpq   a60 <dmirror_migrate+0x230>
+		migrate_vma_pages(&args);
+     c86:	48 8d 7c 24 70       	lea    0x70(%rsp),%rdi
+     c8b:	e8 00 00 00 00       	callq  c90 <dmirror_migrate+0x460>
+	mutex_lock(&dmirror->mutex);
+     c90:	48 8b 04 24          	mov    (%rsp),%rax
+	unsigned long start = args->start;
+     c94:	48 8b 9c 24 98 00 00 	mov    0x98(%rsp),%rbx
+     c9b:	00 
+	unsigned long end = args->end;
+     c9c:	48 8b ac 24 a0 00 00 	mov    0xa0(%rsp),%rbp
+     ca3:	00 
+	const unsigned long *src = args->src;
+     ca4:	4c 8b a4 24 80 00 00 	mov    0x80(%rsp),%r12
+     cab:	00 
+	mutex_lock(&dmirror->mutex);
+     cac:	4c 8d 68 70          	lea    0x70(%rax),%r13
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++,
+     cb0:	48 c1 eb 0c          	shr    $0xc,%rbx
+	const unsigned long *dst = args->dst;
+     cb4:	4c 8b 74 24 78       	mov    0x78(%rsp),%r14
+	mutex_lock(&dmirror->mutex);
+     cb9:	4c 89 ef             	mov    %r13,%rdi
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++,
+     cbc:	48 c1 ed 0c          	shr    $0xc,%rbp
+	mutex_lock(&dmirror->mutex);
+     cc0:	e8 00 00 00 00       	callq  cc5 <dmirror_migrate+0x495>
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++,
+     cc5:	48 39 eb             	cmp    %rbp,%rbx
+     cc8:	73 77                	jae    d41 <dmirror_migrate+0x511>
+     cca:	48 89 d8             	mov    %rbx,%rax
+     ccd:	48 f7 d8             	neg    %rax
+     cd0:	48 c1 e0 03          	shl    $0x3,%rax
+     cd4:	49 01 c4             	add    %rax,%r12
+     cd7:	49 01 c6             	add    %rax,%r14
+		entry = xa_store(&dmirror->pt, pfn, entry, GFP_ATOMIC);
+     cda:	48 8b 04 24          	mov    (%rsp),%rax
+     cde:	4c 8d 78 08          	lea    0x8(%rax),%r15
+		if (!(*src & MIGRATE_PFN_MIGRATE))
+     ce2:	41 f6 04 dc 02       	testb  $0x2,(%r12,%rbx,8)
+     ce7:	74 4f                	je     d38 <dmirror_migrate+0x508>
+		dpage = migrate_pfn_to_page(*dst);
+     ce9:	49 8b 0c de          	mov    (%r14,%rbx,8),%rcx
+	if (!(mpfn & MIGRATE_PFN_VALID))
+     ced:	f6 c1 01             	test   $0x1,%cl
+     cf0:	74 46                	je     d38 <dmirror_migrate+0x508>
+	return pfn_to_page(mpfn >> MIGRATE_PFN_SHIFT);
+     cf2:	48 89 c8             	mov    %rcx,%rax
+     cf5:	48 83 e0 c0          	and    $0xffffffffffffffc0,%rax
+		if (!dpage)
+     cf9:	48 03 05 00 00 00 00 	add    0x0(%rip),%rax        # d00 <dmirror_migrate+0x4d0>
+     d00:	74 36                	je     d38 <dmirror_migrate+0x508>
+		entry = dpage->zone_device_data;
+     d02:	48 8b 50 10          	mov    0x10(%rax),%rdx
+		entry = xa_store(&dmirror->pt, pfn, entry, GFP_ATOMIC);
+     d06:	48 89 de             	mov    %rbx,%rsi
+     d09:	4c 89 ff             	mov    %r15,%rdi
+	return (void *)((unsigned long)p | tag);
+     d0c:	48 89 d0             	mov    %rdx,%rax
+     d0f:	48 83 c8 03          	or     $0x3,%rax
+     d13:	83 e1 08             	and    $0x8,%ecx
+     d16:	b9 20 0a 00 00       	mov    $0xa20,%ecx
+     d1b:	48 0f 45 d0          	cmovne %rax,%rdx
+     d1f:	e8 00 00 00 00       	callq  d24 <dmirror_migrate+0x4f4>
+	return ((unsigned long)entry & 3) == 2;
+     d24:	48 89 c2             	mov    %rax,%rdx
+     d27:	83 e2 03             	and    $0x3,%edx
+	return unlikely(xa_is_internal(entry) &&
+     d2a:	48 83 fa 02          	cmp    $0x2,%rdx
+     d2e:	75 08                	jne    d38 <dmirror_migrate+0x508>
+     d30:	48 3d 05 c0 ff ff    	cmp    $0xffffffffffffc005,%rax
+     d36:	77 09                	ja     d41 <dmirror_migrate+0x511>
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++,
+     d38:	48 83 c3 01          	add    $0x1,%rbx
+     d3c:	48 39 eb             	cmp    %rbp,%rbx
+     d3f:	75 a1                	jne    ce2 <dmirror_migrate+0x4b2>
+			mutex_unlock(&dmirror->mutex);
+     d41:	4c 89 ef             	mov    %r13,%rdi
+     d44:	e8 00 00 00 00       	callq  d49 <dmirror_migrate+0x519>
+		migrate_vma_finalize(&args);
+     d49:	48 8d 7c 24 70       	lea    0x70(%rsp),%rdi
+     d4e:	e8 00 00 00 00       	callq  d53 <dmirror_migrate+0x523>
+	for (addr = start; addr < end; addr = next) {
+     d53:	48 8b 5c 24 28       	mov    0x28(%rsp),%rbx
+     d58:	48 39 5c 24 10       	cmp    %rbx,0x10(%rsp)
+     d5d:	0f 87 79 fb ff ff    	ja     8dc <dmirror_migrate+0xac>
+	return down_read_trylock(&mm->mmap_lock) != 0;
+}
+
+static inline void mmap_read_unlock(struct mm_struct *mm)
+{
+	up_read(&mm->mmap_lock);
+     d63:	48 8b 7c 24 38       	mov    0x38(%rsp),%rdi
+     d68:	e8 00 00 00 00       	callq  d6d <dmirror_migrate+0x53d>
+	mmput(mm);
+     d6d:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
+     d72:	e8 00 00 00 00       	callq  d77 <dmirror_migrate+0x547>
+	bounce->size = size;
+     d77:	48 8b 44 24 48       	mov    0x48(%rsp),%rax
+	bounce->addr = addr;
+     d7c:	48 8b 5c 24 30       	mov    0x30(%rsp),%rbx
+	bounce->cpages = 0;
+     d81:	48 c7 44 24 68 00 00 	movq   $0x0,0x68(%rsp)
+     d88:	00 00 
+	bounce->ptr = vmalloc(size);
+     d8a:	48 89 c7             	mov    %rax,%rdi
+	bounce->addr = addr;
+     d8d:	48 89 5c 24 60       	mov    %rbx,0x60(%rsp)
+	bounce->size = size;
+     d92:	48 89 44 24 58       	mov    %rax,0x58(%rsp)
+	bounce->ptr = vmalloc(size);
+     d97:	e8 00 00 00 00       	callq  d9c <dmirror_migrate+0x56c>
+     d9c:	48 89 44 24 50       	mov    %rax,0x50(%rsp)
+	if (!bounce->ptr)
+     da1:	48 85 c0             	test   %rax,%rax
+     da4:	0f 84 13 01 00 00    	je     ebd <dmirror_migrate+0x68d>
+	mutex_lock(&dmirror->mutex);
+     daa:	4c 8b 34 24          	mov    (%rsp),%r14
+     dae:	49 8d 6e 70          	lea    0x70(%r14),%rbp
+     db2:	48 89 ef             	mov    %rbp,%rdi
+     db5:	e8 00 00 00 00       	callq  dba <dmirror_migrate+0x58a>
+	ret = dmirror_do_read(dmirror, start, end, &bounce);
+     dba:	48 8b 54 24 10       	mov    0x10(%rsp),%rdx
+     dbf:	48 89 de             	mov    %rbx,%rsi
+     dc2:	4c 89 f7             	mov    %r14,%rdi
+     dc5:	48 8d 4c 24 50       	lea    0x50(%rsp),%rcx
+     dca:	e8 61 f4 ff ff       	callq  230 <dmirror_do_read>
+	mutex_unlock(&dmirror->mutex);
+     dcf:	48 89 ef             	mov    %rbp,%rdi
+	ret = dmirror_do_read(dmirror, start, end, &bounce);
+     dd2:	89 c3                	mov    %eax,%ebx
+	mutex_unlock(&dmirror->mutex);
+     dd4:	e8 00 00 00 00       	callq  dd9 <dmirror_migrate+0x5a9>
+	if (ret == 0) {
+     dd9:	85 db                	test   %ebx,%ebx
+     ddb:	0f 84 8a 00 00 00    	je     e6b <dmirror_migrate+0x63b>
+     de1:	48 8b 6c 24 50       	mov    0x50(%rsp),%rbp
+	cmd->cpages = bounce.cpages;
+     de6:	48 8b 44 24 68       	mov    0x68(%rsp),%rax
+     deb:	48 8b 4c 24 40       	mov    0x40(%rsp),%rcx
+	vfree(bounce->ptr);
+     df0:	48 89 ef             	mov    %rbp,%rdi
+	cmd->cpages = bounce.cpages;
+     df3:	48 89 41 18          	mov    %rax,0x18(%rcx)
+	vfree(bounce->ptr);
+     df7:	e8 00 00 00 00       	callq  dfc <dmirror_migrate+0x5cc>
+	return ret;
+     dfc:	eb 23                	jmp    e21 <dmirror_migrate+0x5f1>
+	kunmap_atomic(vfrom);
+     dfe:	e8 00 00 00 00       	callq  e03 <dmirror_migrate+0x5d3>
+     e03:	e9 2d fd ff ff       	jmpq   b35 <dmirror_migrate+0x305>
+	kunmap_atomic(vto);
+     e08:	e8 00 00 00 00       	callq  e0d <dmirror_migrate+0x5dd>
+     e0d:	e9 fa fc ff ff       	jmpq   b0c <dmirror_migrate+0x2dc>
+	kunmap_atomic(kaddr);
+     e12:	e8 00 00 00 00       	callq  e17 <dmirror_migrate+0x5e7>
+     e17:	e9 f8 fd ff ff       	jmpq   c14 <dmirror_migrate+0x3e4>
+		return -EINVAL;
+     e1c:	bb ea ff ff ff       	mov    $0xffffffea,%ebx
+}
+     e21:	48 8b 8c 24 b0 04 00 	mov    0x4b0(%rsp),%rcx
+     e28:	00 
+     e29:	65 48 33 0c 25 28 00 	xor    %gs:0x28,%rcx
+     e30:	00 00 
+     e32:	89 d8                	mov    %ebx,%eax
+     e34:	0f 85 99 00 00 00    	jne    ed3 <dmirror_migrate+0x6a3>
+     e3a:	48 81 c4 b8 04 00 00 	add    $0x4b8,%rsp
+     e41:	5b                   	pop    %rbx
+     e42:	5d                   	pop    %rbp
+     e43:	41 5c                	pop    %r12
+     e45:	41 5d                	pop    %r13
+     e47:	41 5e                	pop    %r14
+     e49:	41 5f                	pop    %r15
+     e4b:	c3                   	retq   
+			ret = -EINVAL;
+     e4c:	bb ea ff ff ff       	mov    $0xffffffea,%ebx
+     e51:	48 8b 7c 24 38       	mov    0x38(%rsp),%rdi
+     e56:	e8 00 00 00 00       	callq  e5b <dmirror_migrate+0x62b>
+	mmput(mm);
+     e5b:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
+     e60:	e8 00 00 00 00       	callq  e65 <dmirror_migrate+0x635>
+	return ret;
+     e65:	eb ba                	jmp    e21 <dmirror_migrate+0x5f1>
+     e67:	89 c3                	mov    %eax,%ebx
+     e69:	eb e6                	jmp    e51 <dmirror_migrate+0x621>
+		if (copy_to_user(u64_to_user_ptr(cmd->ptr), bounce.ptr,
+     e6b:	48 8b 44 24 40       	mov    0x40(%rsp),%rax
+     e70:	4c 8b 64 24 58       	mov    0x58(%rsp),%r12
+     e75:	48 8b 6c 24 50       	mov    0x50(%rsp),%rbp
+     e7a:	4c 8b 68 08          	mov    0x8(%rax),%r13
+			__bad_copy_from();
+		else
+			__bad_copy_to();
+		return false;
+	}
+	if (WARN_ON_ONCE(bytes > INT_MAX))
+     e7e:	49 81 fc ff ff ff 7f 	cmp    $0x7fffffff,%r12
+     e85:	77 40                	ja     ec7 <dmirror_migrate+0x697>
+		__check_object_size(ptr, n, to_user);
+     e87:	48 89 ef             	mov    %rbp,%rdi
+     e8a:	ba 01 00 00 00       	mov    $0x1,%edx
+     e8f:	4c 89 e6             	mov    %r12,%rsi
+     e92:	e8 00 00 00 00       	callq  e97 <dmirror_migrate+0x667>
+		n = _copy_to_user(to, from, n);
+     e97:	48 89 ee             	mov    %rbp,%rsi
+     e9a:	4c 89 e2             	mov    %r12,%rdx
+     e9d:	4c 89 ef             	mov    %r13,%rdi
+     ea0:	e8 00 00 00 00       	callq  ea5 <dmirror_migrate+0x675>
+	return n;
+     ea5:	48 8b 6c 24 50       	mov    0x50(%rsp),%rbp
+     eaa:	48 85 c0             	test   %rax,%rax
+     ead:	0f 84 33 ff ff ff    	je     de6 <dmirror_migrate+0x5b6>
+			ret = -EFAULT;
+     eb3:	bb f2 ff ff ff       	mov    $0xfffffff2,%ebx
+     eb8:	e9 29 ff ff ff       	jmpq   de6 <dmirror_migrate+0x5b6>
+		return -ENOMEM;
+     ebd:	bb f4 ff ff ff       	mov    $0xfffffff4,%ebx
+     ec2:	e9 5a ff ff ff       	jmpq   e21 <dmirror_migrate+0x5f1>
+	if (WARN_ON_ONCE(bytes > INT_MAX))
+     ec7:	0f 0b                	ud2    
+			ret = -EFAULT;
+     ec9:	bb f2 ff ff ff       	mov    $0xfffffff2,%ebx
+     ece:	e9 13 ff ff ff       	jmpq   de6 <dmirror_migrate+0x5b6>
+}
+     ed3:	e8 00 00 00 00       	callq  ed8 <dmirror_migrate+0x6a8>
+     ed8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     edf:	00 
+
+0000000000000ee0 <dmirror_fault>:
+{
+     ee0:	41 57                	push   %r15
+     ee2:	41 56                	push   %r14
+     ee4:	41 55                	push   %r13
+     ee6:	41 54                	push   %r12
+     ee8:	49 89 fc             	mov    %rdi,%r12
+     eeb:	55                   	push   %rbp
+     eec:	53                   	push   %rbx
+     eed:	48 89 d3             	mov    %rdx,%rbx
+     ef0:	89 ca                	mov    %ecx,%edx
+	struct hmm_range range = {
+     ef2:	b9 06 00 00 00       	mov    $0x6,%ecx
+{
+     ef7:	48 81 ec 58 02 00 00 	sub    $0x258,%rsp
+	struct mm_struct *mm = dmirror->notifier.mm;
+     efe:	4c 8b 47 50          	mov    0x50(%rdi),%r8
+{
+     f02:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+     f09:	00 00 
+     f0b:	48 89 84 24 50 02 00 	mov    %rax,0x250(%rsp)
+     f12:	00 
+     f13:	31 c0                	xor    %eax,%eax
+	struct hmm_range range = {
+     f15:	48 8d 7c 24 18       	lea    0x18(%rsp),%rdi
+			HMM_PFN_REQ_FAULT | (write ? HMM_PFN_REQ_WRITE : 0),
+     f1a:	84 d2                	test   %dl,%dl
+     f1c:	48 ba 00 00 00 00 00 	movabs $0x8000000000000000,%rdx
+     f23:	00 00 80 
+	struct mm_struct *mm = dmirror->notifier.mm;
+     f26:	4c 89 44 24 08       	mov    %r8,0x8(%rsp)
+	struct hmm_range range = {
+     f2b:	f3 48 ab             	rep stos %rax,%es:(%rdi)
+		.notifier = &dmirror->notifier,
+     f2e:	49 8d 44 24 18       	lea    0x18(%r12),%rax
+     f33:	48 89 44 24 10       	mov    %rax,0x10(%rsp)
+	struct hmm_range range = {
+     f38:	48 8d 44 24 50       	lea    0x50(%rsp),%rax
+     f3d:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
+			HMM_PFN_REQ_FAULT | (write ? HMM_PFN_REQ_WRITE : 0),
+     f42:	48 b8 00 00 00 00 00 	movabs $0xc000000000000000,%rax
+     f49:	00 00 c0 
+     f4c:	48 0f 44 c2          	cmove  %rdx,%rax
+	struct hmm_range range = {
+     f50:	48 89 44 24 38       	mov    %rax,0x38(%rsp)
+     f55:	49 8b 04 24          	mov    (%r12),%rax
+     f59:	48 89 44 24 48       	mov    %rax,0x48(%rsp)
+	return __READ_ONCE((v)->counter);
+     f5e:	41 8b 40 5c          	mov    0x5c(%r8),%eax
+		if (unlikely(c == u))
+     f62:	85 c0                	test   %eax,%eax
+     f64:	0f 84 2e 02 00 00    	je     1198 <dmirror_fault+0x2b8>
+	return try_cmpxchg(&v->counter, old, new);
+     f6a:	48 8b 7c 24 08       	mov    0x8(%rsp),%rdi
+	} while (!arch_atomic_try_cmpxchg(v, &c, c + a));
+     f6f:	8d 48 01             	lea    0x1(%rax),%ecx
+     f72:	48 8d 57 5c          	lea    0x5c(%rdi),%rdx
+     f76:	f0 0f b1 4f 5c       	lock cmpxchg %ecx,0x5c(%rdi)
+     f7b:	0f 85 b5 00 00 00    	jne    1036 <dmirror_fault+0x156>
+	for (addr = start; addr < end; addr = range.end) {
+     f81:	48 39 de             	cmp    %rbx,%rsi
+     f84:	0f 83 c6 00 00 00    	jae    1050 <dmirror_fault+0x170>
+		range.start = addr;
+     f8a:	48 89 74 24 20       	mov    %rsi,0x20(%rsp)
+		range.end = min(addr + (ARRAY_SIZE(pfns) << PAGE_SHIFT), end);
+     f8f:	48 81 c6 00 00 04 00 	add    $0x40000,%rsi
+	struct mm_struct *mm = dmirror->notifier.mm;
+     f96:	4d 8b 74 24 50       	mov    0x50(%r12),%r14
+		range.end = min(addr + (ARRAY_SIZE(pfns) << PAGE_SHIFT), end);
+     f9b:	48 39 de             	cmp    %rbx,%rsi
+		jiffies + msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
+     f9e:	48 8b 2d 00 00 00 00 	mov    0x0(%rip),%rbp        # fa5 <dmirror_fault+0xc5>
+		range.end = min(addr + (ARRAY_SIZE(pfns) << PAGE_SHIFT), end);
+     fa5:	48 0f 47 f3          	cmova  %rbx,%rsi
+	unsigned long timeout =
+     fa9:	48 81 c5 2c 01 00 00 	add    $0x12c,%rbp
+		range.end = min(addr + (ARRAY_SIZE(pfns) << PAGE_SHIFT), end);
+     fb0:	48 89 74 24 28       	mov    %rsi,0x28(%rsp)
+		if (time_after(jiffies, timeout)) {
+     fb5:	48 8b 05 00 00 00 00 	mov    0x0(%rip),%rax        # fbc <dmirror_fault+0xdc>
+     fbc:	48 39 c5             	cmp    %rax,%rbp
+     fbf:	0f 88 c5 00 00 00    	js     108a <dmirror_fault+0x1aa>
+		range->notifier_seq = mmu_interval_read_begin(range->notifier);
+     fc5:	48 8b 7c 24 10       	mov    0x10(%rsp),%rdi
+	down_read(&mm->mmap_lock);
+     fca:	4d 8d 6e 78          	lea    0x78(%r14),%r13
+     fce:	e8 00 00 00 00       	callq  fd3 <dmirror_fault+0xf3>
+     fd3:	4c 89 ef             	mov    %r13,%rdi
+     fd6:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+     fdb:	e8 00 00 00 00       	callq  fe0 <dmirror_fault+0x100>
+		ret = hmm_range_fault(range);
+     fe0:	48 8d 7c 24 10       	lea    0x10(%rsp),%rdi
+     fe5:	e8 00 00 00 00       	callq  fea <dmirror_fault+0x10a>
+	up_read(&mm->mmap_lock);
+     fea:	4c 89 ef             	mov    %r13,%rdi
+     fed:	41 89 c7             	mov    %eax,%r15d
+     ff0:	e8 00 00 00 00       	callq  ff5 <dmirror_fault+0x115>
+		if (ret) {
+     ff5:	45 85 ff             	test   %r15d,%r15d
+     ff8:	74 5b                	je     1055 <dmirror_fault+0x175>
+			if (ret == -EBUSY)
+     ffa:	41 83 ff f0          	cmp    $0xfffffff0,%r15d
+     ffe:	74 b5                	je     fb5 <dmirror_fault+0xd5>
+	mmput(mm);
+    1000:	48 8b 7c 24 08       	mov    0x8(%rsp),%rdi
+    1005:	e8 00 00 00 00       	callq  100a <dmirror_fault+0x12a>
+}
+    100a:	48 8b 9c 24 50 02 00 	mov    0x250(%rsp),%rbx
+    1011:	00 
+    1012:	65 48 33 1c 25 28 00 	xor    %gs:0x28,%rbx
+    1019:	00 00 
+    101b:	44 89 f8             	mov    %r15d,%eax
+    101e:	0f 85 86 01 00 00    	jne    11aa <dmirror_fault+0x2ca>
+    1024:	48 81 c4 58 02 00 00 	add    $0x258,%rsp
+    102b:	5b                   	pop    %rbx
+    102c:	5d                   	pop    %rbp
+    102d:	41 5c                	pop    %r12
+    102f:	41 5d                	pop    %r13
+    1031:	41 5e                	pop    %r14
+    1033:	41 5f                	pop    %r15
+    1035:	c3                   	retq   
+		if (unlikely(c == u))
+    1036:	85 c0                	test   %eax,%eax
+    1038:	0f 84 5a 01 00 00    	je     1198 <dmirror_fault+0x2b8>
+	} while (!arch_atomic_try_cmpxchg(v, &c, c + a));
+    103e:	8d 48 01             	lea    0x1(%rax),%ecx
+    1041:	f0 0f b1 0a          	lock cmpxchg %ecx,(%rdx)
+    1045:	75 ef                	jne    1036 <dmirror_fault+0x156>
+	for (addr = start; addr < end; addr = range.end) {
+    1047:	48 39 de             	cmp    %rbx,%rsi
+    104a:	0f 82 3a ff ff ff    	jb     f8a <dmirror_fault+0xaa>
+			return -EFAULT;
+    1050:	45 31 ff             	xor    %r15d,%r15d
+    1053:	eb ab                	jmp    1000 <dmirror_fault+0x120>
+		mutex_lock(&dmirror->mutex);
+    1055:	4d 8d 6c 24 70       	lea    0x70(%r12),%r13
+    105a:	4c 89 ef             	mov    %r13,%rdi
+    105d:	e8 00 00 00 00       	callq  1062 <dmirror_fault+0x182>
+		if (mmu_interval_read_retry(range->notifier,
+    1062:	48 8b 44 24 10       	mov    0x10(%rsp),%rax
+    1067:	48 8b 40 50          	mov    0x50(%rax),%rax
+    106b:	48 39 44 24 18       	cmp    %rax,0x18(%rsp)
+    1070:	74 23                	je     1095 <dmirror_fault+0x1b5>
+			mutex_unlock(&dmirror->mutex);
+    1072:	4c 89 ef             	mov    %r13,%rdi
+    1075:	e8 00 00 00 00       	callq  107a <dmirror_fault+0x19a>
+		if (time_after(jiffies, timeout)) {
+    107a:	48 8b 05 00 00 00 00 	mov    0x0(%rip),%rax        # 1081 <dmirror_fault+0x1a1>
+    1081:	48 39 c5             	cmp    %rax,%rbp
+    1084:	0f 89 3b ff ff ff    	jns    fc5 <dmirror_fault+0xe5>
+			ret = -EBUSY;
+    108a:	41 bf f0 ff ff ff    	mov    $0xfffffff0,%r15d
+    1090:	e9 6b ff ff ff       	jmpq   1000 <dmirror_fault+0x120>
+	for (pfn = (range->start >> PAGE_SHIFT);
+    1095:	48 8b 6c 24 20       	mov    0x20(%rsp),%rbp
+	     pfn < (range->end >> PAGE_SHIFT);
+    109a:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+	unsigned long *pfns = range->hmm_pfns;
+    109f:	48 8b 54 24 30       	mov    0x30(%rsp),%rdx
+	for (pfn = (range->start >> PAGE_SHIFT);
+    10a4:	48 c1 ed 0c          	shr    $0xc,%rbp
+	     pfn < (range->end >> PAGE_SHIFT);
+    10a8:	48 c1 e8 0c          	shr    $0xc,%rax
+	for (pfn = (range->start >> PAGE_SHIFT);
+    10ac:	48 39 c5             	cmp    %rax,%rbp
+    10af:	0f 83 eb 00 00 00    	jae    11a0 <dmirror_fault+0x2c0>
+		if (*pfns & HMM_PFN_WRITE)
+    10b5:	49 bf 00 00 00 00 00 	movabs $0x4000000000000000,%r15
+    10bc:	00 00 40 
+    10bf:	48 89 e8             	mov    %rbp,%rax
+    10c2:	48 f7 d8             	neg    %rax
+    10c5:	4c 8d 34 c2          	lea    (%rdx,%rax,8),%r14
+		entry = xa_store(&dmirror->pt, pfn, entry, GFP_ATOMIC);
+    10c9:	49 8d 44 24 08       	lea    0x8(%r12),%rax
+    10ce:	48 89 04 24          	mov    %rax,(%rsp)
+    10d2:	eb 3f                	jmp    1113 <dmirror_fault+0x233>
+	return (void *)((unsigned long)p | tag);
+    10d4:	48 83 ca 03          	or     $0x3,%rdx
+    10d8:	48 8b 3c 24          	mov    (%rsp),%rdi
+    10dc:	b9 20 0a 00 00       	mov    $0xa20,%ecx
+    10e1:	48 89 ee             	mov    %rbp,%rsi
+    10e4:	e8 00 00 00 00       	callq  10e9 <dmirror_fault+0x209>
+	return ((unsigned long)entry & 3) == 2;
+    10e9:	48 89 c2             	mov    %rax,%rdx
+    10ec:	83 e2 03             	and    $0x3,%edx
+	return unlikely(xa_is_internal(entry) &&
+    10ef:	48 83 fa 02          	cmp    $0x2,%rdx
+    10f3:	75 08                	jne    10fd <dmirror_fault+0x21d>
+    10f5:	48 3d 05 c0 ff ff    	cmp    $0xffffffffffffc005,%rax
+    10fb:	77 5f                	ja     115c <dmirror_fault+0x27c>
+	     pfn < (range->end >> PAGE_SHIFT);
+    10fd:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+	     pfn++, pfns++) {
+    1102:	48 83 c5 01          	add    $0x1,%rbp
+	     pfn < (range->end >> PAGE_SHIFT);
+    1106:	48 c1 e8 0c          	shr    $0xc,%rax
+	for (pfn = (range->start >> PAGE_SHIFT);
+    110a:	48 39 c5             	cmp    %rax,%rbp
+    110d:	0f 83 8d 00 00 00    	jae    11a0 <dmirror_fault+0x2c0>
+		WARN_ON(*pfns & HMM_PFN_ERROR);
+    1113:	48 b9 00 00 00 00 00 	movabs $0x2000000000000000,%rcx
+    111a:	00 00 20 
+    111d:	49 8b 04 ee          	mov    (%r14,%rbp,8),%rax
+    1121:	48 85 c8             	test   %rcx,%rax
+    1124:	75 6e                	jne    1194 <dmirror_fault+0x2b4>
+		WARN_ON(!(*pfns & HMM_PFN_VALID));
+    1126:	48 85 c0             	test   %rax,%rax
+    1129:	79 65                	jns    1190 <dmirror_fault+0x2b0>
+ * mmu_interval_read_begin(). The caller must have tested for HMM_PFN_VALID
+ * already.
+ */
+static inline struct page *hmm_pfn_to_page(unsigned long hmm_pfn)
+{
+	return pfn_to_page(hmm_pfn & ~HMM_PFN_FLAGS);
+    112b:	48 89 c2             	mov    %rax,%rdx
+    112e:	48 c1 e2 06          	shl    $0x6,%rdx
+		WARN_ON(!page);
+    1132:	48 03 15 00 00 00 00 	add    0x0(%rip),%rdx        # 1139 <dmirror_fault+0x259>
+    1139:	74 51                	je     118c <dmirror_fault+0x2ac>
+		if (*pfns & HMM_PFN_WRITE)
+    113b:	4c 85 f8             	test   %r15,%rax
+    113e:	75 94                	jne    10d4 <dmirror_fault+0x1f4>
+		else if (WARN_ON(range->default_flags & HMM_PFN_WRITE))
+    1140:	4c 85 7c 24 38       	test   %r15,0x38(%rsp)
+    1145:	74 91                	je     10d8 <dmirror_fault+0x1f8>
+    1147:	0f 0b                	ud2    
+	mutex_unlock(&dmirror->mutex);
+    1149:	4c 89 ef             	mov    %r13,%rdi
+			return -EFAULT;
+    114c:	41 bf f2 ff ff ff    	mov    $0xfffffff2,%r15d
+	mutex_unlock(&dmirror->mutex);
+    1152:	e8 00 00 00 00       	callq  1157 <dmirror_fault+0x277>
+		if (ret)
+    1157:	e9 a4 fe ff ff       	jmpq   1000 <dmirror_fault+0x120>
+		return (long)entry >> 2;
+    115c:	48 c1 f8 02          	sar    $0x2,%rax
+	mutex_unlock(&dmirror->mutex);
+    1160:	4c 89 ef             	mov    %r13,%rdi
+    1163:	48 89 c5             	mov    %rax,%rbp
+    1166:	41 89 c7             	mov    %eax,%r15d
+    1169:	e8 00 00 00 00       	callq  116e <dmirror_fault+0x28e>
+		if (ret)
+    116e:	85 ed                	test   %ebp,%ebp
+    1170:	0f 85 8a fe ff ff    	jne    1000 <dmirror_fault+0x120>
+	for (addr = start; addr < end; addr = range.end) {
+    1176:	48 8b 74 24 28       	mov    0x28(%rsp),%rsi
+    117b:	48 39 f3             	cmp    %rsi,%rbx
+    117e:	0f 87 06 fe ff ff    	ja     f8a <dmirror_fault+0xaa>
+			return -EFAULT;
+    1184:	45 31 ff             	xor    %r15d,%r15d
+    1187:	e9 74 fe ff ff       	jmpq   1000 <dmirror_fault+0x120>
+		WARN_ON(!page);
+    118c:	0f 0b                	ud2    
+    118e:	eb ab                	jmp    113b <dmirror_fault+0x25b>
+		WARN_ON(!(*pfns & HMM_PFN_VALID));
+    1190:	0f 0b                	ud2    
+    1192:	eb 97                	jmp    112b <dmirror_fault+0x24b>
+		WARN_ON(*pfns & HMM_PFN_ERROR);
+    1194:	0f 0b                	ud2    
+    1196:	eb 8e                	jmp    1126 <dmirror_fault+0x246>
+		return 0;
+    1198:	45 31 ff             	xor    %r15d,%r15d
+    119b:	e9 6a fe ff ff       	jmpq   100a <dmirror_fault+0x12a>
+	mutex_unlock(&dmirror->mutex);
+    11a0:	4c 89 ef             	mov    %r13,%rdi
+    11a3:	e8 00 00 00 00       	callq  11a8 <dmirror_fault+0x2c8>
+		if (ret)
+    11a8:	eb cc                	jmp    1176 <dmirror_fault+0x296>
+}
+    11aa:	e8 00 00 00 00       	callq  11af <dmirror_fault+0x2cf>
+    11af:	90                   	nop
+
+00000000000011b0 <dmirror_snapshot>:
+{
+    11b0:	41 57                	push   %r15
+	struct hmm_range range = {
+    11b2:	b9 07 00 00 00       	mov    $0x7,%ecx
+{
+    11b7:	49 89 ff             	mov    %rdi,%r15
+    11ba:	41 56                	push   %r14
+    11bc:	41 55                	push   %r13
+    11be:	41 54                	push   %r12
+    11c0:	55                   	push   %rbp
+    11c1:	53                   	push   %rbx
+    11c2:	48 89 f3             	mov    %rsi,%rbx
+    11c5:	48 81 ec 08 03 00 00 	sub    $0x308,%rsp
+	start = cmd->addr;
+    11cc:	48 8b 13             	mov    (%rbx),%rdx
+{
+    11cf:	48 89 34 24          	mov    %rsi,(%rsp)
+	struct mm_struct *mm = dmirror->notifier.mm;
+    11d3:	48 8b 77 50          	mov    0x50(%rdi),%rsi
+	struct hmm_range range = {
+    11d7:	48 8d 7c 24 20       	lea    0x20(%rsp),%rdi
+{
+    11dc:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+    11e3:	00 00 
+    11e5:	48 89 84 24 00 03 00 	mov    %rax,0x300(%rsp)
+    11ec:	00 
+    11ed:	31 c0                	xor    %eax,%eax
+	unsigned long size = cmd->npages << PAGE_SHIFT;
+    11ef:	48 8b 43 10          	mov    0x10(%rbx),%rax
+	struct mm_struct *mm = dmirror->notifier.mm;
+    11f3:	48 89 74 24 18       	mov    %rsi,0x18(%rsp)
+	unsigned long size = cmd->npages << PAGE_SHIFT;
+    11f8:	49 89 c4             	mov    %rax,%r12
+    11fb:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+	struct hmm_range range = {
+    1200:	31 c0                	xor    %eax,%eax
+    1202:	f3 48 ab             	rep stos %rax,%es:(%rdi)
+    1205:	48 8d 84 24 c0 00 00 	lea    0xc0(%rsp),%rax
+    120c:	00 
+	unsigned long size = cmd->npages << PAGE_SHIFT;
+    120d:	49 c1 e4 0c          	shl    $0xc,%r12
+	struct hmm_range range = {
+    1211:	48 89 44 24 40       	mov    %rax,0x40(%rsp)
+    1216:	49 8b 07             	mov    (%r15),%rax
+    1219:	48 89 44 24 58       	mov    %rax,0x58(%rsp)
+	end = start + size;
+    121e:	49 01 d4             	add    %rdx,%r12
+    1221:	0f 82 2a 03 00 00    	jb     1551 <dmirror_snapshot+0x3a1>
+	return __READ_ONCE((v)->counter);
+    1227:	8b 46 5c             	mov    0x5c(%rsi),%eax
+		if (unlikely(c == u))
+    122a:	85 c0                	test   %eax,%eax
+    122c:	0f 84 1f 03 00 00    	je     1551 <dmirror_snapshot+0x3a1>
+	return try_cmpxchg(&v->counter, old, new);
+    1232:	48 8b 5c 24 18       	mov    0x18(%rsp),%rbx
+	} while (!arch_atomic_try_cmpxchg(v, &c, c + a));
+    1237:	8d 70 01             	lea    0x1(%rax),%esi
+    123a:	48 8d 4b 5c          	lea    0x5c(%rbx),%rcx
+    123e:	f0 0f b1 73 5c       	lock cmpxchg %esi,0x5c(%rbx)
+    1243:	0f 85 01 01 00 00    	jne    134a <dmirror_snapshot+0x19a>
+	uptr = u64_to_user_ptr(cmd->ptr);
+    1249:	48 8b 04 24          	mov    (%rsp),%rax
+    124d:	4c 8b 68 08          	mov    0x8(%rax),%r13
+	for (addr = start; addr < end; addr = next) {
+    1251:	4c 39 e2             	cmp    %r12,%rdx
+    1254:	0f 83 12 01 00 00    	jae    136c <dmirror_snapshot+0x1bc>
+		next = min(addr + (ARRAY_SIZE(pfns) << PAGE_SHIFT), end);
+    125a:	48 8d 9a 00 00 04 00 	lea    0x40000(%rdx),%rbx
+	struct mm_struct *mm = dmirror->notifier.mm;
+    1261:	49 8b 6f 50          	mov    0x50(%r15),%rbp
+	range->notifier = &notifier.notifier;
+    1265:	48 8d 44 24 60       	lea    0x60(%rsp),%rax
+	ret = mmu_interval_notifier_insert(range->notifier, mm,
+    126a:	49 c7 c0 00 00 00 00 	mov    $0x0,%r8
+		next = min(addr + (ARRAY_SIZE(pfns) << PAGE_SHIFT), end);
+    1271:	4c 39 e3             	cmp    %r12,%rbx
+	ret = mmu_interval_notifier_insert(range->notifier, mm,
+    1274:	48 89 c7             	mov    %rax,%rdi
+		range.start = addr;
+    1277:	48 89 54 24 30       	mov    %rdx,0x30(%rsp)
+		jiffies + msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
+    127c:	4c 8b 35 00 00 00 00 	mov    0x0(%rip),%r14        # 1283 <dmirror_snapshot+0xd3>
+		next = min(addr + (ARRAY_SIZE(pfns) << PAGE_SHIFT), end);
+    1283:	49 0f 47 dc          	cmova  %r12,%rbx
+	ret = mmu_interval_notifier_insert(range->notifier, mm,
+    1287:	48 89 ee             	mov    %rbp,%rsi
+	range->notifier = &notifier.notifier;
+    128a:	48 89 44 24 20       	mov    %rax,0x20(%rsp)
+	notifier.dmirror = dmirror;
+    128f:	4c 89 bc 24 b8 00 00 	mov    %r15,0xb8(%rsp)
+    1296:	00 
+	ret = mmu_interval_notifier_insert(range->notifier, mm,
+    1297:	48 89 d9             	mov    %rbx,%rcx
+		range.end = next;
+    129a:	48 89 5c 24 38       	mov    %rbx,0x38(%rsp)
+	ret = mmu_interval_notifier_insert(range->notifier, mm,
+    129f:	48 29 d1             	sub    %rdx,%rcx
+    12a2:	e8 00 00 00 00       	callq  12a7 <dmirror_snapshot+0xf7>
+	if (ret)
+    12a7:	85 c0                	test   %eax,%eax
+    12a9:	75 66                	jne    1311 <dmirror_snapshot+0x161>
+	down_read(&mm->mmap_lock);
+    12ab:	48 89 5c 24 08       	mov    %rbx,0x8(%rsp)
+	unsigned long timeout =
+    12b0:	49 81 c6 2c 01 00 00 	add    $0x12c,%r14
+    12b7:	48 83 c5 78          	add    $0x78,%rbp
+		if (time_after(jiffies, timeout)) {
+    12bb:	48 8b 05 00 00 00 00 	mov    0x0(%rip),%rax        # 12c2 <dmirror_snapshot+0x112>
+    12c2:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
+    12c7:	49 39 c6             	cmp    %rax,%r14
+    12ca:	0f 88 8b 02 00 00    	js     155b <dmirror_snapshot+0x3ab>
+		range->notifier_seq = mmu_interval_read_begin(range->notifier);
+    12d0:	e8 00 00 00 00       	callq  12d5 <dmirror_snapshot+0x125>
+    12d5:	48 89 ef             	mov    %rbp,%rdi
+    12d8:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+    12dd:	e8 00 00 00 00       	callq  12e2 <dmirror_snapshot+0x132>
+		ret = hmm_range_fault(range);
+    12e2:	48 8d 7c 24 20       	lea    0x20(%rsp),%rdi
+    12e7:	e8 00 00 00 00       	callq  12ec <dmirror_snapshot+0x13c>
+	up_read(&mm->mmap_lock);
+    12ec:	48 89 ef             	mov    %rbp,%rdi
+    12ef:	89 c3                	mov    %eax,%ebx
+    12f1:	e8 00 00 00 00       	callq  12f6 <dmirror_snapshot+0x146>
+		if (ret) {
+    12f6:	85 db                	test   %ebx,%ebx
+    12f8:	74 76                	je     1370 <dmirror_snapshot+0x1c0>
+			if (ret == -EBUSY)
+    12fa:	83 fb f0             	cmp    $0xfffffff0,%ebx
+    12fd:	74 bc                	je     12bb <dmirror_snapshot+0x10b>
+    12ff:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
+    1304:	89 d8                	mov    %ebx,%eax
+    1306:	89 04 24             	mov    %eax,(%rsp)
+	mmu_interval_notifier_remove(range->notifier);
+    1309:	e8 00 00 00 00       	callq  130e <dmirror_snapshot+0x15e>
+		if (ret)
+    130e:	8b 04 24             	mov    (%rsp),%eax
+	mmput(mm);
+    1311:	48 8b 7c 24 18       	mov    0x18(%rsp),%rdi
+    1316:	89 04 24             	mov    %eax,(%rsp)
+    1319:	e8 00 00 00 00       	callq  131e <dmirror_snapshot+0x16e>
+	return ret;
+    131e:	8b 04 24             	mov    (%rsp),%eax
+}
+    1321:	48 8b 9c 24 00 03 00 	mov    0x300(%rsp),%rbx
+    1328:	00 
+    1329:	65 48 33 1c 25 28 00 	xor    %gs:0x28,%rbx
+    1330:	00 00 
+    1332:	0f 85 2d 02 00 00    	jne    1565 <dmirror_snapshot+0x3b5>
+    1338:	48 81 c4 08 03 00 00 	add    $0x308,%rsp
+    133f:	5b                   	pop    %rbx
+    1340:	5d                   	pop    %rbp
+    1341:	41 5c                	pop    %r12
+    1343:	41 5d                	pop    %r13
+    1345:	41 5e                	pop    %r14
+    1347:	41 5f                	pop    %r15
+    1349:	c3                   	retq   
+		if (unlikely(c == u))
+    134a:	85 c0                	test   %eax,%eax
+    134c:	0f 84 ff 01 00 00    	je     1551 <dmirror_snapshot+0x3a1>
+	} while (!arch_atomic_try_cmpxchg(v, &c, c + a));
+    1352:	8d 70 01             	lea    0x1(%rax),%esi
+    1355:	f0 0f b1 31          	lock cmpxchg %esi,(%rcx)
+    1359:	75 ef                	jne    134a <dmirror_snapshot+0x19a>
+	uptr = u64_to_user_ptr(cmd->ptr);
+    135b:	48 8b 04 24          	mov    (%rsp),%rax
+    135f:	4c 8b 68 08          	mov    0x8(%rax),%r13
+	for (addr = start; addr < end; addr = next) {
+    1363:	4c 39 e2             	cmp    %r12,%rdx
+    1366:	0f 82 ee fe ff ff    	jb     125a <dmirror_snapshot+0xaa>
+		*perm = HMM_DMIRROR_PROT_NONE;
+    136c:	31 c0                	xor    %eax,%eax
+    136e:	eb a1                	jmp    1311 <dmirror_snapshot+0x161>
+		mutex_lock(&dmirror->mutex);
+    1370:	4d 8d 4f 70          	lea    0x70(%r15),%r9
+    1374:	4c 89 cf             	mov    %r9,%rdi
+    1377:	4c 89 4c 24 10       	mov    %r9,0x10(%rsp)
+    137c:	e8 00 00 00 00       	callq  1381 <dmirror_snapshot+0x1d1>
+		if (mmu_interval_read_retry(range->notifier,
+    1381:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
+    1386:	4c 8b 4c 24 10       	mov    0x10(%rsp),%r9
+    138b:	48 8b 40 50          	mov    0x50(%rax),%rax
+    138f:	48 39 44 24 28       	cmp    %rax,0x28(%rsp)
+    1394:	0f 85 7d 01 00 00    	jne    1517 <dmirror_snapshot+0x367>
+	n = (range->end - range->start) >> PAGE_SHIFT;
+    139a:	4c 8b 44 24 38       	mov    0x38(%rsp),%r8
+    139f:	4c 2b 44 24 30       	sub    0x30(%rsp),%r8
+	for (i = 0; i < n; i++)
+    13a4:	49 c1 e8 0c          	shr    $0xc,%r8
+    13a8:	48 8b 5c 24 08       	mov    0x8(%rsp),%rbx
+    13ad:	0f 84 a2 00 00 00    	je     1455 <dmirror_snapshot+0x2a5>
+    13b3:	48 8d 84 24 c0 02 00 	lea    0x2c0(%rsp),%rax
+    13ba:	00 
+    13bb:	4c 8b 15 00 00 00 00 	mov    0x0(%rip),%r10        # 13c2 <dmirror_snapshot+0x212>
+    13c2:	48 8b 7c 24 40       	mov    0x40(%rsp),%rdi
+
+#else
+static inline int is_zero_pfn(unsigned long pfn)
+{
+	extern unsigned long zero_pfn;
+	return pfn == zero_pfn;
+    13c7:	4c 8b 1d 00 00 00 00 	mov    0x0(%rip),%r11        # 13ce <dmirror_snapshot+0x21e>
+    13ce:	49 01 c0             	add    %rax,%r8
+    13d1:	eb 60                	jmp    1433 <dmirror_snapshot+0x283>
+	if (!(entry & HMM_PFN_VALID)) {
+    13d3:	48 85 d2             	test   %rdx,%rdx
+    13d6:	0f 89 f2 00 00 00    	jns    14ce <dmirror_snapshot+0x31e>
+    13dc:	48 89 d1             	mov    %rdx,%rcx
+    13df:	48 c1 e1 06          	shl    $0x6,%rcx
+    13e3:	4c 01 d1             	add    %r10,%rcx
+	return (page->flags >> ZONES_PGSHIFT) & ZONES_MASK;
+    13e6:	48 8b 31             	mov    (%rcx),%rsi
+    13e9:	48 c1 ee 38          	shr    $0x38,%rsi
+    13ed:	83 e6 07             	and    $0x7,%esi
+		is_zone_device_page(page) &&
+    13f0:	83 fe 04             	cmp    $0x4,%esi
+    13f3:	0f 84 e7 00 00 00    	je     14e0 <dmirror_snapshot+0x330>
+	} else if (is_zero_pfn(page_to_pfn(page)))
+    13f9:	4c 29 d1             	sub    %r10,%rcx
+    13fc:	48 c1 f9 06          	sar    $0x6,%rcx
+    1400:	4c 39 d9             	cmp    %r11,%rcx
+    1403:	0f 84 01 01 00 00    	je     150a <dmirror_snapshot+0x35a>
+		*perm = HMM_DMIRROR_PROT_NONE;
+    1409:	c6 00 00             	movb   $0x0,(%rax)
+    140c:	31 c9                	xor    %ecx,%ecx
+	if (entry & HMM_PFN_WRITE)
+    140e:	48 be 00 00 00 00 00 	movabs $0x4000000000000000,%rsi
+    1415:	00 00 40 
+    1418:	48 85 f2             	test   %rsi,%rdx
+    141b:	0f 84 b5 00 00 00    	je     14d6 <dmirror_snapshot+0x326>
+		*perm |= HMM_DMIRROR_PROT_WRITE;
+    1421:	83 c9 02             	or     $0x2,%ecx
+    1424:	88 08                	mov    %cl,(%rax)
+	for (i = 0; i < n; i++)
+    1426:	48 83 c0 01          	add    $0x1,%rax
+    142a:	48 83 c7 08          	add    $0x8,%rdi
+    142e:	4c 39 c0             	cmp    %r8,%rax
+    1431:	74 22                	je     1455 <dmirror_snapshot+0x2a5>
+	if (entry & HMM_PFN_ERROR) {
+    1433:	48 be 00 00 00 00 00 	movabs $0x2000000000000000,%rsi
+    143a:	00 00 20 
+		dmirror_mkentry(dmirror, range, perm + i, range->hmm_pfns[i]);
+    143d:	48 8b 17             	mov    (%rdi),%rdx
+	if (entry & HMM_PFN_ERROR) {
+    1440:	48 85 f2             	test   %rsi,%rdx
+    1443:	74 8e                	je     13d3 <dmirror_snapshot+0x223>
+		*perm = HMM_DMIRROR_PROT_ERROR;
+    1445:	c6 00 ff             	movb   $0xff,(%rax)
+	for (i = 0; i < n; i++)
+    1448:	48 83 c0 01          	add    $0x1,%rax
+    144c:	48 83 c7 08          	add    $0x8,%rdi
+    1450:	4c 39 c0             	cmp    %r8,%rax
+    1453:	75 de                	jne    1433 <dmirror_snapshot+0x283>
+	mutex_unlock(&dmirror->mutex);
+    1455:	4c 89 cf             	mov    %r9,%rdi
+    1458:	e8 00 00 00 00       	callq  145d <dmirror_snapshot+0x2ad>
+	mmu_interval_notifier_remove(range->notifier);
+    145d:	48 8b 7c 24 20       	mov    0x20(%rsp),%rdi
+    1462:	e8 00 00 00 00       	callq  1467 <dmirror_snapshot+0x2b7>
+		n = (range.end - range.start) >> PAGE_SHIFT;
+    1467:	48 8b 6c 24 38       	mov    0x38(%rsp),%rbp
+    146c:	48 2b 6c 24 30       	sub    0x30(%rsp),%rbp
+    1471:	48 c1 ed 0c          	shr    $0xc,%rbp
+	if (unlikely(sz >= 0 && sz < bytes)) {
+    1475:	48 83 fd 40          	cmp    $0x40,%rbp
+    1479:	0f 87 a5 00 00 00    	ja     1524 <dmirror_snapshot+0x374>
+		__check_object_size(ptr, n, to_user);
+    147f:	ba 01 00 00 00       	mov    $0x1,%edx
+    1484:	48 89 ee             	mov    %rbp,%rsi
+    1487:	48 8d bc 24 c0 02 00 	lea    0x2c0(%rsp),%rdi
+    148e:	00 
+    148f:	e8 00 00 00 00       	callq  1494 <dmirror_snapshot+0x2e4>
+		n = _copy_to_user(to, from, n);
+    1494:	48 89 ea             	mov    %rbp,%rdx
+    1497:	4c 89 ef             	mov    %r13,%rdi
+    149a:	48 8d b4 24 c0 02 00 	lea    0x2c0(%rsp),%rsi
+    14a1:	00 
+    14a2:	e8 00 00 00 00       	callq  14a7 <dmirror_snapshot+0x2f7>
+		if (copy_to_user(uptr, perm, n)) {
+    14a7:	48 85 c0             	test   %rax,%rax
+    14aa:	0f 85 ba 00 00 00    	jne    156a <dmirror_snapshot+0x3ba>
+		cmd->cpages += n;
+    14b0:	48 8b 04 24          	mov    (%rsp),%rax
+		uptr += n;
+    14b4:	49 01 ed             	add    %rbp,%r13
+    14b7:	48 89 da             	mov    %rbx,%rdx
+		cmd->cpages += n;
+    14ba:	48 01 68 18          	add    %rbp,0x18(%rax)
+	for (addr = start; addr < end; addr = next) {
+    14be:	49 39 dc             	cmp    %rbx,%r12
+    14c1:	0f 87 93 fd ff ff    	ja     125a <dmirror_snapshot+0xaa>
+		*perm = HMM_DMIRROR_PROT_NONE;
+    14c7:	31 c0                	xor    %eax,%eax
+    14c9:	e9 43 fe ff ff       	jmpq   1311 <dmirror_snapshot+0x161>
+		*perm = HMM_DMIRROR_PROT_NONE;
+    14ce:	c6 00 00             	movb   $0x0,(%rax)
+		return;
+    14d1:	e9 50 ff ff ff       	jmpq   1426 <dmirror_snapshot+0x276>
+		*perm |= HMM_DMIRROR_PROT_READ;
+    14d6:	83 c9 01             	or     $0x1,%ecx
+    14d9:	88 08                	mov    %cl,(%rax)
+    14db:	e9 46 ff ff ff       	jmpq   1426 <dmirror_snapshot+0x276>
+		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
+    14e0:	48 8b 71 08          	mov    0x8(%rcx),%rsi
+		is_zone_device_page(page) &&
+    14e4:	83 be d0 00 00 00 01 	cmpl   $0x1,0xd0(%rsi)
+    14eb:	0f 85 08 ff ff ff    	jne    13f9 <dmirror_snapshot+0x249>
+		if (dmirror->mdevice == dmirror_page_to_device(page))
+    14f1:	48 8b b6 e8 00 00 00 	mov    0xe8(%rsi),%rsi
+    14f8:	49 39 37             	cmp    %rsi,(%r15)
+    14fb:	74 47                	je     1544 <dmirror_snapshot+0x394>
+			*perm = HMM_DMIRROR_PROT_DEV_PRIVATE_REMOTE;
+    14fd:	c6 00 30             	movb   $0x30,(%rax)
+    1500:	b9 30 00 00 00       	mov    $0x30,%ecx
+    1505:	e9 04 ff ff ff       	jmpq   140e <dmirror_snapshot+0x25e>
+		*perm = HMM_DMIRROR_PROT_ZERO;
+    150a:	c6 00 10             	movb   $0x10,(%rax)
+    150d:	b9 10 00 00 00       	mov    $0x10,%ecx
+    1512:	e9 f7 fe ff ff       	jmpq   140e <dmirror_snapshot+0x25e>
+			mutex_unlock(&dmirror->mutex);
+    1517:	4c 89 cf             	mov    %r9,%rdi
+    151a:	e8 00 00 00 00       	callq  151f <dmirror_snapshot+0x36f>
+			continue;
+    151f:	e9 97 fd ff ff       	jmpq   12bb <dmirror_snapshot+0x10b>
+	WARN(1, "Buffer overflow detected (%d < %lu)!\n", size, count);
+    1524:	48 89 ea             	mov    %rbp,%rdx
+    1527:	be 40 00 00 00       	mov    $0x40,%esi
+    152c:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+    1533:	e8 00 00 00 00       	callq  1538 <dmirror_snapshot+0x388>
+    1538:	0f 0b                	ud2    
+			ret = -EFAULT;
+    153a:	b8 f2 ff ff ff       	mov    $0xfffffff2,%eax
+    153f:	e9 cd fd ff ff       	jmpq   1311 <dmirror_snapshot+0x161>
+			*perm = HMM_DMIRROR_PROT_DEV_PRIVATE_LOCAL;
+    1544:	c6 00 20             	movb   $0x20,(%rax)
+    1547:	b9 20 00 00 00       	mov    $0x20,%ecx
+    154c:	e9 bd fe ff ff       	jmpq   140e <dmirror_snapshot+0x25e>
+		return -EINVAL;
+    1551:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+    1556:	e9 c6 fd ff ff       	jmpq   1321 <dmirror_snapshot+0x171>
+			ret = -EBUSY;
+    155b:	b8 f0 ff ff ff       	mov    $0xfffffff0,%eax
+    1560:	e9 a1 fd ff ff       	jmpq   1306 <dmirror_snapshot+0x156>
+}
+    1565:	e8 00 00 00 00       	callq  156a <dmirror_snapshot+0x3ba>
+			ret = -EFAULT;
+    156a:	b8 f2 ff ff ff       	mov    $0xfffffff2,%eax
+    156f:	e9 9d fd ff ff       	jmpq   1311 <dmirror_snapshot+0x161>
+    1574:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+    157b:	00 00 00 00 
+    157f:	90                   	nop
+
+0000000000001580 <dmirror_fops_unlocked_ioctl>:
+{
+    1580:	41 57                	push   %r15
+    1582:	41 56                	push   %r14
+    1584:	41 55                	push   %r13
+    1586:	41 54                	push   %r12
+    1588:	55                   	push   %rbp
+    1589:	53                   	push   %rbx
+    158a:	48 83 c4 80          	add    $0xffffffffffffff80,%rsp
+	dmirror = filp->private_data;
+    158e:	4c 8b a7 c8 00 00 00 	mov    0xc8(%rdi),%r12
+{
+    1595:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+    159c:	00 00 
+    159e:	48 89 44 24 78       	mov    %rax,0x78(%rsp)
+    15a3:	31 c0                	xor    %eax,%eax
+	if (!dmirror)
+    15a5:	4d 85 e4             	test   %r12,%r12
+    15a8:	0f 84 c3 01 00 00    	je     1771 <dmirror_fops_unlocked_ioctl+0x1f1>
+    15ae:	49 89 d6             	mov    %rdx,%r14
+		n = _copy_from_user(to, from, n);
+    15b1:	89 f5                	mov    %esi,%ebp
+    15b3:	48 8d 7c 24 50       	lea    0x50(%rsp),%rdi
+    15b8:	ba 28 00 00 00       	mov    $0x28,%edx
+    15bd:	4c 89 f6             	mov    %r14,%rsi
+    15c0:	e8 00 00 00 00       	callq  15c5 <dmirror_fops_unlocked_ioctl+0x45>
+	if (copy_from_user(&cmd, uarg, sizeof(cmd)))
+    15c5:	48 85 c0             	test   %rax,%rax
+    15c8:	0f 85 96 00 00 00    	jne    1664 <dmirror_fops_unlocked_ioctl+0xe4>
+	if (cmd.addr & ~PAGE_MASK)
+    15ce:	48 8b 5c 24 50       	mov    0x50(%rsp),%rbx
+    15d3:	f7 c3 ff 0f 00 00    	test   $0xfff,%ebx
+    15d9:	0f 85 92 01 00 00    	jne    1771 <dmirror_fops_unlocked_ioctl+0x1f1>
+	if (cmd.addr >= (cmd.addr + (cmd.npages << PAGE_SHIFT)))
+    15df:	4c 8b 7c 24 60       	mov    0x60(%rsp),%r15
+    15e4:	49 89 dd             	mov    %rbx,%r13
+    15e7:	31 c0                	xor    %eax,%eax
+    15e9:	49 c1 e7 0c          	shl    $0xc,%r15
+    15ed:	4d 01 fd             	add    %r15,%r13
+    15f0:	0f 92 c0             	setb   %al
+    15f3:	4c 39 eb             	cmp    %r13,%rbx
+    15f6:	0f 83 75 01 00 00    	jae    1771 <dmirror_fops_unlocked_ioctl+0x1f1>
+	cmd.cpages = 0;
+    15fc:	48 c7 44 24 68 00 00 	movq   $0x0,0x68(%rsp)
+    1603:	00 00 
+	cmd.faults = 0;
+    1605:	48 c7 44 24 70 00 00 	movq   $0x0,0x70(%rsp)
+    160c:	00 00 
+	switch (command) {
+    160e:	81 fd 01 48 28 c0    	cmp    $0xc0284801,%ebp
+    1614:	0f 84 97 01 00 00    	je     17b1 <dmirror_fops_unlocked_ioctl+0x231>
+    161a:	76 54                	jbe    1670 <dmirror_fops_unlocked_ioctl+0xf0>
+    161c:	81 fd 02 48 28 c0    	cmp    $0xc0284802,%ebp
+    1622:	0f 84 77 01 00 00    	je     179f <dmirror_fops_unlocked_ioctl+0x21f>
+    1628:	81 fd 03 48 28 c0    	cmp    $0xc0284803,%ebp
+    162e:	0f 85 3d 01 00 00    	jne    1771 <dmirror_fops_unlocked_ioctl+0x1f1>
+		ret = dmirror_snapshot(dmirror, &cmd);
+    1634:	48 8d 74 24 50       	lea    0x50(%rsp),%rsi
+    1639:	4c 89 e7             	mov    %r12,%rdi
+    163c:	e8 6f fb ff ff       	callq  11b0 <dmirror_snapshot>
+	if (ret)
+    1641:	85 c0                	test   %eax,%eax
+    1643:	0f 85 52 01 00 00    	jne    179b <dmirror_fops_unlocked_ioctl+0x21b>
+		n = _copy_to_user(to, from, n);
+    1649:	ba 28 00 00 00       	mov    $0x28,%edx
+    164e:	48 8d 74 24 50       	lea    0x50(%rsp),%rsi
+    1653:	4c 89 f7             	mov    %r14,%rdi
+    1656:	e8 00 00 00 00       	callq  165b <dmirror_fops_unlocked_ioctl+0xdb>
+	if (copy_to_user(uarg, &cmd, sizeof(cmd)))
+    165b:	48 85 c0             	test   %rax,%rax
+    165e:	0f 84 14 01 00 00    	je     1778 <dmirror_fops_unlocked_ioctl+0x1f8>
+	if (ret)
+    1664:	48 c7 c0 f2 ff ff ff 	mov    $0xfffffffffffffff2,%rax
+    166b:	e9 08 01 00 00       	jmpq   1778 <dmirror_fops_unlocked_ioctl+0x1f8>
+	switch (command) {
+    1670:	81 fd 00 48 28 c0    	cmp    $0xc0284800,%ebp
+    1676:	0f 85 f5 00 00 00    	jne    1771 <dmirror_fops_unlocked_ioctl+0x1f1>
+	if (end < start)
+    167c:	48 85 c0             	test   %rax,%rax
+    167f:	0f 85 ec 00 00 00    	jne    1771 <dmirror_fops_unlocked_ioctl+0x1f1>
+	bounce->ptr = vmalloc(size);
+    1685:	4c 89 ff             	mov    %r15,%rdi
+	bounce->addr = addr;
+    1688:	48 89 5c 24 40       	mov    %rbx,0x40(%rsp)
+	bounce->size = size;
+    168d:	4c 89 7c 24 38       	mov    %r15,0x38(%rsp)
+	bounce->cpages = 0;
+    1692:	48 c7 44 24 48 00 00 	movq   $0x0,0x48(%rsp)
+    1699:	00 00 
+	bounce->ptr = vmalloc(size);
+    169b:	e8 00 00 00 00       	callq  16a0 <dmirror_fops_unlocked_ioctl+0x120>
+    16a0:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
+	if (!bounce->ptr)
+    16a5:	48 85 c0             	test   %rax,%rax
+    16a8:	0f 84 2f 03 00 00    	je     19dd <dmirror_fops_unlocked_ioctl+0x45d>
+    16ae:	4d 8d 7c 24 70       	lea    0x70(%r12),%r15
+    16b3:	eb 2e                	jmp    16e3 <dmirror_fops_unlocked_ioctl+0x163>
+		start = cmd->addr + (bounce.cpages << PAGE_SHIFT);
+    16b5:	48 8b 5c 24 48       	mov    0x48(%rsp),%rbx
+		ret = dmirror_fault(dmirror, start, end, false);
+    16ba:	31 c9                	xor    %ecx,%ecx
+    16bc:	4c 89 ea             	mov    %r13,%rdx
+    16bf:	4c 89 e7             	mov    %r12,%rdi
+		start = cmd->addr + (bounce.cpages << PAGE_SHIFT);
+    16c2:	48 c1 e3 0c          	shl    $0xc,%rbx
+    16c6:	48 03 5c 24 50       	add    0x50(%rsp),%rbx
+		ret = dmirror_fault(dmirror, start, end, false);
+    16cb:	48 89 de             	mov    %rbx,%rsi
+    16ce:	e8 0d f8 ff ff       	callq  ee0 <dmirror_fault>
+    16d3:	89 c5                	mov    %eax,%ebp
+		if (ret)
+    16d5:	85 c0                	test   %eax,%eax
+    16d7:	0f 85 5e 02 00 00    	jne    193b <dmirror_fops_unlocked_ioctl+0x3bb>
+		cmd->faults++;
+    16dd:	48 83 44 24 70 01    	addq   $0x1,0x70(%rsp)
+		mutex_lock(&dmirror->mutex);
+    16e3:	4c 89 ff             	mov    %r15,%rdi
+    16e6:	e8 00 00 00 00       	callq  16eb <dmirror_fops_unlocked_ioctl+0x16b>
+		ret = dmirror_do_read(dmirror, start, end, &bounce);
+    16eb:	4c 89 e7             	mov    %r12,%rdi
+    16ee:	4c 89 ea             	mov    %r13,%rdx
+    16f1:	48 89 de             	mov    %rbx,%rsi
+    16f4:	48 8d 4c 24 30       	lea    0x30(%rsp),%rcx
+    16f9:	e8 32 eb ff ff       	callq  230 <dmirror_do_read>
+		mutex_unlock(&dmirror->mutex);
+    16fe:	4c 89 ff             	mov    %r15,%rdi
+		ret = dmirror_do_read(dmirror, start, end, &bounce);
+    1701:	89 c5                	mov    %eax,%ebp
+		mutex_unlock(&dmirror->mutex);
+    1703:	e8 00 00 00 00       	callq  1708 <dmirror_fops_unlocked_ioctl+0x188>
+		if (ret != -ENOENT)
+    1708:	83 fd fe             	cmp    $0xfffffffe,%ebp
+    170b:	74 a8                	je     16b5 <dmirror_fops_unlocked_ioctl+0x135>
+	if (ret == 0) {
+    170d:	48 8b 5c 24 30       	mov    0x30(%rsp),%rbx
+    1712:	85 ed                	test   %ebp,%ebp
+    1714:	0f 85 26 02 00 00    	jne    1940 <dmirror_fops_unlocked_ioctl+0x3c0>
+		if (copy_to_user(u64_to_user_ptr(cmd->ptr), bounce.ptr,
+    171a:	48 8b 6c 24 38       	mov    0x38(%rsp),%rbp
+    171f:	4c 8b 64 24 58       	mov    0x58(%rsp),%r12
+	if (WARN_ON_ONCE(bytes > INT_MAX))
+    1724:	48 81 fd ff ff ff 7f 	cmp    $0x7fffffff,%rbp
+    172b:	0f 87 a8 02 00 00    	ja     19d9 <dmirror_fops_unlocked_ioctl+0x459>
+		__check_object_size(ptr, n, to_user);
+    1731:	ba 01 00 00 00       	mov    $0x1,%edx
+    1736:	48 89 ee             	mov    %rbp,%rsi
+    1739:	48 89 df             	mov    %rbx,%rdi
+    173c:	e8 00 00 00 00       	callq  1741 <dmirror_fops_unlocked_ioctl+0x1c1>
+    1741:	48 89 ea             	mov    %rbp,%rdx
+    1744:	48 89 de             	mov    %rbx,%rsi
+    1747:	4c 89 e7             	mov    %r12,%rdi
+    174a:	e8 00 00 00 00       	callq  174f <dmirror_fops_unlocked_ioctl+0x1cf>
+    174f:	48 85 c0             	test   %rax,%rax
+    1752:	0f 85 65 02 00 00    	jne    19bd <dmirror_fops_unlocked_ioctl+0x43d>
+	cmd->cpages = bounce.cpages;
+    1758:	48 8b 44 24 48       	mov    0x48(%rsp),%rax
+	vfree(bounce->ptr);
+    175d:	48 8b 7c 24 30       	mov    0x30(%rsp),%rdi
+	cmd->cpages = bounce.cpages;
+    1762:	48 89 44 24 68       	mov    %rax,0x68(%rsp)
+	vfree(bounce->ptr);
+    1767:	e8 00 00 00 00       	callq  176c <dmirror_fops_unlocked_ioctl+0x1ec>
+	if (ret)
+    176c:	e9 d8 fe ff ff       	jmpq   1649 <dmirror_fops_unlocked_ioctl+0xc9>
+	if (end < start)
+    1771:	48 c7 c0 ea ff ff ff 	mov    $0xffffffffffffffea,%rax
+}
+    1778:	48 8b 5c 24 78       	mov    0x78(%rsp),%rbx
+    177d:	65 48 33 1c 25 28 00 	xor    %gs:0x28,%rbx
+    1784:	00 00 
+    1786:	0f 85 5d 02 00 00    	jne    19e9 <dmirror_fops_unlocked_ioctl+0x469>
+    178c:	48 83 ec 80          	sub    $0xffffffffffffff80,%rsp
+    1790:	5b                   	pop    %rbx
+    1791:	5d                   	pop    %rbp
+    1792:	41 5c                	pop    %r12
+    1794:	41 5d                	pop    %r13
+    1796:	41 5e                	pop    %r14
+    1798:	41 5f                	pop    %r15
+    179a:	c3                   	retq   
+    179b:	48 98                	cltq   
+		return ret;
+    179d:	eb d9                	jmp    1778 <dmirror_fops_unlocked_ioctl+0x1f8>
+		ret = dmirror_migrate(dmirror, &cmd);
+    179f:	48 8d 74 24 50       	lea    0x50(%rsp),%rsi
+    17a4:	4c 89 e7             	mov    %r12,%rdi
+    17a7:	e8 84 f0 ff ff       	callq  830 <dmirror_migrate>
+		break;
+    17ac:	e9 90 fe ff ff       	jmpq   1641 <dmirror_fops_unlocked_ioctl+0xc1>
+	if (end < start)
+    17b1:	48 85 c0             	test   %rax,%rax
+    17b4:	75 bb                	jne    1771 <dmirror_fops_unlocked_ioctl+0x1f1>
+	bounce->ptr = vmalloc(size);
+    17b6:	4c 89 ff             	mov    %r15,%rdi
+    17b9:	e8 00 00 00 00       	callq  17be <dmirror_fops_unlocked_ioctl+0x23e>
+    17be:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
+	if (!bounce->ptr)
+    17c3:	48 85 c0             	test   %rax,%rax
+    17c6:	0f 84 11 02 00 00    	je     19dd <dmirror_fops_unlocked_ioctl+0x45d>
+	if (copy_from_user(bounce.ptr, u64_to_user_ptr(cmd->ptr),
+    17cc:	48 8b 6c 24 58       	mov    0x58(%rsp),%rbp
+	if (WARN_ON_ONCE(bytes > INT_MAX))
+    17d1:	49 81 ff ff ff ff 7f 	cmp    $0x7fffffff,%r15
+    17d8:	0f 87 7c 01 00 00    	ja     195a <dmirror_fops_unlocked_ioctl+0x3da>
+		__check_object_size(ptr, n, to_user);
+    17de:	48 8b 7c 24 18       	mov    0x18(%rsp),%rdi
+    17e3:	31 d2                	xor    %edx,%edx
+    17e5:	4c 89 fe             	mov    %r15,%rsi
+    17e8:	e8 00 00 00 00       	callq  17ed <dmirror_fops_unlocked_ioctl+0x26d>
+		n = _copy_from_user(to, from, n);
+    17ed:	48 8b 7c 24 18       	mov    0x18(%rsp),%rdi
+    17f2:	4c 89 fa             	mov    %r15,%rdx
+    17f5:	48 89 ee             	mov    %rbp,%rsi
+    17f8:	e8 00 00 00 00       	callq  17fd <dmirror_fops_unlocked_ioctl+0x27d>
+    17fd:	49 89 c0             	mov    %rax,%r8
+    1800:	48 85 c0             	test   %rax,%rax
+    1803:	0f 85 53 01 00 00    	jne    195c <dmirror_fops_unlocked_ioctl+0x3dc>
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+    1809:	4c 89 e8             	mov    %r13,%rax
+    180c:	48 89 dd             	mov    %rbx,%rbp
+    180f:	48 c1 e8 0c          	shr    $0xc,%rax
+    1813:	48 89 44 24 20       	mov    %rax,0x20(%rsp)
+    1818:	49 8d 44 24 70       	lea    0x70(%r12),%rax
+    181d:	48 89 04 24          	mov    %rax,(%rsp)
+    1821:	49 8d 44 24 08       	lea    0x8(%r12),%rax
+    1826:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+		mutex_lock(&dmirror->mutex);
+    182b:	48 8b 3c 24          	mov    (%rsp),%rdi
+    182f:	4c 89 44 24 08       	mov    %r8,0x8(%rsp)
+    1834:	e8 00 00 00 00       	callq  1839 <dmirror_fops_unlocked_ioctl+0x2b9>
+	ptr = bounce->ptr + ((start - bounce->addr) & PAGE_MASK);
+    1839:	48 89 ea             	mov    %rbp,%rdx
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+    183c:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
+    1841:	48 c1 ed 0c          	shr    $0xc,%rbp
+	ptr = bounce->ptr + ((start - bounce->addr) & PAGE_MASK);
+    1845:	48 29 da             	sub    %rbx,%rdx
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+    1848:	4c 8b 44 24 08       	mov    0x8(%rsp),%r8
+	ptr = bounce->ptr + ((start - bounce->addr) & PAGE_MASK);
+    184d:	48 81 e2 00 f0 ff ff 	and    $0xfffffffffffff000,%rdx
+    1854:	48 03 54 24 18       	add    0x18(%rsp),%rdx
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+    1859:	48 39 c5             	cmp    %rax,%rbp
+    185c:	0f 83 19 01 00 00    	jae    197b <dmirror_fops_unlocked_ioctl+0x3fb>
+    1862:	4c 01 c0             	add    %r8,%rax
+    1865:	4d 89 c7             	mov    %r8,%r15
+    1868:	48 29 e8             	sub    %rbp,%rax
+    186b:	4c 29 c5             	sub    %r8,%rbp
+    186e:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+    1873:	eb 6b                	jmp    18e0 <dmirror_fops_unlocked_ioctl+0x360>
+	return (unsigned long)entry & 3UL;
+    1875:	83 e0 03             	and    $0x3,%eax
+		if (!page || xa_pointer_tag(entry) != DPT_XA_TAG_WRITE)
+    1878:	83 f8 03             	cmp    $0x3,%eax
+    187b:	0f 85 80 00 00 00    	jne    1901 <dmirror_fops_unlocked_ioctl+0x381>
+    1881:	48 8b 54 24 10       	mov    0x10(%rsp),%rdx
+	return page_to_virt(page);
+    1886:	48 2b 0d 00 00 00 00 	sub    0x0(%rip),%rcx        # 188d <dmirror_fops_unlocked_ioctl+0x30d>
+		bounce->cpages++;
+    188d:	49 83 c7 01          	add    $0x1,%r15
+    1891:	48 c1 f9 06          	sar    $0x6,%rcx
+    1895:	48 8b 02             	mov    (%rdx),%rax
+    1898:	48 c1 e1 0c          	shl    $0xc,%rcx
+    189c:	48 03 0d 00 00 00 00 	add    0x0(%rip),%rcx        # 18a3 <dmirror_fops_unlocked_ioctl+0x323>
+    18a3:	48 89 d6             	mov    %rdx,%rsi
+    18a6:	48 8d 79 08          	lea    0x8(%rcx),%rdi
+		ptr += PAGE_SIZE;
+    18aa:	48 81 c2 00 10 00 00 	add    $0x1000,%rdx
+    18b1:	48 89 01             	mov    %rax,(%rcx)
+    18b4:	48 8b 42 f8          	mov    -0x8(%rdx),%rax
+    18b8:	48 83 e7 f8          	and    $0xfffffffffffffff8,%rdi
+    18bc:	48 89 81 f8 0f 00 00 	mov    %rax,0xff8(%rcx)
+    18c3:	48 29 f9             	sub    %rdi,%rcx
+    18c6:	48 29 ce             	sub    %rcx,%rsi
+    18c9:	81 c1 00 10 00 00    	add    $0x1000,%ecx
+    18cf:	c1 e9 03             	shr    $0x3,%ecx
+    18d2:	f3 48 a5             	rep movsq %ds:(%rsi),%es:(%rdi)
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+    18d5:	4c 39 7c 24 08       	cmp    %r15,0x8(%rsp)
+    18da:	0f 84 a0 00 00 00    	je     1980 <dmirror_fops_unlocked_ioctl+0x400>
+		entry = xa_load(&dmirror->pt, pfn);
+    18e0:	48 8b 7c 24 28       	mov    0x28(%rsp),%rdi
+    18e5:	4a 8d 74 3d 00       	lea    0x0(%rbp,%r15,1),%rsi
+    18ea:	48 89 54 24 10       	mov    %rdx,0x10(%rsp)
+    18ef:	e8 00 00 00 00       	callq  18f4 <dmirror_fops_unlocked_ioctl+0x374>
+		if (!page || xa_pointer_tag(entry) != DPT_XA_TAG_WRITE)
+    18f4:	48 89 c1             	mov    %rax,%rcx
+    18f7:	48 83 e1 fc          	and    $0xfffffffffffffffc,%rcx
+    18fb:	0f 85 74 ff ff ff    	jne    1875 <dmirror_fops_unlocked_ioctl+0x2f5>
+		mutex_unlock(&dmirror->mutex);
+    1901:	48 8b 3c 24          	mov    (%rsp),%rdi
+		start = cmd->addr + (bounce.cpages << PAGE_SHIFT);
+    1905:	4c 89 fd             	mov    %r15,%rbp
+    1908:	48 c1 e5 0c          	shl    $0xc,%rbp
+		mutex_unlock(&dmirror->mutex);
+    190c:	e8 00 00 00 00       	callq  1911 <dmirror_fops_unlocked_ioctl+0x391>
+		start = cmd->addr + (bounce.cpages << PAGE_SHIFT);
+    1911:	48 03 6c 24 50       	add    0x50(%rsp),%rbp
+		ret = dmirror_fault(dmirror, start, end, true);
+    1916:	4c 89 ea             	mov    %r13,%rdx
+    1919:	4c 89 e7             	mov    %r12,%rdi
+    191c:	b9 01 00 00 00       	mov    $0x1,%ecx
+    1921:	48 89 ee             	mov    %rbp,%rsi
+    1924:	e8 b7 f5 ff ff       	callq  ee0 <dmirror_fault>
+		if (ret)
+    1929:	85 c0                	test   %eax,%eax
+    192b:	75 75                	jne    19a2 <dmirror_fops_unlocked_ioctl+0x422>
+		cmd->faults++;
+    192d:	48 83 44 24 70 01    	addq   $0x1,0x70(%rsp)
+    1933:	4d 89 f8             	mov    %r15,%r8
+    1936:	e9 f0 fe ff ff       	jmpq   182b <dmirror_fops_unlocked_ioctl+0x2ab>
+    193b:	48 8b 5c 24 30       	mov    0x30(%rsp),%rbx
+	cmd->cpages = bounce.cpages;
+    1940:	48 8b 44 24 48       	mov    0x48(%rsp),%rax
+	vfree(bounce->ptr);
+    1945:	48 89 df             	mov    %rbx,%rdi
+	cmd->cpages = bounce.cpages;
+    1948:	48 89 44 24 68       	mov    %rax,0x68(%rsp)
+	vfree(bounce->ptr);
+    194d:	e8 00 00 00 00       	callq  1952 <dmirror_fops_unlocked_ioctl+0x3d2>
+	if (ret)
+    1952:	48 63 c5             	movslq %ebp,%rax
+    1955:	e9 1e fe ff ff       	jmpq   1778 <dmirror_fops_unlocked_ioctl+0x1f8>
+	if (WARN_ON_ONCE(bytes > INT_MAX))
+    195a:	0f 0b                	ud2    
+	cmd->cpages = bounce.cpages;
+    195c:	48 c7 44 24 68 00 00 	movq   $0x0,0x68(%rsp)
+    1963:	00 00 
+	vfree(bounce->ptr);
+    1965:	48 8b 7c 24 18       	mov    0x18(%rsp),%rdi
+    196a:	e8 00 00 00 00       	callq  196f <dmirror_fops_unlocked_ioctl+0x3ef>
+    196f:	48 c7 c0 f2 ff ff ff 	mov    $0xfffffffffffffff2,%rax
+    1976:	e9 fd fd ff ff       	jmpq   1778 <dmirror_fops_unlocked_ioctl+0x1f8>
+	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++) {
+    197b:	4c 89 44 24 08       	mov    %r8,0x8(%rsp)
+		mutex_unlock(&dmirror->mutex);
+    1980:	48 8b 3c 24          	mov    (%rsp),%rdi
+    1984:	e8 00 00 00 00       	callq  1989 <dmirror_fops_unlocked_ioctl+0x409>
+	cmd->cpages = bounce.cpages;
+    1989:	48 8b 44 24 08       	mov    0x8(%rsp),%rax
+	vfree(bounce->ptr);
+    198e:	48 8b 7c 24 18       	mov    0x18(%rsp),%rdi
+	cmd->cpages = bounce.cpages;
+    1993:	48 89 44 24 68       	mov    %rax,0x68(%rsp)
+	vfree(bounce->ptr);
+    1998:	e8 00 00 00 00       	callq  199d <dmirror_fops_unlocked_ioctl+0x41d>
+	if (ret)
+    199d:	e9 a7 fc ff ff       	jmpq   1649 <dmirror_fops_unlocked_ioctl+0xc9>
+	vfree(bounce->ptr);
+    19a2:	48 8b 7c 24 18       	mov    0x18(%rsp),%rdi
+    19a7:	89 04 24             	mov    %eax,(%rsp)
+	cmd->cpages = bounce.cpages;
+    19aa:	4c 89 7c 24 68       	mov    %r15,0x68(%rsp)
+	vfree(bounce->ptr);
+    19af:	e8 00 00 00 00       	callq  19b4 <dmirror_fops_unlocked_ioctl+0x434>
+	if (ret)
+    19b4:	48 63 04 24          	movslq (%rsp),%rax
+    19b8:	e9 bb fd ff ff       	jmpq   1778 <dmirror_fops_unlocked_ioctl+0x1f8>
+    19bd:	48 8b 5c 24 30       	mov    0x30(%rsp),%rbx
+	cmd->cpages = bounce.cpages;
+    19c2:	48 8b 44 24 48       	mov    0x48(%rsp),%rax
+	vfree(bounce->ptr);
+    19c7:	48 89 df             	mov    %rbx,%rdi
+	cmd->cpages = bounce.cpages;
+    19ca:	48 89 44 24 68       	mov    %rax,0x68(%rsp)
+	vfree(bounce->ptr);
+    19cf:	e8 00 00 00 00       	callq  19d4 <dmirror_fops_unlocked_ioctl+0x454>
+    19d4:	e9 8b fc ff ff       	jmpq   1664 <dmirror_fops_unlocked_ioctl+0xe4>
+    19d9:	0f 0b                	ud2    
+	return n;
+    19db:	eb e5                	jmp    19c2 <dmirror_fops_unlocked_ioctl+0x442>
+	if (!bounce->ptr)
+    19dd:	48 c7 c0 f4 ff ff ff 	mov    $0xfffffffffffffff4,%rax
+    19e4:	e9 8f fd ff ff       	jmpq   1778 <dmirror_fops_unlocked_ioctl+0x1f8>
+}
+    19e9:	e8 00 00 00 00       	callq  19ee <dmirror_fops_unlocked_ioctl+0x46e>
+
+Disassembly of section .text.unlikely:
+
+0000000000000000 <dmirror_device_remove>:
+
+	return 0;
+}
+
+static void dmirror_device_remove(struct dmirror_device *mdevice)
+{
+   0:	41 55                	push   %r13
+   2:	49 c7 c5 00 00 00 00 	mov    $0x0,%r13
+   9:	41 54                	push   %r12
+   b:	55                   	push   %rbp
+   c:	31 ed                	xor    %ebp,%ebp
+   e:	53                   	push   %rbx
+	unsigned int i;
+
+	if (mdevice->devmem_chunks) {
+   f:	48 83 7f 78 00       	cmpq   $0x0,0x78(%rdi)
+{
+  14:	48 89 fb             	mov    %rdi,%rbx
+	if (mdevice->devmem_chunks) {
+  17:	74 41                	je     5a <dmirror_device_remove+0x5a>
+		for (i = 0; i < mdevice->devmem_count; i++) {
+  19:	48 8b 7b 78          	mov    0x78(%rbx),%rdi
+  1d:	39 6b 74             	cmp    %ebp,0x74(%rbx)
+  20:	76 33                	jbe    55 <dmirror_device_remove+0x55>
+			struct dmirror_chunk *devmem =
+				mdevice->devmem_chunks[i];
+  22:	89 e8                	mov    %ebp,%eax
+		for (i = 0; i < mdevice->devmem_count; i++) {
+  24:	ff c5                	inc    %ebp
+			struct dmirror_chunk *devmem =
+  26:	4c 8b 24 c7          	mov    (%rdi,%rax,8),%r12
+
+			memunmap_pages(&devmem->pagemap);
+  2a:	4c 89 e7             	mov    %r12,%rdi
+  2d:	e8 00 00 00 00       	callq  32 <dmirror_device_remove+0x32>
+  32:	49 8b 44 24 38       	mov    0x38(%r12),%rax
+			release_mem_region(devmem->pagemap.res.start,
+  37:	49 8b 74 24 30       	mov    0x30(%r12),%rsi
+  3c:	4c 89 ef             	mov    %r13,%rdi
+  3f:	48 8d 50 01          	lea    0x1(%rax),%rdx
+  43:	48 29 f2             	sub    %rsi,%rdx
+  46:	e8 00 00 00 00       	callq  4b <dmirror_device_remove+0x4b>
+					   resource_size(&devmem->pagemap.res));
+			kfree(devmem);
+  4b:	4c 89 e7             	mov    %r12,%rdi
+  4e:	e8 00 00 00 00       	callq  53 <dmirror_device_remove+0x53>
+		for (i = 0; i < mdevice->devmem_count; i++) {
+  53:	eb c4                	jmp    19 <dmirror_device_remove+0x19>
+		}
+		kfree(mdevice->devmem_chunks);
+  55:	e8 00 00 00 00       	callq  5a <dmirror_device_remove+0x5a>
+	}
+
+	cdev_del(&mdevice->cdevice);
+  5a:	48 89 df             	mov    %rbx,%rdi
+}
+  5d:	5b                   	pop    %rbx
+  5e:	5d                   	pop    %rbp
+  5f:	41 5c                	pop    %r12
+  61:	41 5d                	pop    %r13
+	cdev_del(&mdevice->cdevice);
+  63:	e9 00 00 00 00       	jmpq   68 <.LC4+0x30>
+
+Disassembly of section .altinstr_replacement:
+
+0000000000000000 <.altinstr_replacement>:
+   0:	e8 00 00 00 00       	callq  5 <.altinstr_replacement+0x5>
+   5:	e8 00 00 00 00       	callq  a <init_module+0xa>
+
+Disassembly of section .init.text:
+
+0000000000000000 <init_module>:
+
+static int __init hmm_dmirror_init(void)
+{
+   0:	41 54                	push   %r12
+	int ret;
+	int id;
+
+	ret = alloc_chrdev_region(&dmirror_dev, 0, DMIRROR_NDEVICES,
+   2:	48 c7 c1 00 00 00 00 	mov    $0x0,%rcx
+   9:	ba 02 00 00 00       	mov    $0x2,%edx
+   e:	31 f6                	xor    %esi,%esi
+{
+  10:	55                   	push   %rbp
+	ret = alloc_chrdev_region(&dmirror_dev, 0, DMIRROR_NDEVICES,
+  11:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+{
+  18:	53                   	push   %rbx
+	ret = alloc_chrdev_region(&dmirror_dev, 0, DMIRROR_NDEVICES,
+  19:	e8 00 00 00 00       	callq  1e <init_module+0x1e>
+  1e:	89 c3                	mov    %eax,%ebx
+				  "HMM_DMIRROR");
+	if (ret)
+  20:	85 c0                	test   %eax,%eax
+  22:	0f 85 63 01 00 00    	jne    18b <init_module+0x18b>
+	dev = MKDEV(MAJOR(dmirror_dev), id);
+  28:	8b 2d 00 00 00 00    	mov    0x0(%rip),%ebp        # 2e <init_module+0x2e>
+	mutex_init(&mdevice->devmem_lock);
+  2e:	48 c7 c2 00 00 00 00 	mov    $0x0,%rdx
+  35:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+  3c:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  43:	e8 00 00 00 00       	callq  48 <init_module+0x48>
+	cdev_init(&mdevice->cdevice, &dmirror_fops);
+  48:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+  4f:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+	spin_lock_init(&mdevice->lock);
+  56:	c7 05 00 00 00 00 00 	movl   $0x0,0x0(%rip)        # 60 <init_module+0x60>
+  5d:	00 00 00 
+	dev = MKDEV(MAJOR(dmirror_dev), id);
+  60:	81 e5 00 00 f0 ff    	and    $0xfff00000,%ebp
+	mdevice->cdevice.owner = THIS_MODULE;
+  66:	49 c7 c4 00 00 00 00 	mov    $0x0,%r12
+	cdev_init(&mdevice->cdevice, &dmirror_fops);
+  6d:	e8 00 00 00 00       	callq  72 <init_module+0x72>
+	ret = cdev_add(&mdevice->cdevice, dev, 1);
+  72:	ba 01 00 00 00       	mov    $0x1,%edx
+  77:	89 ee                	mov    %ebp,%esi
+  79:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+	mdevice->cdevice.owner = THIS_MODULE;
+  80:	4c 89 25 00 00 00 00 	mov    %r12,0x0(%rip)        # 87 <init_module+0x87>
+	ret = cdev_add(&mdevice->cdevice, dev, 1);
+  87:	e8 00 00 00 00       	callq  8c <init_module+0x8c>
+	if (ret)
+  8c:	85 c0                	test   %eax,%eax
+  8e:	0f 85 ab 00 00 00    	jne    13f <init_module+0x13f>
+	dmirror_allocate_chunk(mdevice, NULL);
+  94:	31 f6                	xor    %esi,%esi
+  96:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  9d:	e8 00 00 00 00       	callq  a2 <init_module+0xa2>
+	dev = MKDEV(MAJOR(dmirror_dev), id);
+  a2:	8b 2d 00 00 00 00    	mov    0x0(%rip),%ebp        # a8 <init_module+0xa8>
+	mutex_init(&mdevice->devmem_lock);
+  a8:	48 c7 c2 00 00 00 00 	mov    $0x0,%rdx
+  af:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+  b6:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  bd:	e8 00 00 00 00       	callq  c2 <init_module+0xc2>
+	dev = MKDEV(MAJOR(dmirror_dev), id);
+  c2:	81 e5 00 00 f0 ff    	and    $0xfff00000,%ebp
+	cdev_init(&mdevice->cdevice, &dmirror_fops);
+  c8:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+  cf:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+	spin_lock_init(&mdevice->lock);
+  d6:	c7 05 00 00 00 00 00 	movl   $0x0,0x0(%rip)        # e0 <init_module+0xe0>
+  dd:	00 00 00 
+	dev = MKDEV(MAJOR(dmirror_dev), id);
+  e0:	83 cd 01             	or     $0x1,%ebp
+	cdev_init(&mdevice->cdevice, &dmirror_fops);
+  e3:	e8 00 00 00 00       	callq  e8 <init_module+0xe8>
+	ret = cdev_add(&mdevice->cdevice, dev, 1);
+  e8:	ba 01 00 00 00       	mov    $0x1,%edx
+  ed:	89 ee                	mov    %ebp,%esi
+  ef:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+	mdevice->cdevice.owner = THIS_MODULE;
+  f6:	4c 89 25 00 00 00 00 	mov    %r12,0x0(%rip)        # fd <init_module+0xfd>
+	ret = cdev_add(&mdevice->cdevice, dev, 1);
+  fd:	e8 00 00 00 00       	callq  102 <init_module+0x102>
+	if (ret)
+ 102:	85 c0                	test   %eax,%eax
+ 104:	75 34                	jne    13a <init_module+0x13a>
+	dmirror_allocate_chunk(mdevice, NULL);
+ 106:	31 f6                	xor    %esi,%esi
+ 108:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+ 10f:	e8 00 00 00 00       	callq  114 <init_module+0x114>
+ 114:	31 f6                	xor    %esi,%esi
+ 116:	bf c2 0d 10 00       	mov    $0x100dc2,%edi
+ 11b:	e8 00 00 00 00       	callq  120 <init_module+0x120>
+	/*
+	 * Allocate a zero page to simulate a reserved page of device private
+	 * memory which is always zero. The zero_pfn page isn't used just to
+	 * make the code here simpler (i.e., we need a struct page for it).
+	 */
+	dmirror_zero_page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
+ 120:	48 89 05 00 00 00 00 	mov    %rax,0x0(%rip)        # 127 <init_module+0x127>
+	if (!dmirror_zero_page) {
+ 127:	48 85 c0             	test   %rax,%rax
+ 12a:	74 19                	je     145 <init_module+0x145>
+		ret = -ENOMEM;
+		goto err_chrdev;
+	}
+
+	pr_info("HMM test module loaded. This is only for testing HMM.\n");
+ 12c:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+ 133:	e8 00 00 00 00       	callq  138 <init_module+0x138>
+	return 0;
+ 138:	eb 51                	jmp    18b <init_module+0x18b>
+	for (id = 0; id < DMIRROR_NDEVICES; id++) {
+ 13a:	bb 01 00 00 00       	mov    $0x1,%ebx
+ 13f:	89 dd                	mov    %ebx,%ebp
+	ret = cdev_add(&mdevice->cdevice, dev, 1);
+ 141:	89 c3                	mov    %eax,%ebx
+ 143:	eb 0a                	jmp    14f <init_module+0x14f>
+ 145:	bd 02 00 00 00       	mov    $0x2,%ebp
+		ret = -ENOMEM;
+ 14a:	bb f4 ff ff ff       	mov    $0xfffffff4,%ebx
+ 14f:	8d 7d ff             	lea    -0x1(%rbp),%edi
+ 152:	48 63 ff             	movslq %edi,%rdi
+ 155:	48 69 ff c0 00 00 00 	imul   $0xc0,%rdi,%rdi
+ 15c:	48 81 c7 00 00 00 00 	add    $0x0,%rdi
+
+err_chrdev:
+	while (--id >= 0)
+ 163:	ff cd                	dec    %ebp
+ 165:	4c 8d a7 40 ff ff ff 	lea    -0xc0(%rdi),%r12
+ 16c:	83 fd ff             	cmp    $0xffffffff,%ebp
+ 16f:	74 0a                	je     17b <init_module+0x17b>
+		dmirror_device_remove(dmirror_devices + id);
+ 171:	e8 00 00 00 00       	callq  176 <init_module+0x176>
+ 176:	4c 89 e7             	mov    %r12,%rdi
+ 179:	eb e8                	jmp    163 <init_module+0x163>
+	unregister_chrdev_region(dmirror_dev, DMIRROR_NDEVICES);
+ 17b:	8b 3d 00 00 00 00    	mov    0x0(%rip),%edi        # 181 <init_module+0x181>
+ 181:	be 02 00 00 00       	mov    $0x2,%esi
+ 186:	e8 00 00 00 00       	callq  18b <init_module+0x18b>
+err_unreg:
+	return ret;
+}
+ 18b:	89 d8                	mov    %ebx,%eax
+ 18d:	5b                   	pop    %rbx
+ 18e:	5d                   	pop    %rbp
+ 18f:	41 5c                	pop    %r12
+ 191:	c3                   	retq   
+
+Disassembly of section .exit.text:
+
+0000000000000000 <cleanup_module>:
+
+static void __exit hmm_dmirror_exit(void)
+{
+	int id;
+
+	if (dmirror_zero_page)
+   0:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 7 <cleanup_module+0x7>
+   7:	48 85 ff             	test   %rdi,%rdi
+   a:	74 07                	je     13 <cleanup_module+0x13>
+		__free_page(dmirror_zero_page);
+   c:	31 f6                	xor    %esi,%esi
+   e:	e8 00 00 00 00       	callq  13 <cleanup_module+0x13>
+	for (id = 0; id < DMIRROR_NDEVICES; id++)
+		dmirror_device_remove(dmirror_devices + id);
+  13:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  1a:	e8 00 00 00 00       	callq  1f <cleanup_module+0x1f>
+  1f:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  26:	e8 00 00 00 00       	callq  2b <cleanup_module+0x2b>
+	unregister_chrdev_region(dmirror_dev, DMIRROR_NDEVICES);
+  2b:	8b 3d 00 00 00 00    	mov    0x0(%rip),%edi        # 31 <cleanup_module+0x31>
+  31:	be 02 00 00 00       	mov    $0x2,%esi
+  36:	e9 00 00 00 00       	jmpq   3b <.LC4+0x3>

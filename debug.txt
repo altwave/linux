@@ -1,0 +1,1001 @@
+-- Logs begin at Thu 2020-07-09 16:06:14 EDT, end at Thu 2020-09-10 11:59:32 EDT. --
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -16
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_hole
+Sep 10 11:52:14 cat-server kernel: ops->pte_hole2 returned -14
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -14
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -16
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_hole
+Sep 10 11:52:14 cat-server kernel: ops->pte_hole2 returned -14
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -14
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -16
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_hole
+Sep 10 11:52:14 cat-server kernel: ops->pte_hole2 returned -14
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -14
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -16
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_hole
+Sep 10 11:52:14 cat-server kernel: ops->pte_hole2 returned -14
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -14
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -16
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437744065224
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: BUG: unable to handle page fault for address: 00000000ffff87c7
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: #PF: supervisor read access in kernel mode
+Sep 10 11:52:14 cat-server kernel: #PF: error_code(0x0000) - not-present page
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: PGD 0 P4D 0 
+Sep 10 11:52:14 cat-server kernel: Oops: 0000 [#1] PREEMPT SMP PTI
+Sep 10 11:52:14 cat-server kernel: CPU: 38 PID: 4420 Comm: hmm-tests Not tainted 5.8.0-rc4-00090-g5dbe32d7bd28-dirty #154
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Hardware name: Silicon Mechanics iPW-4T2-308/X11DAi-N, BIOS 2.0 11/29/2017
+Sep 10 11:52:14 cat-server kernel: RIP: 0010:mm_walk_range_lookup+0x28/0x50
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Code: eb a2 0f 1f 44 00 00 41 54 45 31 e4 53 48 89 fb 48 c7 c7 c8 e7 56 9b e8 53 72 e3 ff 48 85 db 74 2a 4c 8b 63 28 4d 85 e4 74 21 <4d> 8b 24 24 48 c7 c7 1c e8 56 9b e8 35 72 e3 ff 4d 85 e4 74 0c 48
+Sep 10 11:52:14 cat-server kernel: RSP: 0018:ffffa390086179a8 EFLAGS: 00010202
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: RAX: 000000000000001b RBX: ffffa39008617ac8 RCX: 0000000000000000
+Sep 10 11:52:14 cat-server kernel: RDX: 0000000000000000 RSI: ffffffff9b557717 RDI: 00000000ffffffff
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: RBP: ffffa39008617ac8 R08: 0000000000000000 R09: 0000000000000001
+Sep 10 11:52:14 cat-server kernel: R10: 0000000000aaaaaa R11: ffffffff9b2c2380 R12: 00000000ffff87c7
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: R13: ffffa39008617a50 R14: 0000000000000001 R15: ffffa39008617b70
+Sep 10 11:52:14 cat-server kernel: FS:  00007ff23be25b80(0000) GS:ffff92e64fc80000(0000) knlGS:0000000000000000
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Sep 10 11:52:14 cat-server kernel: CR2: 00000000ffff87c7 CR3: 0000000bc5550006 CR4: 00000000007606e0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+Sep 10 11:52:14 cat-server kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Sep 10 11:52:14 cat-server kernel: PKRU: 55555554
+Sep 10 11:52:14 cat-server kernel: Call Trace:
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel:  bpf_mm_walk_hmm_range_storage_update_elem+0x3f/0x7f
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel:  bpf_prog_d531f6384fd4e048_start_hook+0xbd/0x330
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel:  ? vprintk_emit+0x14c/0x210
+Sep 10 11:52:14 cat-server kernel:  ? hmm_range_fault+0x66/0xec
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel:  ? dmirror_snapshot.constprop.0+0x21a/0x3d0 [test_hmm]
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel:  ? prep_new_page+0x44/0xb0
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel:  ? get_page_from_freelist+0xfa0/0x1230
+Sep 10 11:52:14 cat-server kernel:  ? preempt_count_add+0x49/0xa0
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel:  ? kernel_init_free_pages+0x6d/0x90
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel:  ? prep_new_page+0x8a/0xb0
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel:  ? get_page_from_freelist+0xfa0/0x1230
+Sep 10 11:52:14 cat-server kernel:  ? __mod_memcg_state.part.0+0x5a/0xc0
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel:  ? __mod_lruvec_state+0xa0/0x100
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel:  ? lru_cache_add+0x7f/0xa0
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel:  ? _raw_spin_unlock+0x16/0x30
+Sep 10 11:52:14 cat-server kernel:  ? dmirror_fops_unlocked_ioctl+0x247/0x450 [test_hmm]
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel:  ? ksys_ioctl+0x82/0xc0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel:  ? __x64_sys_ioctl+0x16/0x20
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel:  ? do_syscall_64+0x44/0x70
+Sep 10 11:52:14 cat-server kernel:  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Modules linked in: test_hmm fuse amdgpu intel_rapl_msr intel_rapl_common skx_edac nfit x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel ipmi_ssif ast snd_hda_codec_realtek kvm drm_vram_helper gpu_sched snd_hda_codec_generic snd_hda_codec_hdmi drm_ttm_helper ledtrig_audio i2c_algo_bit rfkill snd_hda_intel ttm snd_intel_dspcfg snd_hda_codec iTCO_wdt irqbypass iTCO_vendor_support snd_hda_core drm_kms_helper crct10dif_pclmul ofpart snd_hwdep crc32_pclmul ghash_clmulni_intel snd_pcm aesni_intel cmdlinepart crypto_simd nls_iso8859_1 cryptd intel_spi_pci nls_cp437 glue_helper vfat intel_spi cec i40e snd_timer rapl fat spi_nor mei_me snd uas acpi_ipmi syscopyarea intel_cstate i2c_i801 sysfillrect ioatdma sysimgblt ipmi_si usb_storage intel_uncore mei mtd joydev input_leds mousedev pcspkr fb_sys_fops lpc_ich i2c_smbus soundcore dca wmi ipmi_devintf ipmi_msghandler acpi_power_meter evdev mac_hid drm sg agpgart crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2
+Sep 10 11:52:14 cat-server kernel:  hid_generic
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel:  usbhid hid xhci_pci xhci_hcd sr_mod crc32c_intel cdrom
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: CR2: 00000000ffff87c7
+Sep 10 11:52:14 cat-server kernel: ---[ end trace 5749646fe672e550 ]---
+Sep 10 11:52:14 cat-server kernel: RIP: 0010:mm_walk_range_lookup+0x28/0x50
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Code: eb a2 0f 1f 44 00 00 41 54 45 31 e4 53 48 89 fb 48 c7 c7 c8 e7 56 9b e8 53 72 e3 ff 48 85 db 74 2a 4c 8b 63 28 4d 85 e4 74 21 <4d> 8b 24 24 48 c7 c7 1c e8 56 9b e8 35 72 e3 ff 4d 85 e4 74 0c 48
+Sep 10 11:52:14 cat-server kernel: RSP: 0018:ffffa390086179a8 EFLAGS: 00010202
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: RAX: 000000000000001b RBX: ffffa39008617ac8 RCX: 0000000000000000
+Sep 10 11:52:14 cat-server kernel: RDX: 0000000000000000 RSI: ffffffff9b557717 RDI: 00000000ffffffff
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: RBP: ffffa39008617ac8 R08: 0000000000000000 R09: 0000000000000001
+Sep 10 11:52:14 cat-server kernel: R10: 0000000000aaaaaa R11: ffffffff9b2c2380 R12: 00000000ffff87c7
+Sep 10 11:52:14 cat-server kernel: R13: ffffa39008617a50 R14: 0000000000000001 R15: ffffa39008617b70
+Sep 10 11:52:14 cat-server kernel: FS:  00007ff23be25b80(0000) GS:ffff92e64fc80000(0000) knlGS:0000000000000000
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Sep 10 11:52:14 cat-server kernel: CR2: 00000000ffff87c7 CR3: 0000000bc5550006 CR4: 00000000007606e0
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+Sep 10 11:52:14 cat-server kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: PKRU: 55555554
+Sep 10 11:52:14 cat-server kernel: note: hmm-tests[4420] exited with preempt_count 1
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437746408328
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437746408328
+Sep 10 11:52:14 cat-server kernel: Called hmm_range_fault
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Calling start_hook
+Sep 10 11:52:14 cat-server kernel: Called bpf_mm_walk_hmm_range_storage_update_elem
+Sep 10 11:52:14 cat-server kernel: Addr=18446642437743704968
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Calling ops->test_walk2
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_hole
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_test
+Sep 10 11:52:14 cat-server kernel: ops->pte_hole2 returned -14
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_test returned 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: ops->test_walk2 returned 0
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned -14
+Sep 10 11:52:14 cat-server kernel: Calling ops->pud_entry2
+Sep 10 11:52:14 cat-server kernel: bpf_hmm_vma_walk_pud got 0
+Sep 10 11:52:14 cat-server kernel: ops->pud_entry returned 0
+Sep 10 11:52:14 cat-server kernel: Calling ops->pmd_entry2
+Sep 10 11:52:14 cat-server kernel: Called bpf_hmm_vma_walk_pmd
+Sep 10 11:52:14 cat-server kernel: ops->pmd_entry2 got 0
+Sep 10 11:52:14 cat-server kernel: Called mm_walk_range_lookup
+Sep 10 11:52:14 cat-server kernel: Found hmm_vma_walk
+Sep 10 11:52:14 cat-server kernel: hmm_range_fault from driver returned 0
+Sep 10 11:52:56 cat-server kernel: kauditd_printk_skb: 35 callbacks suppressed
+Sep 10 11:52:56 cat-server kernel: audit: type=1106 audit(1599753176.158:80): pid=855 uid=0 auid=1000 ses=1 msg='op=PAM:session_close grantors=pam_loginuid,pam_keyinit,pam_limits,pam_unix,pam_permit,pam_mail,pam_systemd,pam_env acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:52:56 cat-server kernel: audit: type=1104 audit(1599753176.158:81): pid=855 uid=0 auid=1000 ses=1 msg='op=PAM:setcred grantors=pam_tally2,pam_shells,pam_unix,pam_permit acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:52:56 cat-server kernel: audit: type=1106 audit(1599753176.162:82): pid=4143 uid=0 auid=1000 ses=1 msg='op=PAM:session_close grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/0 res=success'
+Sep 10 11:52:56 cat-server kernel: audit: type=1104 audit(1599753176.162:83): pid=4143 uid=0 auid=1000 ses=1 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/0 res=success'
+Sep 10 11:52:56 cat-server kernel: audit: type=1106 audit(1599753176.162:84): pid=4140 uid=0 auid=1000 ses=1 msg='op=PAM:session_close grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/0 res=success'
+Sep 10 11:52:56 cat-server kernel: audit: type=1104 audit(1599753176.162:85): pid=4140 uid=0 auid=1000 ses=1 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/0 res=success'
+Sep 10 11:53:23 cat-server kernel: audit: type=1100 audit(1599753203.285:86): pid=4428 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication grantors=pam_tally2,pam_shells,pam_unix,pam_permit acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:53:23 cat-server kernel: audit: type=1101 audit(1599753203.292:87): pid=4428 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:accounting grantors=pam_tally2,pam_access,pam_unix,pam_permit,pam_time acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:53:23 cat-server kernel: audit: type=1103 audit(1599753203.292:88): pid=4428 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:setcred grantors=pam_tally2,pam_shells,pam_unix,pam_permit acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:53:23 cat-server kernel: audit: type=1006 audit(1599753203.292:89): pid=4428 uid=0 old-auid=4294967295 auid=1000 tty=(none) old-ses=4294967295 ses=3 res=1
+Sep 10 11:53:23 cat-server kernel: audit: type=1300 audit(1599753203.292:89): arch=c000003e syscall=1 success=yes exit=4 a0=3 a1=7ffef067ba90 a2=4 a3=7ffef067b7a4 items=0 ppid=753 pid=4428 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=3 comm="sshd" exe="/usr/bin/sshd" key=(null)
+Sep 10 11:53:23 cat-server kernel: audit: type=1327 audit(1599753203.292:89): proctitle=737368643A20636174205B707269765D
+Sep 10 11:53:23 cat-server kernel: audit: type=1105 audit(1599753203.312:90): pid=4428 uid=0 auid=1000 ses=3 msg='op=PAM:session_open grantors=pam_loginuid,pam_keyinit,pam_limits,pam_unix,pam_permit,pam_mail,pam_systemd,pam_env acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:53:23 cat-server kernel: audit: type=1103 audit(1599753203.315:91): pid=4430 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_tally2,pam_shells,pam_unix,pam_permit acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:54:23 cat-server kernel: audit: type=1101 audit(1599753263.725:92): pid=4456 uid=1000 auid=1000 ses=3 msg='op=PAM:accounting grantors=pam_unix,pam_permit,pam_time acct="cat" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:54:23 cat-server kernel: audit: type=1110 audit(1599753263.725:93): pid=4456 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:54:23 cat-server kernel: audit: type=1105 audit(1599753263.728:94): pid=4456 uid=0 auid=1000 ses=3 msg='op=PAM:session_open grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:54:23 cat-server kernel: audit: type=1106 audit(1599753263.975:95): pid=4456 uid=0 auid=1000 ses=3 msg='op=PAM:session_close grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:54:23 cat-server kernel: audit: type=1104 audit(1599753263.975:96): pid=4456 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:00 cat-server kernel: audit: type=1101 audit(1599753300.458:97): pid=4459 uid=1000 auid=1000 ses=3 msg='op=PAM:accounting grantors=pam_unix,pam_permit,pam_time acct="cat" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:00 cat-server kernel: audit: type=1110 audit(1599753300.458:98): pid=4459 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:00 cat-server kernel: audit: type=1105 audit(1599753300.458:99): pid=4459 uid=0 auid=1000 ses=3 msg='op=PAM:session_open grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:02 cat-server kernel: audit: type=1106 audit(1599753302.732:100): pid=4459 uid=0 auid=1000 ses=3 msg='op=PAM:session_close grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:02 cat-server kernel: audit: type=1104 audit(1599753302.732:101): pid=4459 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:07 cat-server kernel: audit: type=1101 audit(1599753307.135:102): pid=4462 uid=1000 auid=1000 ses=3 msg='op=PAM:accounting grantors=pam_unix,pam_permit,pam_time acct="cat" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:07 cat-server kernel: audit: type=1110 audit(1599753307.135:103): pid=4462 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:07 cat-server kernel: audit: type=1105 audit(1599753307.135:104): pid=4462 uid=0 auid=1000 ses=3 msg='op=PAM:session_open grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:07 cat-server kernel: audit: type=1106 audit(1599753307.662:105): pid=4462 uid=0 auid=1000 ses=3 msg='op=PAM:session_close grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:07 cat-server kernel: audit: type=1104 audit(1599753307.662:106): pid=4462 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1101 audit(1599753326.462:107): pid=4464 uid=1000 auid=1000 ses=3 msg='op=PAM:accounting grantors=pam_unix,pam_permit,pam_time acct="cat" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1110 audit(1599753326.462:108): pid=4464 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1105 audit(1599753326.462:109): pid=4464 uid=0 auid=1000 ses=3 msg='op=PAM:session_open grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1106 audit(1599753326.498:110): pid=4464 uid=0 auid=1000 ses=3 msg='op=PAM:session_close grantors=pam_limits,pam_unix,pam_permit acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1104 audit(1599753326.498:111): pid=4464 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_unix,pam_permit,pam_env acct="root" exe="/usr/bin/sudo" hostname=? addr=? terminal=/dev/pts/1 res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1131 audit(1599753326.608:112): pid=1 uid=0 auid=4294967295 ses=4294967295 msg='unit=sshd comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1131 audit(1599753326.622:113): pid=1 uid=0 auid=4294967295 ses=4294967295 msg='unit=getty@tty1 comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1131 audit(1599753326.645:114): pid=1 uid=0 auid=4294967295 ses=4294967295 msg='unit=systemd-random-seed comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1106 audit(1599753326.652:115): pid=4428 uid=0 auid=1000 ses=3 msg='op=PAM:session_close grantors=pam_loginuid,pam_keyinit,pam_limits,pam_unix,pam_permit,pam_mail,pam_systemd,pam_env acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'
+Sep 10 11:55:26 cat-server kernel: audit: type=1104 audit(1599753326.652:116): pid=4428 uid=0 auid=1000 ses=3 msg='op=PAM:setcred grantors=pam_tally2,pam_shells,pam_unix,pam_permit acct="cat" exe="/usr/bin/sshd" hostname=71.197.3.159 addr=71.197.3.159 terminal=ssh res=success'

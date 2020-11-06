@@ -12,8 +12,6 @@
 #include <bpf/bpf_tracing.h>
 #include <sys/types.h>
 #include "bpf_hmm_policy_helpers.h"
-//#include "test_progs.h"
-//#include "libbpf.h"
 
 char _license[] SEC("license") = "GPL";
 
@@ -21,21 +19,13 @@ char _license[] SEC("license") = "GPL";
 SEC("struct_ops/"#name) \
 BPF_PROG(name, args)
 
-struct range_update {
-	struct hmm_range range;
-	unsigned long start;
-	unsigned long end;
-	unsigned long value;
-};
 
-
-/*
 struct hmm_pfn_map {
 	__uint(type, BPF_MAP_TYPE_ARRAY);
 	__uint(max_entries, 10);
 	__type(key, unsigned long);
 	__type(value, unsigned long);
-} hmm_pfn_map SEC(".maps");
+};
 
 struct inner_map {
 	__uint(type, BPF_MAP_TYPE_ARRAY);
@@ -48,27 +38,25 @@ struct outer_hash {
 	__uint(type, BPF_MAP_TYPE_HASH_OF_MAPS);
 	__uint(max_entries, 5);
 	__uint(key_size, sizeof(int));
+	/* Here everything works flawlessly due to reuse of struct inner_map
+	 * and compiler will complain at the attempt to use non-inner_map
+	 * references below. This is great experience.
+	 */
 	__array(values, struct inner_map);
 } outer_hash SEC(".maps");
 
-*/
-
-struct {
-	__uint(type, BPF_MAP_TYPE_HMM_RANGE_STORAGE);
-	__uint(map_flags, BPF_F_NO_PREALLOC);
-	__type(key, int);
-	__type(value, struct hmm_range); //struct hmm_range *);
-} hmm_range_map SEC(".maps");
+//= {
+//	.values = { [0] = &inner_map1 },
+//};
 
 
-/*
 struct bpf_map_def SEC("maps") hmm_range_map = {
 	.type			= BPF_MAP_TYPE_HASH,
 	.key_size		= sizeof(unsigned long),
 	.value_size		= sizeof(unsigned long),
 	.max_entries		= 1024,
 };
-*/
+
 static inline pmd_t pmd_read_atomic(pmd_t *pmdp)
 {
 	/*
@@ -399,32 +387,16 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
 	return !pmd_present(pmd) && is_migration_entry(pmd_to_swp_entry(pmd));
 }
 
-/*
 static int __always_inline hmm_pfns_fill(unsigned long addr, unsigned long end, 
 		struct hmm_range *range, unsigned long cpu_flags)
 {
        	unsigned long i = (addr - range->start) >> PAGE_SHIFT;
 	int npages = (end - addr) >> PAGE_SHIFT;
-
-	//char fmt[] = "hmm_pfns_fill called, addr=%lu, range->start=%lu, i=%lu, npages=%d\n";
-	//bpf_trace_printk(fmt, sizeof(fmt), addr, range->start, i, npages);
-	int MAX_SIZE = 1000;
-
-	#pragma unroll
-	for (int j=0; j<MAX_SIZE; j++) {
-		if (addr < end) {
-			range->hmm_pfns[i++] = cpu_flags;
-			addr += PAGE_SIZE;
-		}
-	}
 	
-	//for (; addr < end; addr += PAGE_SIZE, i++)
-	//	range->hmm_pfns[i] = cpu_flags;
-	
-//	bpf_hmm_pfn_update_user(&range->hmm_pfns[i], cpu_flags, npages * sizeof(unsigned long));
+	bpf_hmm_pfn_update_user(&range->hmm_pfns[i], cpu_flags, npages * sizeof(unsigned long));
 	return 0;
 }
-*/
+
 static int __always_inline hmm_vma_fault(unsigned long addr, unsigned long end,
 			unsigned int required_fault, struct mm_walk *walk)
 {
@@ -530,25 +502,17 @@ _hmm_vma_walk_hole(unsigned long addr_kern, unsigned long end_kern, int depth_ke
 	if (!vma) {
 		if (required_fault)
 			return -EFAULT;
-		return bpf_hmm_pfns_fill(addr, end, range, HMM_PFN_ERROR);
+		return hmm_pfns_fill(addr, end, range, HMM_PFN_ERROR);
 	}
 	if (required_fault)
 		return hmm_vma_fault(addr, end, required_fault, walk);
 	
-	return bpf_hmm_pfns_fill(addr, end, range, 0);
+	return hmm_pfns_fill(addr, end, range, 0);
 }
 
 int BPF_STRUCT_OPS(hmm_vma_walk_hole, unsigned long addr_kern, unsigned long end_kern, int depth_kern, 
-					struct mm_walk *walk, int *ret) {	
-	char fmt[] = "hmm_vma_walk_hole called\n";
-	bpf_trace_printk(fmt, sizeof(fmt));
-	
-	int val =bpf_hmm_vma_walk_hole(addr_kern, end_kern, depth_kern, walk);
-		
-	char fmt2[] = "hmm_vma_walk_hole returned: %d\n";
-	bpf_trace_printk(fmt2, sizeof(fmt2), val);
-	*ret = val;
-	return 0; //ret;
+					struct mm_walk *walk) {	
+	return bpf_hmm_vma_walk_hole(addr_kern, end_kern, depth_kern, walk);
 	//return _hmm_vma_walk_hole(addr_kern, end_kern, depth_kern, walk);
 };
 
@@ -605,18 +569,8 @@ static __always_inline unsigned long pud_to_hmm_pfn_flags(struct hmm_range *rang
 		return pud_write(pud) ? (HMM_PFN_VALID | HMM_PFN_WRITE) : HMM_PFN_VALID;
 }
 
-SEC("struct_ops/hmm_vma_walk_pud")
-int BPF_PROG(hmm_vma_walk_pud, pud_t *pudp_kern, unsigned long start, unsigned long end, struct mm_walk *walk, int *ret) {
-	char fmt[] = "hmm_vma_walk_pud called\n";
-	bpf_trace_printk(fmt, sizeof(fmt));
-	int ret2 = 0;
-	
-	int val = bpf_hmm_vma_walk_pud(pudp_kern, start, end, walk, &ret2);
-		
-	char fmt2[] = "hmm_vma_walk_pud returned: %d\n";
-	bpf_trace_printk(fmt2, sizeof(fmt2), val);
-	*ret = val;
-	return 0; //ret;
+int BPF_STRUCT_OPS(hmm_vma_walk_pud, pud_t *pudp_kern, unsigned long start, unsigned long end, struct mm_walk *walk) {
+	return bpf_hmm_vma_walk_pud(pudp_kern, start, end, walk);
 	/*
 	struct hmm_range *range;
 	unsigned long key;
@@ -773,17 +727,9 @@ fault:
 //	return 0;
 }
 
-int BPF_STRUCT_OPS(hmm_vma_walk_pmd, pmd_t *pmdp, unsigned long start, unsigned long end, struct mm_walk *walk, int *ret) {
+int BPF_STRUCT_OPS(hmm_vma_walk_pmd, pmd_t *pmdp, unsigned long start, unsigned long end, struct mm_walk *walk) {
 //	return 0;
-	char fmt[] = "hmm_vma_walk_pmd called\n";
-	bpf_trace_printk(fmt, sizeof(fmt));
-	
-	int val = bpf_hmm_vma_walk_pmd(pmdp, start, end, walk);
-		
-	char fmt2[] = "hmm_vma_walk_pmd returned: %d\n";
-	bpf_trace_printk(fmt2, sizeof(fmt2), val);
-	*ret = val;
-	return 0; //ret;
+	return bpf_hmm_vma_walk_pmd(pmdp, start, end, walk);
 	/*
 	struct hmm_range *range;
 	unsigned long key;
@@ -850,7 +796,7 @@ again:
 
 int BPF_STRUCT_OPS(hmm_vma_walk_hugetlb_entry, pte_t *pte, unsigned long hmask,
 					unsigned long start, unsigned long end, 
-					struct mm_walk *walk, int *ret) {	
+					struct mm_walk *walk) {	
 	/*
 	unsigned long addr = start, i, pfn;
 	unsigned int required_fault;
@@ -888,38 +834,26 @@ int BPF_STRUCT_OPS(hmm_vma_walk_hugetlb_entry, pte_t *pte, unsigned long hmask,
 	bpf_hmm_spin_unlock(ptl);
 */
 //	return 0;
-	int val= bpf_hmm_vma_walk_hugetlb_entry((void *)pte, hmask, start, end, walk);
-	char fmt2[] = "hmm_vma_walk_hugetlb_entry returned: %d\n";
-	bpf_trace_printk(fmt2, sizeof(fmt2), val);
-	*ret = val;
-	return val;
+	return bpf_hmm_vma_walk_hugetlb_entry((void *)pte, hmask, start, end, walk);
 };
 
 SEC("struct_ops/hmm_test_walk")
-int BPF_PROG(hmm_test_walk, unsigned long start_kern, unsigned long end_kern, struct mm_walk *walk, int *ret) {
+int BPF_PROG(hmm_test_walk, unsigned long start_kern, unsigned long end_kern, struct mm_walk *walk) {
+	/*struct hmm_vma_walk *hmm_vma_walk;
+	struct hmm_range * range;
 	unsigned long start = 0;
 	unsigned long end = 0;
-	unsigned long npages;
-
-	unsigned long key = (unsigned long)walk;
-	struct hmm_range * range = bpf_map_lookup_elem(&hmm_range_map, &key);
-	if (range) {
-		char fmt3[] = "TEST_WALK Found range in map, range.start = %lu\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3), range->start);
-	}
-	else {
-		char fmt3[] = "TEST_WALK Did not find range\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3));
-	}
-	
+	unsigned long key, value;
 	
 	bpf_probe_read_kernel(&start, sizeof(start), &start_kern);
 	bpf_probe_read_kernel(&end, sizeof(end), &end_kern);
 	
-	npages = (end - start) >> PAGE_SHIFT;
-	
-	char fmt4[] = "TEST_WALK start=%lu, end=%lu, npages%lu\n";
-	bpf_trace_printk(fmt4, sizeof(fmt4), start, end, npages);
+	unsigned long npages = (end_kern - start_kern) >> PAGE_SHIFT;
+		
+	key = (unsigned long)bpf_get_hmm_vma_walk(walk);
+	range = (struct hmm_range *)bpf_map_lookup_elem(&hmm_range_map, &key);
+	if (!range)
+		return -1;
 
 
 	// TODO: Fix vma
@@ -928,157 +862,29 @@ int BPF_PROG(hmm_test_walk, unsigned long start_kern, unsigned long end_kern, st
 
 	bpf_probe_read_kernel(&vm_flags, sizeof(vm_flags), &vma->vm_flags);
         
-	if (!(vm_flags & (VM_IO | VM_PFNMAP | VM_MIXEDMAP)) && vm_flags & VM_READ) {
-		char fmt5[] = "Didn't find vm flags, value is %lu\n";
-		bpf_trace_printk(fmt5, sizeof(fmt5), vm_flags);
-		*ret = 0;
+	if (!(vm_flags & (VM_IO | VM_PFNMAP | VM_MIXEDMAP)) &&
+	    vm_flags & VM_READ)
 		return 0;
-	}
-	char fmt6[] = "FOUND vm flags\n";
-	bpf_trace_printk(fmt6, sizeof(fmt6));
-	
-//	if (hmm_range_need_fault(range,	
-//				range->hmm_pfns + ((start_kern - range->start) >> PAGE_SHIFT), 
-//				npages, 0)) {
-//		*ret = -EFAULT;
-//		return -EFAULT;
-//	}
-/*
-	if (range) {
-		struct range_update update = {
-			.start = start,
-			.end = end,
-			.value = HMM_PFN_ERROR,
-			.range = {
-				.start = range->start,
-				.end = range->end,
-				.default_flags = range->default_flags,
-				.pfn_flags_mask = range->pfn_flags_mask,
-				.hmm_pfns = range->hmm_pfns
-			}
-		};	
 
-		int err = bpf_map_update_elem(&hmm_range_map, &key, &update, BPF_EXIST); //BPF_ANY);//BPF_HMM_RANGE_STORAGE_GET_F_CREATE);
-	//bpf_hmm_pfns_fill(range, start, end, HMM_PFN_ERROR);
-// deallocate usermem and store into kernel mem
-//	*ret = 1;
-//	return 1;
-	//return 1;
-	}
-*/	
-	int val = bpf_hmm_vma_walk_test(start_kern, end_kern, walk);
-	char fmt2[] = "hmm_vma_walk_test returned: %d\n";
-	bpf_trace_printk(fmt2, sizeof(fmt2), val);
-	*ret = val;
-	return val;
 	
+	if (hmm_range_need_fault(range,	
+				range->hmm_pfns + ((start_kern - range->start) >> PAGE_SHIFT), 
+				npages, 0)) {
+		return -EFAULT;
+	}
+	
+
+	hmm_pfns_fill(start, end, range, HMM_PFN_ERROR);
+// deallocate usermem and store into kernel mem
+	return 1;*/
+	//return 1;
+	return bpf_hmm_vma_walk_test(start_kern, end_kern, walk);
+//	return 0;
 };
 
-SEC("struct_ops/start_hook")
-void BPF_PROG(start_hook, void *walk) {
-	unsigned long key;
-	int inner_map_fd = 0;
-	unsigned long i;
-	int npages;
-
-	struct hmm_range range = {
-		.start = 5UL,
-	};
-
-	struct range_update update = {
-		.range = {
-			.start = 0UL,
-		},
-//		.range = {
-//
-//		},
-	};
-
-	struct hmm_range * range2 = NULL;
-
-	if (range.start) {
-		char fmt3[] = "Set range.start = %lu\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3), range.start);
-	}
-	else {
-		char fmt3[] = "Range.start not set\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3));
-	}
-	
-//	struct hmm_range value = {};
-
-	key = (unsigned long)walk;
-//	char fmt2[] = "start_hook called, key is %lu\n";
-//	bpf_trace_printk(fmt2, sizeof(fmt2), key);
-//	struct hmm_range * range2 = bpf_get_hmm_range_user(walk); //replace wmap
-//	value = (unsigned long)range;
-//	if (!range2) {
-//		char fmt[] = "start_hook did not find range\n";
-//		bpf_trace_printk(fmt, sizeof(fmt));
-//	}
-       // value = NULL;	
-	int err = bpf_map_update_elem(&hmm_range_map, &key, &update, BPF_NOEXIST); //BPF_ANY);//BPF_HMM_RANGE_STORAGE_GET_F_CREATE);
-	char fmt[] = "update elem returned %d\n";
-	bpf_trace_printk(fmt, sizeof(fmt), err);
-
-	if (range.start) {
-		char fmt3[] = "range.start = %lu\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3), range.start);
-	}
-	else {
-		char fmt3[] = "Did not find range.start\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3));
-	}
-
-	range2 = bpf_map_lookup_elem(&hmm_range_map, &key);
-	if (range2) {
-		char fmt3[] = "Found range2 in map, range2.start = %lu\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3), range2->start);
-		if (range2->end - range2->start > 0) {	
-			char fmt4[] = "Contains hmm_pfns, range2.hmm_pfns = %lu\n";
-			bpf_trace_printk(fmt4, sizeof(fmt4), range2->hmm_pfns[0]);
-			
-       			//i = (range2->end - range2->start) >> PAGE_SHIFT;
-			npages = (range2->end - range2->start) >> PAGE_SHIFT;
-			char fmt5[] = "Creating inner map, npages = %d\n";
-			bpf_trace_printk(fmt5, sizeof(fmt5), npages);
-			//inner_map_fd = bpf_create_map(BPF_MAP_TYPE_ARRAY, sizeof(unsigned long), sizeof(unsigned long), npages, 0);	
-		}
-	}
-	else {
-		char fmt3[] = "Did not find range2\n";
-		bpf_trace_printk(fmt3, sizeof(fmt3));
-	}
-	
-	
-	//range = NULL; //bpf_hmm_range_storage_get(&hmm_range_map, (void *)key, NULL, BPF_SK_STORAGE_GET_F_CREATE);
-	//if (!range) {
-	//	char fmt[] = "update elem returned %d\n";
-	//	bpf_trace_printk(fmt, sizeof(fmt), err);
-//	}
-
-//	char fmt3[] = "range->start = %lu, range->end = %lu\n";
-//	bpf_trace_printk(fmt3, sizeof(fmt3), range->start, range->end);
-
-	//bpf_map_update_elem(&hmm_range_map, &key, &value, BPF_ANY);
-	
-}	
-SEC("struct_ops/end_hook")
-void BPF_PROG(end_hook, void *walk) {
-	unsigned long key;
-
-	key = (unsigned long)walk;
-	char fmt2[] = "end_hook called, key is %lu\n";
-	bpf_trace_printk(fmt2, sizeof(fmt2), key);
-
-	//bpf_hmm_range_storage_delete(&hmm_range_map, (void *)key);
-
-	bpf_map_delete_elem(&hmm_range_map, &key);
-	
-}	
-/*
 SEC("struct_ops/policy_fault")
-void BPF_PROG(policy_fault, struct hmm_vma_walk * walk) {
+void BPF_PROG(policy_fault, struct hmm_vma_walk * walk, struct mm_walk_ops * ops) {
+
 	unsigned long key, value;
 	unsigned long npages;
 	struct inner_map * inner_map;
@@ -1090,6 +896,10 @@ void BPF_PROG(policy_fault, struct hmm_vma_walk * walk) {
 
 	bpf_map_update_elem(&hmm_range_map, &key, &value, BPF_ANY);
 
+	int inner_key;
+	unsigned long inner_value;
+	inner_key = 0;
+	inner_value = 75;
 
 //	inner_map = bpf_map_lookup_elem(&outer_hash, &inner_key);
 	//if (!inner_map)
@@ -1102,7 +912,7 @@ void BPF_PROG(policy_fault, struct hmm_vma_walk * walk) {
 //	key = 1;
 
 //	npages = (range->end - range->start) >> PAGE_SHIFT;
-//	unsigned long pfns[npages] = rahmm_pfns;
+//	unsigned long pfns[npages] = range->hmm_pfns;
 
 //	if (range && range->hmm_pfns && range->hmm_pfns[0]) 
 //		bpf_map_update_elem(&hmm_pfn_map, &key, &range->hmm_pfns[0], BPF_ANY);
@@ -1116,32 +926,26 @@ void BPF_PROG(policy_fault, struct hmm_vma_walk * walk) {
 	//	bpf_map_update_elem(map, &i, &range->hmm_pfns[i], BPF_ANY);
 	//}
 
-	bpf_hmm_policy_fault(walk);
+	bpf_hmm_policy_fault(walk, ops);
 
 	bpf_map_delete_elem(&hmm_range_map, &key);
 
 	// update kern_range with user_range	
 	// free user memory
-
-};
-*/
-
-SEC(".struct_ops")
-struct mm_walk_ops ops = {
-	.pud_entry2	= (void *)hmm_vma_walk_pud,
-	.pmd_entry2	= (void *)hmm_vma_walk_pmd,
-	.pte_hole2	= (void *)hmm_vma_walk_hole,
-	.hugetlb_entry2	= (void *)hmm_vma_walk_hugetlb_entry,
-	.test_walk2 = (void *)hmm_test_walk,
-	.start_hook	= (void *)start_hook,
-	.end_hook	= (void *)end_hook,
-	.name = "bpf_mm_walk_ops",
 };
 
-/*
 SEC(".struct_ops")
 struct hmm_policy policy = {
 	.fault = (void *)policy_fault,
 	.name = "bpf_hmm_policy"
 };
-*/
+
+SEC(".struct_ops")
+struct mm_walk_ops ops = {
+	.pud_entry	= (void *)hmm_vma_walk_pud,
+	.pmd_entry	= (void *)hmm_vma_walk_pmd,
+	.pte_hole	= (void *)hmm_vma_walk_hole,
+	.hugetlb_entry	= (void *)hmm_vma_walk_hugetlb_entry,
+	.test_walk = (void *)hmm_test_walk,
+	.name = "bpf_mm_walk_ops",
+};

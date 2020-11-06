@@ -117,10 +117,13 @@ static struct bpf_map *find_and_alloc_map(union bpf_attr *attr)
 	if (attr->map_ifindex)
 		ops = &bpf_map_offload_ops;
 	map = ops->map_alloc(attr);
-	if (IS_ERR(map))
+	if (IS_ERR(map)) {
+		printk(KERN_INFO "find_and_alloc_map map alloc error\n");
 		return map;
+	}
 	map->ops = ops;
 	map->map_type = type;
+	printk(KERN_INFO "find_and_alloc_map RETURNING\n");
 	return map;
 }
 
@@ -768,6 +771,7 @@ static int map_check_btf(struct bpf_map *map, const struct btf *btf,
 		if (map->map_type != BPF_MAP_TYPE_HASH &&
 		    map->map_type != BPF_MAP_TYPE_ARRAY &&
 		    map->map_type != BPF_MAP_TYPE_CGROUP_STORAGE &&
+		    map->map_type != BPF_MAP_TYPE_HMM_RANGE_STORAGE &&
 		    map->map_type != BPF_MAP_TYPE_SK_STORAGE)
 			return -ENOTSUPP;
 		if (map->spin_lock_off + sizeof(struct bpf_spin_lock) >
@@ -818,13 +822,17 @@ static int map_create(union bpf_attr *attr)
 
 	/* find map type and init map: hashtable vs rbtree vs bloom vs ... */
 	map = find_and_alloc_map(attr);
-	if (IS_ERR(map))
+	if (IS_ERR(map)) {
+		printk(KERN_INFO "map_create find_and_alloc_map map alloc error\n");
 		return PTR_ERR(map);
+	}
 
 	err = bpf_obj_name_cpy(map->name, attr->map_name,
 			       sizeof(attr->map_name));
-	if (err < 0)
+	if (err < 0) {
+		printk(KERN_INFO "map_create err 2\n");
 		goto free_map;
+	}
 
 	atomic64_set(&map->refcnt, 1);
 	atomic64_set(&map->usercnt, 1);
@@ -844,6 +852,7 @@ static int map_create(union bpf_attr *attr)
 		btf = btf_get_by_fd(attr->btf_fd);
 		if (IS_ERR(btf)) {
 			err = PTR_ERR(btf);
+			printk(KERN_INFO "map_create err 3\n");
 			goto free_map;
 		}
 		map->btf = btf;
@@ -851,8 +860,10 @@ static int map_create(union bpf_attr *attr)
 		if (attr->btf_value_type_id) {
 			err = map_check_btf(map, btf, attr->btf_key_type_id,
 					    attr->btf_value_type_id);
-			if (err)
+			if (err) {
+				printk(KERN_INFO "map_create err 4\n");
 				goto free_map;
+			}
 		}
 
 		map->btf_key_type_id = attr->btf_key_type_id;
@@ -862,12 +873,16 @@ static int map_create(union bpf_attr *attr)
 	}
 
 	err = security_bpf_map_alloc(map);
-	if (err)
+	if (err) {
+		printk(KERN_INFO "map_create err 5\n");
 		goto free_map;
+	}
 
 	err = bpf_map_alloc_id(map);
-	if (err)
+	if (err) {
+		printk(KERN_INFO "map_create err 6\n");
 		goto free_map_sec;
+	}
 
 	err = bpf_map_new_fd(map, f_flags);
 	if (err < 0) {
@@ -877,10 +892,12 @@ static int map_create(union bpf_attr *attr)
 		 * to the userspace and the userspace may
 		 * have refcnt-ed it through BPF_MAP_GET_FD_BY_ID.
 		 */
+		printk(KERN_INFO "map_create err 6\n");
 		bpf_map_put_with_uref(map);
 		return err;
 	}
 
+	printk(KERN_INFO "map_create DONE\n");
 	return err;
 
 free_map_sec:

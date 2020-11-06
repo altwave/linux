@@ -87,7 +87,7 @@ class HeaderParser(object):
         #   - Same as above, with "const" and/or "struct" in front of type
         #   - "..." (undefined number of arguments, for bpf_trace_printk())
         # There is at least one term ("void"), and at most five arguments.
-        p = re.compile(' \* ?((.+) \**\w+\((((const )?(struct )?(\w+|\.\.\.)( \**\w+)?)(, )?){1,7}\))$')
+        p = re.compile(' \* ?((.+) \**\w+\((((const )?(struct )?(\w+|\.\.\.)( \**\w+)?)(, )?){1,9}\))$')
         capture = p.match(self.line)
         if not capture:
             raise NoHelperFound
@@ -408,6 +408,7 @@ class PrinterHelpers(Printer):
             'struct bpf_perf_event_value',
             'struct bpf_pidns_info',
             'struct bpf_sock',
+            'struct bpf_hmm_range',
             'struct bpf_sock_addr',
             'struct bpf_sock_ops',
             'struct bpf_sock_tuple',
@@ -431,6 +432,8 @@ class PrinterHelpers(Printer):
             'struct sk_msg_md',
             'struct xdp_md',
             'struct vm_area_struct',
+            'struct mm_walk_ops',
+            'struct mm_struct',
     ]
     known_types = {
             '...',
@@ -452,6 +455,7 @@ class PrinterHelpers(Printer):
             'struct bpf_perf_event_value',
             'struct bpf_pidns_info',
             'struct bpf_sock',
+            'struct bpf_hmm_range',
             'struct bpf_sock_addr',
             'struct bpf_sock_ops',
             'struct bpf_sock_tuple',
@@ -471,7 +475,9 @@ class PrinterHelpers(Printer):
             'struct hmm_vma_walk',
             'const struct hmm_vma_walk',
             'struct mmu_interval_notifier',
-            'struct vm_area_struct'
+            'struct vm_area_struct',
+            'struct mm_walk_ops',
+            'struct mm_struct',
     }
     mapped_types = {
             'u8': '__u8',

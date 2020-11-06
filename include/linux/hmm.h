@@ -86,7 +86,12 @@ struct hmm_range {
 	unsigned long		default_flags;
 	unsigned long		pfn_flags_mask;
 	void			*dev_private_owner;
-	int 			ret_val;
+
+#ifdef CONFIG_BPF_SYSCALL
+	struct bpf_hmm_range_storage __rcu	*hmm_range_bpf_storage;
+#endif
+
+	//	int 			ret_val;
 };
 
 struct hmm_vma_walk {
@@ -97,13 +102,27 @@ struct hmm_vma_walk {
 
 struct hmm_policy {
 	struct list_head	list;
-	void (*fault)(struct hmm_range * range);
-	char 		name[HMM_POLICY_NAME_MAX];
+	void (*fault)(struct hmm_vma_walk * walk); //fix this to one arg
+//	struct mm_walk_ops * ops;
+	int (*pud_entry)(pud_t *pud, unsigned long addr,
+			 unsigned long next, struct mm_walk *walk);
+	int (*pmd_entry)(pmd_t *pmd, unsigned long addr,
+			 unsigned long next, struct mm_walk *walk);
+	int (*pte_hole)(unsigned long addr, unsigned long next,
+			int depth, struct mm_walk *walk);
+	int (*hugetlb_entry)(pte_t *pte, unsigned long hmask,
+			     unsigned long addr, unsigned long next,
+			     struct mm_walk *walk);
+	int (*test_walk)(unsigned long addr, unsigned long next,
+			struct mm_walk *walk);
+	char name[HMM_POLICY_NAME_MAX];
 };
 
 int hmm_register_policy(struct hmm_policy * policy);
 void hmm_unregister_policy(struct hmm_policy * policy);
 
+int hmm_register_mm_walk_ops(struct mm_walk_ops * ops);
+void hmm_unregister_mm_walk_ops(struct mm_walk_ops * ops);
 
 int hmm_vma_walk_hole(unsigned long addr, unsigned long end, int depth, struct mm_walk *walk);
 int hmm_vma_walk_pmd(pmd_t *pmdp, unsigned long start,unsigned long end,struct mm_walk *walk);
@@ -111,13 +130,16 @@ int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,struct 
 int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask, unsigned long start, unsigned long end, struct mm_walk *walk);
 int hmm_vma_walk_test(unsigned long start, unsigned long end, struct mm_walk *walk);
 
-int _hmm_range_fault(struct hmm_range *range);
+int hmm_default_policy_fault(struct hmm_vma_walk *walk, const struct mm_walk_ops *ops);
 /*
  * Please see Documentation/vm/hmm.rst for how to use the range API.
  */
 int hmm_range_fault(struct hmm_range *range);
 
+inline bool hmm_is_device_private_entry(struct hmm_range *range, swp_entry_t entry);
 
+int hmm_pfns_fill(unsigned long addr, unsigned long end,
+			 struct hmm_range *range, unsigned long cpu_flags);
 /*
  * HMM_RANGE_DEFAULT_TIMEOUT - default timeout (ms) when waiting for a range
  *

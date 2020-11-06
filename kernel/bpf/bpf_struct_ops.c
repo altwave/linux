@@ -210,6 +210,8 @@ bpf_struct_ops_find_value(u32 value_id)
 			return bpf_struct_ops[i];
 	}
 
+	printk(KERN_INFO "bpf_struct_ops_find_value NOT FOUND\n");
+
 	return NULL;
 }
 
@@ -326,6 +328,8 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 	void *image;
 	u32 i;
 
+	printk(KERN_INFO "bpf_struct_ops_map_update_elem called\n");
+
 	if (flags)
 		return -EINVAL;
 
@@ -358,6 +362,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 		goto unlock;
 	}
 
+	printk(KERN_INFO "bpf_struct_ops_map_update_elem HERE 1\n");
 	memcpy(uvalue, value, map->value_size);
 
 	udata = &uvalue->data;
@@ -369,6 +374,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 		struct bpf_prog *prog;
 		u32 moff;
 
+		printk(KERN_INFO "bpf_struct_ops_map_update_elem member\n");
 		moff = btf_member_bit_offset(t, member) / 8;
 		ptype = btf_type_resolve_ptr(btf_vmlinux, member->type, NULL);
 		if (ptype == module_type) {
@@ -378,9 +384,13 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 			continue;
 		}
 
+		printk(KERN_INFO "try to init member\n");
 		err = st_ops->init_member(t, member, kdata, udata);
-		if (err < 0)
+		if (err < 0) {
+
+			printk(KERN_INFO "try to init member FAILED\n");
 			goto reset_unlock;
+		}
 
 		/* The ->init_member() has handled this member */
 		if (err > 0)
@@ -427,6 +437,8 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 		    prog->aux->attach_btf_id != st_ops->type_id ||
 		    prog->expected_attach_type != i) {
 			err = -EINVAL;
+
+			printk(KERN_INFO "prog logic failed\n");
 			goto reset_unlock;
 		}
 
@@ -470,14 +482,17 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 	set_memory_nx((long)st_map->image, 1);
 	set_memory_rw((long)st_map->image, 1);
 	bpf_map_put(map);
+	printk(KERN_INFO "bpf_struct_ops_map_update_elem DONE\n");
 
 reset_unlock:
+	printk(KERN_INFO "reset unlock\n");
 	bpf_struct_ops_map_put_progs(st_map);
 	memset(uvalue, 0, map->value_size);
 	memset(kvalue, 0, map->value_size);
 unlock:
 	kfree(tprogs);
 	mutex_unlock(&st_map->lock);
+	printk(KERN_INFO "bpf_struct_ops_map_update_elem ERR = %d\n", err);
 	return err;
 }
 
@@ -542,8 +557,10 @@ static void bpf_struct_ops_map_free(struct bpf_map *map)
 static int bpf_struct_ops_map_alloc_check(union bpf_attr *attr)
 {
 	if (attr->key_size != sizeof(unsigned int) || attr->max_entries != 1 ||
-	    attr->map_flags || !attr->btf_vmlinux_value_type_id)
+	    attr->map_flags || !attr->btf_vmlinux_value_type_id) {
+		printk(KERN_INFO "bpf_struct_ops_map_alloc_check FAILED -EINVAL\n");
 		return -EINVAL;
+	}
 	return 0;
 }
 
@@ -557,6 +574,7 @@ static struct bpf_map *bpf_struct_ops_map_alloc(union bpf_attr *attr)
 	struct bpf_map *map;
 	int err;
 
+	printk(KERN_INFO "bpf_struct_ops_map_alloc CALLED\n");
 	if (!bpf_capable())
 		return ERR_PTR(-EPERM);
 
@@ -565,8 +583,10 @@ static struct bpf_map *bpf_struct_ops_map_alloc(union bpf_attr *attr)
 		return ERR_PTR(-ENOTSUPP);
 
 	vt = st_ops->value_type;
-	if (attr->value_size != vt->size)
+	if (attr->value_size != vt->size) {
+		printk(KERN_INFO "bpf_struct_ops_map_alloc attr->value_size!=vt->size, %u, %u\n", attr->value_size, vt->size);
 		return ERR_PTR(-EINVAL);
+	}
 
 	t = st_ops->type;
 
@@ -581,11 +601,14 @@ static struct bpf_map *bpf_struct_ops_map_alloc(union bpf_attr *attr)
 		/* struct bpf_progs **progs */
 		 btf_type_vlen(t) * sizeof(struct bpf_prog *);
 	err = bpf_map_charge_init(&mem, map_total_size);
-	if (err < 0)
+	if (err < 0) {
+		printk(KERN_INFO "bpf_struct_ops_map_alloc bpf_map_charge_init err=%d\n", err);
 		return ERR_PTR(err);
+	}
 
 	st_map = bpf_map_area_alloc(st_map_size, NUMA_NO_NODE);
 	if (!st_map) {
+		printk(KERN_INFO "bpf_struct_ops_map_alloc !st_map\n");
 		bpf_map_charge_finish(&mem);
 		return ERR_PTR(-ENOMEM);
 	}
@@ -600,6 +623,7 @@ static struct bpf_map *bpf_struct_ops_map_alloc(union bpf_attr *attr)
 	if (!st_map->uvalue || !st_map->progs || !st_map->image) {
 		bpf_struct_ops_map_free(map);
 		bpf_map_charge_finish(&mem);
+		printk(KERN_INFO "bpf_struct_ops_map_alloc other error\n");
 		return ERR_PTR(-ENOMEM);
 	}
 
@@ -608,6 +632,7 @@ static struct bpf_map *bpf_struct_ops_map_alloc(union bpf_attr *attr)
 	bpf_map_init_from_attr(map, attr);
 	bpf_map_charge_move(&map->memory, &mem);
 
+	printk(KERN_INFO "bpf_struct_ops_map_alloc FINISHED\n");
 	return map;
 }
 

@@ -106,16 +106,18 @@ struct hmm_range {
 };
 */
 
-struct hmm_policy {
-//	struct list_head	list;
-	int (*fault)(struct hmm_range * range);
-	char 		name[HMM_POLICY_NAME_MAX];
-};
-
 struct hmm_vma_walk {
 	struct hmm_range	*range;
 	unsigned long		last;
 };
+
+struct hmm_policy {
+//	struct list_head	list;
+	int (*fault)(struct hmm_vma_walk * walk, struct mm_walk_ops * ops);
+	char 		name[HMM_POLICY_NAME_MAX];
+	struct mm_walk_ops * ops;
+};
+
 
 /*
 static inline unsigned long pmd_to_hmm_pfn_flags(struct hmm_range *range,

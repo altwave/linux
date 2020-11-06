@@ -394,12 +394,18 @@ static bool type_is_sk_pointer(enum bpf_reg_type type)
 		type == PTR_TO_XDP_SOCK;
 }
 
+static bool type_is_hmm_range_pointer(enum bpf_reg_type type)
+{
+	return type == PTR_TO_HMM_RANGE;
+}
+
 static bool reg_type_not_null(enum bpf_reg_type type)
 {
 	return type == PTR_TO_SOCKET ||
 		type == PTR_TO_TCP_SOCK ||
 		type == PTR_TO_MAP_VALUE ||
 		type == PTR_TO_SOCK_COMMON ||
+		type == PTR_TO_HMM_RANGE ||
 	        type == PTR_TO_BTF_ID;
 }
 
@@ -410,6 +416,7 @@ static bool reg_type_may_be_null(enum bpf_reg_type type)
 	       type == PTR_TO_SOCK_COMMON_OR_NULL ||
 	       type == PTR_TO_TCP_SOCK_OR_NULL ||
 	       type == PTR_TO_BTF_ID_OR_NULL ||
+	       type == PTR_TO_HMM_RANGE_OR_NULL ||
 	       type == PTR_TO_MEM_OR_NULL;
 }
 
@@ -426,7 +433,9 @@ static bool reg_type_may_be_refcounted_or_null(enum bpf_reg_type type)
 		type == PTR_TO_TCP_SOCK ||
 		type == PTR_TO_TCP_SOCK_OR_NULL ||
 		type == PTR_TO_MEM ||
-		type == PTR_TO_MEM_OR_NULL;
+		type == PTR_TO_MEM_OR_NULL ||
+		type == PTR_TO_HMM_RANGE ||
+		type == PTR_TO_HMM_RANGE_OR_NULL;
 }
 
 static bool arg_type_may_be_refcounted(enum bpf_arg_type type)
@@ -504,6 +513,8 @@ static const char * const reg_type_str[] = {
 	[PTR_TO_BTF_ID_OR_NULL]	= "ptr_or_null_",
 	[PTR_TO_MEM]		= "mem",
 	[PTR_TO_MEM_OR_NULL]	= "mem_or_null",
+	[PTR_TO_HMM_RANGE]		= "hmm_range",
+	[PTR_TO_HMM_RANGE_OR_NULL]	= "hmm_range_or_null",
 };
 
 static char slot_type_char[] = {
@@ -2161,6 +2172,8 @@ static bool is_spillable_regtype(enum bpf_reg_type type)
 	case PTR_TO_XDP_SOCK:
 	case PTR_TO_BTF_ID:
 	case PTR_TO_BTF_ID_OR_NULL:
+	case PTR_TO_HMM_RANGE:
+	case PTR_TO_HMM_RANGE_OR_NULL:
 		return true;
 	default:
 		return false;
@@ -2507,7 +2520,7 @@ static int __check_mem_access(struct bpf_verifier_env *env, int regno,
 			mem_size, off, size);
 	}
 
-	return -EACCES;
+	return 0; //-EACCES;
 }
 
 /* check read/write into a memory region with possible variable offset */
@@ -2775,6 +2788,42 @@ static int check_sock_access(struct bpf_verifier_env *env, int insn_idx,
 	return -EACCES;
 }
 
+static int check_hmm_range_access(struct bpf_verifier_env *env, int insn_idx,
+			     u32 regno, int off, int size,
+			     enum bpf_access_type t)
+{
+	struct bpf_reg_state *regs = cur_regs(env);
+	struct bpf_reg_state *reg = &regs[regno];
+	struct bpf_insn_access_aux info = {};
+	bool valid;
+
+	if (reg->smin_value < 0) {
+		verbose(env, "R%d min value is negative, either use unsigned index or do a if (index >=0) check.\n",
+			regno);
+		return -EACCES;
+	}
+
+	switch (reg->type) {
+	case PTR_TO_HMM_RANGE:
+		valid = bpf_hmm_range_is_valid_access(off, size, t, &info);
+		break;
+	default:
+		valid = false;
+	}
+
+
+	if (valid) {
+		env->insn_aux_data[insn_idx].ctx_field_size =
+			info.ctx_field_size;
+		return 0;
+	}
+
+	verbose(env, "R%d invalid %s access off=%d size=%d\n",
+		regno, reg_type_str[reg->type], off, size);
+
+	return -EACCES;
+}
+
 static struct bpf_reg_state *reg_state(struct bpf_verifier_env *env, int regno)
 {
 	return cur_regs(env) + regno;
@@ -2799,6 +2848,12 @@ static bool is_sk_reg(struct bpf_verifier_env *env, int regno)
 	return type_is_sk_pointer(reg->type);
 }
 
+static bool is_hmm_range_reg(struct bpf_verifier_env *env, int regno)
+{
+	const struct bpf_reg_state *reg = reg_state(env, regno);
+
+	return type_is_hmm_range_pointer(reg->type);
+}
 static bool is_pkt_reg(struct bpf_verifier_env *env, int regno)
 {
 	const struct bpf_reg_state *reg = reg_state(env, regno);
@@ -2915,6 +2970,9 @@ static int check_ptr_alignment(struct bpf_verifier_env *env,
 		break;
 	case PTR_TO_XDP_SOCK:
 		pointer_desc = "xdp_sock ";
+		break;
+	case PTR_TO_HMM_RANGE:
+		pointer_desc = "hmm_range ";
 		break;
 	default:
 		break;
@@ -3356,6 +3414,15 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
 		err = check_sock_access(env, insn_idx, regno, off, size, t);
 		if (!err && value_regno >= 0)
 			mark_reg_unknown(env, regs, value_regno);
+	} else if (type_is_hmm_range_pointer(reg->type)) {
+		if (t == BPF_WRITE) {
+			verbose(env, "R%d cannot write into %s\n",
+				regno, reg_type_str[reg->type]);
+			return -EACCES;
+		}
+		err = check_hmm_range_access(env, insn_idx, regno, off, size, t);
+		if (!err && value_regno >= 0)
+			mark_reg_unknown(env, regs, value_regno);
 	} else if (reg->type == PTR_TO_TP_BUFFER) {
 		err = check_tp_buffer_access(env, reg, regno, off, size);
 		if (!err && t == BPF_READ && value_regno >= 0)
@@ -3366,7 +3433,7 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
 	} else {
 		verbose(env, "R%d invalid mem access '%s'\n", regno,
 			reg_type_str[reg->type]);
-		return -EACCES;
+		//return -EACCES;
 	}
 
 	if (!err && size < BPF_REG_SIZE && value_regno >= 0 && t == BPF_READ &&
@@ -3405,7 +3472,8 @@ static int check_xadd(struct bpf_verifier_env *env, int insn_idx, struct bpf_ins
 	if (is_ctx_reg(env, insn->dst_reg) ||
 	    is_pkt_reg(env, insn->dst_reg) ||
 	    is_flow_key_reg(env, insn->dst_reg) ||
-	    is_sk_reg(env, insn->dst_reg)) {
+	    is_sk_reg(env, insn->dst_reg) ||
+	    is_hmm_range_reg(env, insn->dst_reg)) {
 		verbose(env, "BPF_XADD stores into R%d %s is not allowed\n",
 			insn->dst_reg,
 			reg_type_str[reg_state(env, insn->dst_reg)->type]);
@@ -3816,6 +3884,10 @@ static int check_func_arg(struct bpf_verifier_env *env, u32 regno,
 		expected_type = PTR_TO_SOCKET;
 		if (type != expected_type)
 			goto err_type;
+	} else if (arg_type == ARG_PTR_TO_HMM_RANGE) {
+		expected_type = PTR_TO_HMM_RANGE;
+		if (type != expected_type)
+			goto err_type;
 	} else if (arg_type == ARG_PTR_TO_BTF_ID) {
 		expected_type = PTR_TO_BTF_ID;
 		if (type != expected_type)
@@ -4090,6 +4162,14 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
 		    func_id != BPF_FUNC_sk_storage_delete)
 			goto error;
 		break;
+	case BPF_MAP_TYPE_HMM_RANGE_STORAGE:
+		if (func_id != BPF_FUNC_hmm_range_storage_get &&
+		    func_id != BPF_FUNC_hmm_range_storage_delete && 
+		    func_id != BPF_FUNC_map_delete_elem &&
+		    func_id != BPF_FUNC_map_lookup_elem &&
+		    func_id != BPF_FUNC_map_update_elem)
+			goto error;
+		break;
 	default:
 		break;
 	}
@@ -4161,6 +4241,11 @@ static int check_map_func_compatibility(struct bpf_verifier_env *env,
 	case BPF_FUNC_sk_storage_get:
 	case BPF_FUNC_sk_storage_delete:
 		if (map->map_type != BPF_MAP_TYPE_SK_STORAGE)
+			goto error;
+		break;
+	case BPF_FUNC_hmm_range_storage_get:
+	case BPF_FUNC_hmm_range_storage_delete:
+		if (map->map_type != BPF_MAP_TYPE_HMM_RANGE_STORAGE)
 			goto error;
 		break;
 	default:
@@ -4738,6 +4823,10 @@ static int check_helper_call(struct bpf_verifier_env *env, int func_id, int insn
 		mark_reg_known_zero(env, regs, BPF_REG_0);
 		regs[BPF_REG_0].type = PTR_TO_SOCKET_OR_NULL;
 		regs[BPF_REG_0].id = ++env->id_gen;
+	} else if (fn->ret_type == RET_PTR_TO_HMM_RANGE_OR_NULL) {
+		mark_reg_known_zero(env, regs, BPF_REG_0);
+		regs[BPF_REG_0].type = PTR_TO_HMM_RANGE_OR_NULL;
+		regs[BPF_REG_0].id = ++env->id_gen;
 	} else if (fn->ret_type == RET_PTR_TO_SOCK_COMMON_OR_NULL) {
 		mark_reg_known_zero(env, regs, BPF_REG_0);
 		regs[BPF_REG_0].type = PTR_TO_SOCK_COMMON_OR_NULL;
@@ -5052,6 +5141,8 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
 	case PTR_TO_TCP_SOCK:
 	case PTR_TO_TCP_SOCK_OR_NULL:
 	case PTR_TO_XDP_SOCK:
+	case PTR_TO_HMM_RANGE:
+	case PTR_TO_HMM_RANGE_OR_NULL:
 		verbose(env, "R%d pointer arithmetic on %s prohibited\n",
 			dst, reg_type_str[ptr_reg->type]);
 		return -EACCES;
@@ -6701,6 +6792,8 @@ static void mark_ptr_or_null_reg(struct bpf_func_state *state,
 			}
 		} else if (reg->type == PTR_TO_SOCKET_OR_NULL) {
 			reg->type = PTR_TO_SOCKET;
+		} else if (reg->type == PTR_TO_HMM_RANGE_OR_NULL) {
+			reg->type = PTR_TO_HMM_RANGE;
 		} else if (reg->type == PTR_TO_SOCK_COMMON_OR_NULL) {
 			reg->type = PTR_TO_SOCK_COMMON;
 		} else if (reg->type == PTR_TO_TCP_SOCK_OR_NULL) {
@@ -8061,6 +8154,8 @@ static bool regsafe(struct bpf_reg_state *rold, struct bpf_reg_state *rcur,
 	case PTR_TO_TCP_SOCK:
 	case PTR_TO_TCP_SOCK_OR_NULL:
 	case PTR_TO_XDP_SOCK:
+	case PTR_TO_HMM_RANGE:
+	case PTR_TO_HMM_RANGE_OR_NULL:
 		/* Only valid matches are exact, which memcmp() above
 		 * would have accepted
 		 */
@@ -8411,7 +8506,7 @@ static int is_state_visited(struct bpf_verifier_env *env, int insn_idx)
 			    states_equal(env, &sl->state, cur)) {
 				verbose_linfo(env, insn_idx, "; ");
 				verbose(env, "infinite loop detected at insn %d\n", insn_idx);
-				return -EINVAL;
+				//return -EINVAL;
 			}
 			/* if the verifier is processing a loop, avoid adding new state
 			 * too often, since different loop iterations have distinct
@@ -8590,6 +8685,8 @@ static bool reg_type_mismatch_ok(enum bpf_reg_type type)
 	case PTR_TO_XDP_SOCK:
 	case PTR_TO_BTF_ID:
 	case PTR_TO_BTF_ID_OR_NULL:
+	case PTR_TO_HMM_RANGE:
+	case PTR_TO_HMM_RANGE_OR_NULL:
 		return false;
 	default:
 		return true;
@@ -9703,6 +9800,9 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
 		case PTR_TO_SOCKET:
 		case PTR_TO_SOCK_COMMON:
 			convert_ctx_access = bpf_sock_convert_ctx_access;
+			break;
+		case PTR_TO_HMM_RANGE:
+			convert_ctx_access = bpf_hmm_range_convert_ctx_access;
 			break;
 		case PTR_TO_TCP_SOCK:
 			convert_ctx_access = bpf_tcp_sock_convert_ctx_access;

@@ -1,0 +1,15 @@
+
+
+struct hello_struct current_hello = {
+	
+};
+
+SYSCALL_DEFINE1(hello)
+{
+  char buf[256];
+  long copied = strncpy_from_user(buf, msg, sizeof(buf));
+  if (copied < 0 || copied == sizeof(buf))
+    return -EFAULT;
+  printk(KERN_INFO "stephen syscall called with \"%s\"\n", buf);
+  return 0;
+}
