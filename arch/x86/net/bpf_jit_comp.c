@@ -1462,13 +1462,13 @@ static int emit_cond_near_jump(u8 **pprog, void *func, void *ip, u8 jmp_cond)
 }
 
 static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
-		      struct bpf_tramp_progs *tp, int stack_size)
+		      struct bpf_tramp_progs *tp, int stack_size, bool mod_ret)
 {
 	int i;
 	u8 *prog = *pprog;
 
 	for (i = 0; i < tp->nr_progs; i++) {
-		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size, false))
+		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size, mod_ret))  //modified
 			return -EINVAL;
 	}
 	*pprog = prog;
@@ -1611,7 +1611,7 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
 	save_regs(m, &prog, nr_args, stack_size);
 
 	if (fentry->nr_progs)
-		if (invoke_bpf(m, &prog, fentry, stack_size))
+		if (invoke_bpf(m, &prog, fentry, stack_size, flags & BPF_TRAMP_F_MODIFY_RET))
 			return -EINVAL;
 
 	if (fmod_ret->nr_progs) {
@@ -1656,7 +1656,7 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
 	}
 
 	if (fexit->nr_progs)
-		if (invoke_bpf(m, &prog, fexit, stack_size)) {
+		if (invoke_bpf(m, &prog, fexit, stack_size, flags & BPF_TRAMP_F_MODIFY_RET)) {
 			ret = -EINVAL;
 			goto cleanup;
 		}
@@ -1668,7 +1668,7 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
 	 * the return value is only updated on the stack and still needs to be
 	 * restored to R0.
 	 */
-	if (flags & BPF_TRAMP_F_CALL_ORIG)
+	if ((flags & BPF_TRAMP_F_CALL_ORIG) || (flags & BPF_TRAMP_F_MODIFY_RET))	
 		/* restore original return value back into RAX */
 		emit_ldx(&prog, BPF_DW, BPF_REG_0, BPF_REG_FP, -8);
 

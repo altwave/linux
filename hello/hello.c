@@ -22,8 +22,9 @@ SYSCALL_DEFINE0(hello)
 //  if (copied < 0 || copied == sizeof(buf))
 //    return -EFAULT;
 //  printk(KERN_INFO "hello syscall called with \"%s\"\n", buf);
-  current_hello->print_msg(1);
-  return 0;
+  int val = current_hello->print_msg(1);
+  printk(KERN_INFO "hello syscall returning %d\n", val);
+  return val;
 }
 
 int hello_register(struct hello_struct * hs) {
