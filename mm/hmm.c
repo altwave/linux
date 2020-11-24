@@ -26,11 +26,6 @@
 #include <linux/mmu_notifier.h>
 #include <linux/memory_hotplug.h>
 
-struct hmm_vma_walk {
-	struct hmm_range	*range;
-	unsigned long		last;
-};
-
 enum {
 	HMM_NEED_FAULT = 1 << 0,
 	HMM_NEED_WRITE_FAULT = 1 << 1,
@@ -141,7 +136,7 @@ hmm_range_need_fault(const struct hmm_vma_walk *hmm_vma_walk,
 	return required_fault;
 }
 
-static int hmm_vma_walk_hole(unsigned long addr, unsigned long end,
+int hmm_vma_walk_hole(unsigned long addr, unsigned long end,
 			     __always_unused int depth, struct mm_walk *walk)
 {
 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
@@ -174,7 +169,7 @@ static inline unsigned long pmd_to_hmm_pfn_flags(struct hmm_range *range,
 }
 
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-static int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
+int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
 			      unsigned long end, unsigned long hmm_pfns[],
 			      pmd_t pmd)
 {
@@ -218,7 +213,7 @@ static inline unsigned long pte_to_hmm_pfn_flags(struct hmm_range *range,
 	return pte_write(pte) ? (HMM_PFN_VALID | HMM_PFN_WRITE) : HMM_PFN_VALID;
 }
 
-static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
+int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
 			      unsigned long end, pmd_t *pmdp, pte_t *ptep,
 			      unsigned long *hmm_pfn)
 {
@@ -304,7 +299,7 @@ fault:
 	return hmm_vma_fault(addr, end, required_fault, walk);
 }
 
-static int hmm_vma_walk_pmd(pmd_t *pmdp,
+int hmm_vma_walk_pmd(pmd_t *pmdp,
 			    unsigned long start,
 			    unsigned long end,
 			    struct mm_walk *walk)
@@ -392,7 +387,7 @@ static inline unsigned long pud_to_hmm_pfn_flags(struct hmm_range *range,
 	return pud_write(pud) ? (HMM_PFN_VALID | HMM_PFN_WRITE) : HMM_PFN_VALID;
 }
 
-static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
+int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
 		struct mm_walk *walk)
 {
 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
@@ -455,7 +450,7 @@ out_unlock:
 #endif
 
 #ifdef CONFIG_HUGETLB_PAGE
-static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
+int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
 				      unsigned long start, unsigned long end,
 				      struct mm_walk *walk)
 {
@@ -493,7 +488,7 @@ static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
 #define hmm_vma_walk_hugetlb_entry NULL
 #endif /* CONFIG_HUGETLB_PAGE */
 
-static int hmm_vma_walk_test(unsigned long start, unsigned long end,
+int hmm_vma_walk_test(unsigned long start, unsigned long end,
 			     struct mm_walk *walk)
 {
 	struct hmm_vma_walk *hmm_vma_walk = walk->private;

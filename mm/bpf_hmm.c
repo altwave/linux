@@ -17,9 +17,6 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_test_proto __read_mostly;
 
 static const struct bpf_func_proto bpf_get_mm_walk_vma_proto __read_mostly;
 static const struct bpf_func_proto bpf_get_hmm_vma_walk_proto __read_mostly;
-static const struct bpf_func_proto bpf_get_hmm_range_user_proto __read_mostly;
-
-static const struct bpf_func_proto bpf_hmm_pfns_fill_proto __read_mostly;
 
 static const struct bpf_func_proto bpf_hmm_policy_fault_proto __read_mostly;
 
@@ -56,11 +53,6 @@ static const struct bpf_func_proto * bpf_hmm_policy_get_func_proto(enum bpf_func
 		return &bpf_get_mm_walk_vma_proto;
 	case BPF_FUNC_get_hmm_vma_walk:
 		return &bpf_get_hmm_vma_walk_proto;
-	case BPF_FUNC_get_hmm_range_user:
-		return &bpf_get_hmm_range_user_proto;
-	case BPF_FUNC_hmm_pfns_fill:
-		return &bpf_hmm_pfns_fill_proto;
-
 	case BPF_FUNC_hmm_vma_walk_pud:
 		return &bpf_hmm_vma_walk_pud_proto;
 	case BPF_FUNC_hmm_vma_walk_pmd:
@@ -129,7 +121,7 @@ static const struct bpf_func_proto bpf_hmm_to_user_proto = {
 BPF_CALL_2(bpf_hmm_is_device_private_entry, struct hmm_range *, range, void *, entryp) //map need to pass by value here
 {
 	swp_entry_t * ep = (swp_entry_t *)entryp;
-	return hmm_is_device_private_entry(range, *ep);
+	return 0; //hmm_is_device_private_entry(range, *ep);
 }
 
 static const struct bpf_func_proto bpf_hmm_is_device_private_entry_proto = {
@@ -215,22 +207,9 @@ static const struct bpf_func_proto bpf_get_hmm_vma_walk_proto = {
 	//.btf_id		= &mm_struct_id,
 };
 /*
-struct bpf_hmm_storage {
-	struct hmm_range **rngs;
-	struct sk_psock_progs progs;
-	raw_spinlock_t lock;
-};
-*/
 BPF_CALL_1(bpf_get_hmm_range_user, struct hmm_vma_walk *, walk) {
 //	struct bpf_hmm_storage *stab;
 	struct hmm_range *range_user;
-
-
-/*	
-	stab = kzalloc(sizeof(*stab), gfp_user);
-	if (!stab)
-		return err_ptr(-enomem);
-*/
 	
 	struct hmm_range *range = walk->range;
 	unsigned long npages = (range->end - range->start) >> PAGE_SHIFT;
@@ -259,93 +238,7 @@ static const struct bpf_func_proto bpf_get_hmm_range_user_proto = {
 	.arg1_type	= ARG_ANYTHING,
 };
 
-
-
-BPF_CALL_4(bpf_hmm_pfns_fill, unsigned long, addr, unsigned long, end,
-			 struct hmm_range __user *, range, unsigned long, cpu_flags)
-{
-	struct hmm_range range_kern;
-	copy_from_user(&range_kern, range, sizeof(struct hmm_range));
-	
-	int ret = hmm_pfns_fill(addr, end, &range_kern, cpu_flags);
-	copy_to_user(range, &range_kern, sizeof(struct hmm_range));
-	return ret;
-//	hmm_pfns[idx] = value;
-//	memset(ptr, val, size);
-//	return 0;
-}
-
-static const struct bpf_func_proto bpf_hmm_pfns_fill_proto = {
-	.func		= bpf_hmm_pfns_fill,
-	.gpl_only	= false,
-	.ret_type	= RET_INTEGER,
-	.arg1_type	= ARG_ANYTHING,
-	.arg2_type	= ARG_ANYTHING,
-	.arg3_type	= ARG_ANYTHING,
-	.arg4_type	= ARG_ANYTHING,
-};
-
-struct bpf_hmm_tab {
-//	struct bpf_map map;
-//	struct bpf_hmm_tab_netdev **netdev_map; /* DEVMAP type only 
-//	struct list_head list;
-
-	/* these are only used for DEVMAP_HASH type maps */
-//	struct hlist_head *dev_index_head;
-//	spinlock_t index_lock;
-//	unsigned int items;
-//	u32 n_buckets;
-};
-/*
-static struct bpf_map *hmm_map_alloc(union bpf_attr *attr)
-{
-	struct bpf_hmm_tab *tab;
-	int err;
-
-//	if (!capable(CAP_NET_ADMIN))
-//		return ERR_PTR(-EPERM);
-
-	tab = kzalloc(sizeof(*tab), GFP_USER);
-	if (!tab)
-		return ERR_PTR(-ENOMEM);
-
-	err = hmm_map_init_map(tab, attr);
-	if (err) {
-		kfree(tab);
-		return ERR_PTR(err);
-	}
-
-	spin_lock(&hmm_map_lock);
-	list_add_tail_rcu(&tab->list, &hmm_map_list);
-	spin_unlock(&hmm_map_lock);
-
-	return &tab->map;
-}
 */
-/*
-BPF_CALL_1(bpf_pud_write, pud_t, pud) {
-	return pud_write(pud);
-}
-
-static const struct bpf_pud_write_proto = {
-	.func		= bpf_pud_write,
-	.gpl_only	= false,
-	.ret_type	= RET_INTEGER,
-	.arg1_type	= ARG_ANYTHING,
-};
-
-BPF_CALL_1(bpf_pud_present, pud_t, pud) {
-	return pud_present(pud);
-}
-
-static const struct bpf_pud_present_proto = {
-	.func		= bpf_pud_present,
-	.gpl_only	= false,
-	.ret_type	= RET_INTEGER,
-	.arg1_type	= ARG_ANYTHING,
-};
-*/
-
 BPF_CALL_5(bpf_hmm_vma_walk_pud, void *, pudp, unsigned long, start, unsigned long, end, struct mm_walk *,walk, int __user *, ret) {
 	int val = hmm_vma_walk_pud((pud_t *)pudp, start, end, walk);
 	return val;

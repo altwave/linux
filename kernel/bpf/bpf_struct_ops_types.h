@@ -9,7 +9,6 @@ BPF_STRUCT_OPS_TYPE(tcp_congestion_ops)
 #ifdef CONFIG_HMM_MIRROR
 //#include <linux/pagewalk.h>
 #include <linux/hmm.h>
-BPF_STRUCT_OPS_TYPE(hmm_policy)
 BPF_STRUCT_OPS_TYPE(mm_walk_ops)
 #endif
 #include <linux/hello.h>
