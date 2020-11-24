@@ -34,7 +34,6 @@ struct btf_type;
 struct exception_table_entry;
 struct seq_operations;
 struct mm_walk;
-struct vm_area_struct;
 
 extern struct idr btf_idr;
 extern spinlock_t btf_idr_lock;
@@ -251,7 +250,6 @@ enum bpf_arg_type {
 	ARG_PTR_TO_ALLOC_MEM,	/* pointer to dynamically allocated memory */
 	ARG_PTR_TO_ALLOC_MEM_OR_NULL,	/* pointer to dynamically allocated memory or NULL */
 	ARG_CONST_ALLOC_SIZE_OR_ZERO,	/* number of allocated bytes requested */
-	ARG_PTR_TO_HMM_RANGE,	/* pointer to struct hmm_range */
 };
 
 /* type of values returned from helper functions */
@@ -264,7 +262,6 @@ enum bpf_return_type {
 	RET_PTR_TO_TCP_SOCK_OR_NULL,	/* returns a pointer to a tcp_sock or NULL */
 	RET_PTR_TO_SOCK_COMMON_OR_NULL,	/* returns a pointer to a sock_common or NULL */
 	RET_PTR_TO_ALLOC_MEM_OR_NULL,	/* returns a pointer to dynamically allocated memory or NULL */
-	RET_PTR_TO_HMM_RANGE_OR_NULL,	/* returns a pointer to an hmm_range or NULL */
 };
 
 /* eBPF function prototype used by verifier to allow BPF_CALLs from eBPF programs
@@ -334,8 +331,6 @@ enum bpf_reg_type {
 	PTR_TO_BTF_ID_OR_NULL,	 /* reg points to kernel struct or NULL */
 	PTR_TO_MEM,		 /* reg points to valid memory region */
 	PTR_TO_MEM_OR_NULL,	 /* reg points to valid memory region or NULL */
-	PTR_TO_HMM_RANGE,	  /* reg points to struct hmm_range */
-	PTR_TO_HMM_RANGE_OR_NULL, /* reg points to struct hmm_range or NULL */
 };
 
 /* The information passed from prog-specific *_is_valid_access
@@ -1675,31 +1670,6 @@ static inline bool bpf_sock_is_valid_access(int off, int size,
 	return false;
 }
 static inline u32 bpf_sock_convert_ctx_access(enum bpf_access_type type,
-					      const struct bpf_insn *si,
-					      struct bpf_insn *insn_buf,
-					      struct bpf_prog *prog,
-					      u32 *target_size)
-{
-	return 0;
-}
-#endif
-
-#ifdef CONFIG_HMM_MIRROR
-bool bpf_hmm_range_is_valid_access(int off, int size, enum bpf_access_type type,
-			      struct bpf_insn_access_aux *info);
-u32 bpf_hmm_range_convert_ctx_access(enum bpf_access_type type,
-				const struct bpf_insn *si,
-				struct bpf_insn *insn_buf,
-				struct bpf_prog *prog,
-				u32 *target_size);
-#else
-static inline bool bpf_hmm_range_is_valid_access(int off, int size,
-					    enum bpf_access_type type,
-					    struct bpf_insn_access_aux *info)
-{
-	return false;
-}
-static inline u32 bpf_hmm_range_convert_ctx_access(enum bpf_access_type type,
 					      const struct bpf_insn *si,
 					      struct bpf_insn *insn_buf,
 					      struct bpf_prog *prog,

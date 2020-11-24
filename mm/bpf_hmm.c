@@ -42,14 +42,6 @@ static const struct btf_type *mm_struct_type;
 
 static u32 mm_struct_id;
 
-struct bpf_function_ops {
-	unsigned long (*pud_pfn)(pud_t pud);
-};
-
-struct bpf_function_ops bfo = {
-	.pud_pfn = pud_pfn,
-};
-
 static bool bpf_hmm_policy_is_valid_access(int off, int size, 
 		enum bpf_access_type type, const struct bpf_prog *prog, 
 		struct bpf_insn_access_aux *info) 
@@ -80,8 +72,6 @@ static const struct bpf_func_proto * bpf_hmm_policy_get_func_proto(enum bpf_func
 	case BPF_FUNC_hmm_vma_walk_test:
 		return &bpf_hmm_vma_walk_test_proto;
 	
-	case BPF_FUNC_hmm_policy_fault:
-		return &bpf_hmm_policy_fault_proto;
 	case BPF_FUNC_hmm_is_device_private_entry:
 		return &bpf_hmm_is_device_private_entry_proto;
 	case BPF_FUNC_hmm_spin_unlock:
@@ -90,8 +80,6 @@ static const struct bpf_func_proto * bpf_hmm_policy_get_func_proto(enum bpf_func
 		return &bpf_handle_mm_fault_proto;
 	case BPF_FUNC_hmm_update_walk_last:
 		return &bpf_hmm_update_walk_last_proto;
-	case BPF_FUNC_hmm_call_fn:
-		return &bpf_hmm_call_fn_proto;
 	case BPF_FUNC_hmm_huge_pte_lock:
 		return &bpf_hmm_huge_pte_lock_proto;
 	case BPF_FUNC_hmm_to_user:
@@ -104,105 +92,8 @@ static const struct bpf_func_proto * bpf_hmm_policy_get_func_proto(enum bpf_func
 static int bpf_hmm_policy_btf_struct_access(struct bpf_verifier_log *log, const struct btf_type *t, int off,
 					int size, enum bpf_access_type atype, u32 *next_btf_id)
 {
-	//printk(KERN_INFO "Called bpf_struct_access\n");
 	return btf_struct_access(log, t, off, size, atype, next_btf_id);
-	/*
-	size_t end;
-	
-	if (atype == BPF_READ)
-		return btf_struct_access(log, t, off, size, atype, next_btf_id);
-
-	switch (off) {
-	case offsetof(struct mm_walk, vma):
-		end = offsetofend(struct mm_walk, vma);
-		break;
-	case offsetof(struct vm_area_struct, vm_flags):
-		end = offsetofend(struct vm_area_struct, vm_flags);
-		break;
-	default:
-		bpf_log(log, "no write support to mm_walk at off %d\n", off);
-		return -EACCES;
-
-	}
-
-	if (off + size > end) {
-		bpf_log(log,
-			"write access at off %d with size %d beyond the member of tcp_sock ended at %zu\n",
-			off, size, end);
-		return -EACCES;
-	}
-	
-	return NOT_INIT;
-	*/
 }
-
-/*
-	, struct mm_struct *, mm, unsigned long, start,
-		unsigned long, end, const struct mm_walk_ops *, ops,
-		void *, private)
-*/
-/*
-static int _hmm_policy_fault(struct hmm_vma_walk *hmm_vma_walk) 
-{
-	struct hmm_range * range = hmm_vma_walk->range;
-	struct mm_struct *mm = range->notifier->mm;
-	int ret;
-
-//	printk(KERN_INFO "_hmm_policy_fault called\n");
-	mmap_assert_locked(mm);
-
-	do {
-		if (mmu_interval_check_retry(range->notifier,
-					     range->notifier_seq))
-			return -EBUSY;
-		ret = walk_page_range(mm, hmm_vma_walk->last, range->end, ops, hmm_vma_walk);
-	} while (ret == -EBUSY);
-	return ret;
-}
-*/
-BPF_CALL_2(bpf_hmm_policy_fault, struct hmm_vma_walk*, walk, struct mm_walk_ops*, ops)
-{
-	//printk(KERN_INFO "Called bpf_hmm_policy_fault\n");
-	//printk(KERN_INFO "range->start=%016lx, range->end=%016lx\n", a->start, a->end);
-//	int kern_ret = _hmm_policy_fault(walk, ops);
-//	walk->range->ret_val = 0; //kern_ret;
-//	bpf_map_update_elem(map, key, &kern_ret, BPF_ANY);
-
-//	copy_to_user_nofault(user_ret, &kern_ret, sizeof(kern_ret));
-//	printk(KERN_INFO "bpf_hmm_range_fault returning %d\n", walk->range->ret_val);
-	return 0;
-}
-
-static const struct bpf_func_proto bpf_hmm_policy_fault_proto = {
-	.func		= bpf_hmm_policy_fault,
-	.gpl_only	= false,
-	/* In case we want to report error later */
-	.ret_type	= RET_VOID,
-	.arg1_type	= ARG_ANYTHING,
-	.arg2_type	= ARG_ANYTHING,
-};
-
-typedef unsigned long fn_t(void *arg);
-
-BPF_CALL_2(bpf_hmm_call_fn, size_t, offset, void *, arg)
-{
-	// get base address
-	struct bpf_function_ops* base = &bfo;
-
-	// Compute address of member
-    	fn_t *ptr = (fn_t *)((char *)base+offset);
-	
-	return ptr(arg);
-}
-
-static const struct bpf_func_proto bpf_hmm_call_fn_proto = {
-	.func		= bpf_hmm_call_fn,
-	.gpl_only	= false,
-	/* In case we want to report error later */
-	.ret_type	= RET_PTR_TO_ALLOC_MEM_OR_NULL,
-	.arg1_type	= ARG_ANYTHING,
-};
-
 
 BPF_CALL_3(bpf_hmm_huge_pte_lock, struct vm_area_struct *, vma, struct mm_walk *, walk, void *, pte)
 {
@@ -457,9 +348,6 @@ static const struct bpf_pud_present_proto = {
 
 BPF_CALL_5(bpf_hmm_vma_walk_pud, void *, pudp, unsigned long, start, unsigned long, end, struct mm_walk *,walk, int __user *, ret) {
 	int val = hmm_vma_walk_pud((pud_t *)pudp, start, end, walk);
-	//printk(KERN_INFO "bpf_hmm_vma_walk_pud got %d\n", val);
-	memset(ret, val, sizeof(int));
-	//copy_to_user(ret, &val, sizeof(int));
 	return val;
 }
 
@@ -473,7 +361,6 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_pud_proto = {
 	.arg4_type	= ARG_ANYTHING,
 	.arg5_type	= ARG_ANYTHING,
 };
-
 
 
 BPF_CALL_4(bpf_hmm_vma_walk_pmd, void *, pmdp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
@@ -490,19 +377,6 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_pmd_proto = {
 	.arg3_type	= ARG_ANYTHING,
 	.arg4_type	= ARG_ANYTHING,
 };
-
-/*
-BPF_CALL_1(bpf_hmm_range_nr_pfns, struct hmm_range * range) {
-	return 0;	
-}
-
-static const struct bpf_func_proto bpf_hmm_range_nr_pfns_proto = {
-	.func		= bpf_hmm_vma_walk_pmd,
-	.gpl_only	= false,
-	.ret_type	= RET_INTEGER,
-	.arg1_type	= ARG_ANYTHING,
-};
-*/
 
 BPF_CALL_4(bpf_hmm_vma_walk_hole, unsigned long, addr, unsigned long, end,
 					     int, depth, struct mm_walk *,walk) {
@@ -537,8 +411,6 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_hugetlb_entry_proto = {
 	.arg5_type	= ARG_ANYTHING,
 };
 
-
-
 BPF_CALL_3(bpf_hmm_vma_walk_test, unsigned long, start, unsigned long, end,
 						     struct mm_walk *, walk) {
 	//printk(KERN_INFO "Called bpf_hmm_vma_walk_test\n");
@@ -562,40 +434,6 @@ static const struct bpf_verifier_ops bpf_hmm_verifier_ops = {
 	.is_valid_access	= bpf_hmm_policy_is_valid_access,
 	.btf_struct_access	= bpf_hmm_policy_btf_struct_access,
 };
-
-static int bpf_hmm_policy_init_member(const struct btf_type *t, 
-		const struct btf_member *member, 
-		void *kdata, 
-		const void *udata)
-{
-	const struct hmm_policy *uhmm_policy;
-	struct hmm_policy *khmm_policy;
-	int prog_fd;
-	u32 moff;
-
-	uhmm_policy = (const struct hmm_policy *)udata;
-	khmm_policy = (struct hmm_policy *)kdata;
-
-	moff = btf_member_bit_offset(t, member) / 8;
-	switch (moff) {
-	case offsetof(struct hmm_policy, name):
-		if (bpf_obj_name_cpy(khmm_policy->name, uhmm_policy->name, sizeof(khmm_policy->name)) <= 0)
-			return -EINVAL;
-		return 1;
-	}
-	
-	if (!btf_type_resolve_func_ptr(btf_vmlinux, member->type, NULL))
-		return 0;
-
-	/* Ensure bpf_prog is provided for compulsory func ptr */
-	prog_fd = (int)(*(unsigned long *)(udata + moff));
-	//All mm_walk_ops function pointers are optional
-	if (!prog_fd) // && !is_optional(moff) && !is_unsupported(moff))
-		return -EINVAL;
-	
-	
-	return 0;
-}
 
 static int bpf_mm_walk_ops_init_member(const struct btf_type *t, 
 		const struct btf_member *member, 
@@ -637,18 +475,6 @@ static int bpf_hmm_check_member(const struct btf_type *t, const struct btf_membe
 	return 0;
 }
 
-static int bpf_hmm_policy_reg(void *kdata)
-{
-	printk(KERN_INFO "Calling to register policy\n");
-	return hmm_register_policy(kdata);
-}
-
-static void bpf_hmm_policy_unreg(void *kdata)
-{
-	printk(KERN_INFO "Calling to unregister policy\n");
-	hmm_unregister_policy(kdata);
-}
-
 static int bpf_mm_walk_ops_reg(void *kdata)
 {
 	printk(KERN_INFO "Calling to register mm_walk_ops\n");
@@ -661,18 +487,7 @@ static void bpf_mm_walk_ops_unreg(void *kdata)
 	hmm_unregister_mm_walk_ops(kdata);
 }
 
-extern struct bpf_struct_ops bpf_hmm_policy;
 extern struct bpf_struct_ops bpf_mm_walk_ops;
-
-struct bpf_struct_ops bpf_hmm_policy = {
-	.verifier_ops = &bpf_hmm_verifier_ops,
-	.reg = bpf_hmm_policy_reg,
-	.unreg = bpf_hmm_policy_unreg,
-	.check_member = bpf_hmm_check_member,
-	.init_member = bpf_hmm_policy_init_member,
-	.init = bpf_hmm_init,
-	.name = "hmm_policy",
-};
 
 struct bpf_struct_ops bpf_mm_walk_ops = {
 	.verifier_ops = &bpf_hmm_verifier_ops,
@@ -684,60 +499,3 @@ struct bpf_struct_ops bpf_mm_walk_ops = {
 	.name = "mm_walk_ops",
 };
 
-bool bpf_hmm_range_is_valid_access(int off, int size, enum bpf_access_type type,
-			      struct bpf_insn_access_aux *info)
-{
-	if (off < 0 || off >= offsetofend(struct bpf_hmm_range,
-					  pfn_flags_mask))
-		return false;
-
-	if (off % size != 0)
-		return false;
-
-	switch (off) {
-	case offsetof(struct bpf_hmm_range, start):
-	case offsetof(struct bpf_hmm_range, end):
-	case offsetof(struct bpf_hmm_range, default_flags):
-	case offsetof(struct bpf_hmm_range, pfn_flags_mask):
-		return size == sizeof(__u64);
-	default:
-		return size == sizeof(__u32);
-	}
-}
-
-u32 bpf_hmm_range_convert_ctx_access(enum bpf_access_type type,
-				    const struct bpf_insn *si,
-				    struct bpf_insn *insn_buf,
-				    struct bpf_prog *prog, u32 *target_size)
-{
-	struct bpf_insn *insn = insn_buf;
-
-#define BPF_HMM_RANGE_GET_COMMON(FIELD)					\
-	do {								\
-		BUILD_BUG_ON(sizeof_field(struct hmm_range, FIELD) >	\
-			     sizeof_field(struct bpf_hmm_range, FIELD));	\
-		*insn++ = BPF_LDX_MEM(BPF_FIELD_SIZEOF(struct hmm_range, FIELD),\
-				      si->dst_reg, si->src_reg,		\
-				      offsetof(struct hmm_range, FIELD)); \
-	} while (0)
-
-	if (insn > insn_buf)
-		return insn - insn_buf;
-
-	switch (si->off) {
-	case offsetof(struct bpf_hmm_range, start):
-		BPF_HMM_RANGE_GET_COMMON(start);
-		break;
-	case offsetof(struct bpf_hmm_range, end):
-		BPF_HMM_RANGE_GET_COMMON(end);
-		break;
-	case offsetof(struct bpf_hmm_range, default_flags):
-		BPF_HMM_RANGE_GET_COMMON(default_flags);
-		break;
-	case offsetof(struct bpf_hmm_range, pfn_flags_mask):
-		BPF_HMM_RANGE_GET_COMMON(pfn_flags_mask);
-		break;
-	}
-
-	return insn - insn_buf;
-}
