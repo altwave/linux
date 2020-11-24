@@ -344,10 +344,11 @@ static int bpf_mm_walk_ops_init_member(const struct btf_type *t,
 	moff = btf_member_bit_offset(t, member) / 8;
 	switch (moff) {
 	case offsetof(struct mm_walk_ops, name):
-		if (bpf_obj_name_cpy(khmm_policy->name, uhmm_policy->name, sizeof(khmm_policy->name)) <= 0)
+		if (bpf_obj_name_cpy(khmm_policy->name, "new policy", sizeof(khmm_policy->name)) <= 0)
 			return -EINVAL;
 		return 1;
 	}
+	
 	
 	if (!btf_type_resolve_func_ptr(btf_vmlinux, member->type, NULL))
 		return 0;
