@@ -74,12 +74,6 @@ again:
 		if (pmd_none(*pmd) || (!walk->vma && !walk->no_vma)) {
 			if (ops->pte_hole)
 				err = ops->pte_hole(addr, next, depth, walk);
-			if (ops->pte_hole2) {
-				int ret = 0;
-				ops->pte_hole2(addr, next, depth, walk, &ret);
-				//printk(KERN_INFO "ops->pte_hole2 returned %d\n", ret);
-				err = ret;
-			}
 			if (err)
 				break;
 			continue;
@@ -93,13 +87,6 @@ again:
 		 */
 		if (ops->pmd_entry)
 			err = ops->pmd_entry(pmd, addr, next, walk);
-		if (ops->pmd_entry2) {
-			int ret = 0;
-			//printk(KERN_INFO "Calling ops->pmd_entry2\n");
-			ops->pmd_entry2(pmd, addr, next, walk, &ret);
-			//printk(KERN_INFO "ops->pmd_entry2 got %d\n", ret);
-			err = ret;
-		}
 		if (err)
 			break;
 
@@ -145,12 +132,6 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
 		if (pud_none(*pud) || (!walk->vma && !walk->no_vma)) {
 			if (ops->pte_hole)
 				err = ops->pte_hole(addr, next, depth, walk);
-			if (ops->pte_hole2) {
-				int ret = 0;
-				ops->pte_hole2(addr, next, depth, walk, &ret);
-				//printk(KERN_INFO "ops->pte_hole2 returned %d\n", ret);
-				err = ret;
-			}
 			if (err)
 				break;
 			continue;
@@ -158,18 +139,8 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
 
 		walk->action = ACTION_SUBTREE;
 
-		if (ops->pud_entry) {
-	//		printk(KERN_INFO "Calling ops->pud_entry\n");
+		if (ops->pud_entry)
 			err = ops->pud_entry(pud, addr, next, walk);
-	//		printk(KERN_INFO "ops->pud_entry returned %d\n", err);
-		}
-		if (ops->pud_entry2) {
-			int ret = 0;
-	//		printk(KERN_INFO "Calling ops->pud_entry2\n");
-			ops->pud_entry2(pud, addr, next, walk, &ret);
-	//		printk(KERN_INFO "ops->pud_entry returned %d\n", ret);
-			err = ret;
-		}
 		if (err)
 			break;
 
@@ -178,7 +149,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long addr, unsigned long end,
 
 		if ((!walk->vma && (pud_leaf(*pud) || !pud_present(*pud))) ||
 		    walk->action == ACTION_CONTINUE ||
-		    !(ops->pmd_entry || ops->pmd_entry2 || ops->pte_entry))
+		    !(ops->pmd_entry || ops->pte_entry))
 			continue;
 
 		if (walk->vma)
@@ -209,12 +180,6 @@ static int walk_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
 		if (p4d_none_or_clear_bad(p4d)) {
 			if (ops->pte_hole)
 				err = ops->pte_hole(addr, next, depth, walk);
-			if (ops->pte_hole2) {
-				int ret = 0;
-				ops->pte_hole2(addr, next, depth, walk, &ret);
-				//printk(KERN_INFO "ops->pte_hole2 returned %d\n", ret);
-				err = ret;
-			}
 			if (err)
 				break;
 			continue;
@@ -224,7 +189,7 @@ static int walk_p4d_range(pgd_t *pgd, unsigned long addr, unsigned long end,
 			if (err)
 				break;
 		}
-		if (ops->pud_entry || ops->pud_entry2 || ops->pmd_entry || ops->pmd_entry2 || ops->pte_entry)
+		if (ops->pud_entry || ops->pmd_entry || ops->pte_entry)
 			err = walk_pud_range(p4d, addr, next, walk);
 		if (err)
 			break;
@@ -250,12 +215,6 @@ static int walk_pgd_range(unsigned long addr, unsigned long end,
 		if (pgd_none_or_clear_bad(pgd)) {
 			if (ops->pte_hole)
 				err = ops->pte_hole(addr, next, 0, walk);
-			if (ops->pte_hole2) {
-				int ret = 0;
-				ops->pte_hole2(addr, next, 0, walk, &ret);
-				//printk(KERN_INFO "ops->pte_hole2 returned %d\n", ret);
-				err = ret;
-			}
 			if (err)
 				break;
 			continue;
@@ -265,7 +224,7 @@ static int walk_pgd_range(unsigned long addr, unsigned long end,
 			if (err)
 				break;
 		}
-		if (ops->p4d_entry || ops->pud_entry || ops->pud_entry2 || ops->pmd_entry || ops->pmd_entry2 ||
+		if (ops->p4d_entry || ops->pud_entry || ops->pmd_entry ||
 		    ops->pte_entry)
 			err = walk_p4d_range(pgd, addr, next, walk);
 		if (err)
@@ -299,24 +258,10 @@ static int walk_hugetlb_range(unsigned long addr, unsigned long end,
 		next = hugetlb_entry_end(h, addr, end);
 		pte = huge_pte_offset(walk->mm, addr & hmask, sz);
 
-		if (pte) {
-			if (ops->hugetlb_entry)
-				err = ops->hugetlb_entry(pte, hmask, addr, next, walk);
-			else if (ops->hugetlb_entry2) {
-				int ret = 0;
-				ops->hugetlb_entry2(pte, hmask, addr, next, walk, &ret);
-				//printk(KERN_INFO "ops->hugetlb_entry2 returned %d\n", ret);
-				err = ret;
-			}
-		}
+		if (pte)
+			err = ops->hugetlb_entry(pte, hmask, addr, next, walk);
 		else if (ops->pte_hole)
 			err = ops->pte_hole(addr, next, -1, walk);
-		else if (ops->pte_hole2) {
-			int ret = 0;
-			ops->pte_hole2(addr, next, -1, walk, &ret);
-			//printk(KERN_INFO "ops->pte_hole2 returned %d\n", ret);
-			err = ret;
-		}
 
 		if (err)
 			break;
@@ -346,19 +291,8 @@ static int walk_page_test(unsigned long start, unsigned long end,
 	struct vm_area_struct *vma = walk->vma;
 	const struct mm_walk_ops *ops = walk->ops;
 
-	if (ops->test_walk) {
-		//printk(KERN_INFO "Calling ops->test_walk\n");
-		int val = ops->test_walk(start, end, walk);
-		//nnprintk(KERN_INFO "ops->test_walk returned %d\n", val);
-		return val;
-	}
-	if (ops->test_walk2) {
-		//printk(KERN_INFO "Calling ops->test_walk2\n");
-		int ret = 0;
-		ops->test_walk2(start, end, walk, &ret);
-		//printk(KERN_INFO "ops->test_walk2 returned %d\n", ret);
-		return ret;
-	}
+	if (ops->test_walk)
+		return ops->test_walk(start, end, walk);
 
 	/*
 	 * vma(VM_PFNMAP) doesn't have any valid struct pages behind VM_PFNMAP
@@ -372,12 +306,6 @@ static int walk_page_test(unsigned long start, unsigned long end,
 		int err = 1;
 		if (ops->pte_hole)
 			err = ops->pte_hole(start, end, -1, walk);
-		if (ops->pte_hole2) {
-			int ret = 0;
-			ops->pte_hole2(start, end, -1, walk, &ret);
-			//printk(KERN_INFO "ops->pte_hole2 returned %d\n", ret);
-			err = ret;
-		}
 		return err ? err : 1;
 	}
 	return 0;
@@ -397,7 +325,7 @@ static int __walk_page_range(unsigned long start, unsigned long end,
 	}
 
 	if (vma && is_vm_hugetlb_page(vma)) {
-		if (ops->hugetlb_entry || ops->hugetlb_entry2)
+		if (ops->hugetlb_entry)
 			err = walk_hugetlb_range(start, end, walk);
 	} else
 		err = walk_pgd_range(start, end, walk);
@@ -461,7 +389,6 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
 		.private	= private,
 	};
 
-
 	if (start >= end)
 		return -EINVAL;
 
@@ -469,10 +396,6 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
 		return -EINVAL;
 
 	mmap_assert_locked(walk.mm);
-
-	if (ops->start_hook) {
-		ops->start_hook(&walk);
-	}
 
 	vma = find_vma(walk.mm, start);
 	do {
@@ -500,17 +423,11 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
 			if (err < 0)
 				break;
 		}
-		if (walk.vma || walk.ops->pte_hole || walk.ops->pte_hole2)
+		if (walk.vma || walk.ops->pte_hole)
 			err = __walk_page_range(start, next, &walk);
 		if (err)
 			break;
 	} while (start = next, start < end);
-
-
-	if (ops->end_hook) {
-		ops->end_hook(&walk);
-	}
-	
 	return err;
 }
 

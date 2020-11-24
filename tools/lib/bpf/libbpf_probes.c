@@ -109,7 +109,6 @@ probe_load(enum bpf_prog_type prog_type, const struct bpf_insn *insns,
 	case BPF_PROG_TYPE_STRUCT_OPS:
 	case BPF_PROG_TYPE_EXT:
 	case BPF_PROG_TYPE_LSM:
-	case BPF_PROG_TYPE_MM_WALK:
 	default:
 		break;
 	}
@@ -264,7 +263,6 @@ bool bpf_probe_map_type(enum bpf_map_type map_type, __u32 ifindex)
 	case BPF_MAP_TYPE_SOCKHASH:
 	case BPF_MAP_TYPE_REUSEPORT_SOCKARRAY:
 	case BPF_MAP_TYPE_STRUCT_OPS:
-	case BPF_MAP_TYPE_HMM_RANGE_STORAGE:
 	default:
 		break;
 	}

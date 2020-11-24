@@ -148,7 +148,6 @@ enum bpf_map_type {
 	BPF_MAP_TYPE_DEVMAP_HASH,
 	BPF_MAP_TYPE_STRUCT_OPS,
 	BPF_MAP_TYPE_RINGBUF,
-	BPF_MAP_TYPE_HMM_RANGE_STORAGE,
 };
 
 /* Note that tracing related programs such as
@@ -190,7 +189,6 @@ enum bpf_prog_type {
 	BPF_PROG_TYPE_STRUCT_OPS,
 	BPF_PROG_TYPE_EXT,
 	BPF_PROG_TYPE_LSM,
-	BPF_PROG_TYPE_MM_WALK,
 };
 
 enum bpf_attach_type {

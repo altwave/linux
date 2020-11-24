@@ -3594,7 +3594,6 @@ static int bpf_object__create_map(struct bpf_object *obj, struct bpf_map *map)
 	struct bpf_create_map_attr create_attr;
 	struct bpf_map_def *def = &map->def;
 
-	pr_warn("called create_map\n");
 	memset(&create_attr, 0, sizeof(create_attr));
 
 	if (obj->caps.name)
@@ -3674,7 +3673,6 @@ static int bpf_object__create_map(struct bpf_object *obj, struct bpf_map *map)
 		zfree(&map->inner_map);
 	}
 
-	pr_warn("create map success\n");
 	return 0;
 }
 
@@ -3687,8 +3685,6 @@ bpf_object__create_maps(struct bpf_object *obj)
 	int err;
 
 	for (i = 0; i < obj->nr_maps; i++) {
-		
-		pr_warn("create maps iter %d\n", i);
 		map = &obj->maps[i];
 
 		if (map->pin_path) {
@@ -5658,25 +5654,15 @@ int bpf_object__load_xattr(struct bpf_object_load_attr *attr)
 	obj->loaded = true;
 
 	err = bpf_object__probe_loading(obj);
-	if (err) pr_warn("err 1\n");
 	err = err ? : bpf_object__probe_caps(obj);
-	if (err) pr_warn("err 2\n");
 	err = err ? : bpf_object__resolve_externs(obj, obj->kconfig);
-	if (err) pr_warn("err 3\n");
 	err = err ? : bpf_object__sanitize_and_load_btf(obj);
-	if (err) pr_warn("err 4\n");
 	err = err ? : bpf_object__sanitize_maps(obj);
-	if (err) pr_warn("err 5\n");
 	err = err ? : bpf_object__load_vmlinux_btf(obj);
-	if (err) pr_warn("err 6\n");
 	err = err ? : bpf_object__init_kern_struct_ops_maps(obj);
-	if (err) pr_warn("err 7\n");
 	err = err ? : bpf_object__create_maps(obj);
-	if (err) pr_warn("err 8\n");
 	err = err ? : bpf_object__relocate(obj, attr->target_btf_path);
-	if (err) pr_warn("err 9\n");
 	err = err ? : bpf_object__load_progs(obj, attr->log_level);
-	if (err) pr_warn("err 10\n");
 
 	btf__free(obj->btf_vmlinux);
 	obj->btf_vmlinux = NULL;
