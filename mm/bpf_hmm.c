@@ -344,7 +344,7 @@ static int bpf_mm_walk_ops_init_member(const struct btf_type *t,
 	moff = btf_member_bit_offset(t, member) / 8;
 	switch (moff) {
 	case offsetof(struct mm_walk_ops, name):
-		if (bpf_obj_name_cpy(khmm_policy->name, "new policy", sizeof(khmm_policy->name)) <= 0)
+		if (bpf_obj_name_cpy(khmm_policy->name, ukmm_policy->name, sizeof(khmm_policy->name)) <= 0)
 			return -EINVAL;
 		return 1;
 	}
