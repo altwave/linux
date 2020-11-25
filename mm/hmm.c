@@ -25,6 +25,7 @@
 #include <linux/dma-mapping.h>
 #include <linux/mmu_notifier.h>
 #include <linux/memory_hotplug.h>
+#include <linux/syscalls.h>
 
 enum {
 	HMM_NEED_FAULT = 1 << 0,
@@ -592,3 +593,23 @@ void hmm_unregister_mm_walk_ops(struct mm_walk_ops * ops) {
 	curr_walk_ops = &hmm_walk_ops;
 }
 EXPORT_SYMBOL_GPL(hmm_unregister_mm_walk_ops);
+
+
+// Temporarily adding syscalls to help better test stuff
+SYSCALL_DEFINE0(test_hmm_vma_walk_test)
+{
+	printk(KERN_INFO "Called syscall to test hmm_vma_walk_test\n");
+	unsigned long start = 100;
+	unsigned long end = 4000;
+	
+	struct mm_walk walk = {
+		//.range = range,
+		//.last = range->start,
+	};
+	printk(KERN_INFO "start=%lu, end=%lu, walk=%lu\n", 
+			start, end, (unsigned long)&walk);
+	
+	int val = curr_walk_ops->test_walk(start, end, &walk);
+	printk(KERN_INFO "hmm_vma_walk_test returning %d\n", val);
+	return val;
+}

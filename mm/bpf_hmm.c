@@ -306,10 +306,11 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_hugetlb_entry_proto = {
 
 BPF_CALL_3(bpf_hmm_vma_walk_test, unsigned long, start, unsigned long, end,
 						     struct mm_walk *, walk) {
-	//printk(KERN_INFO "Called bpf_hmm_vma_walk_test\n");
-	int val = hmm_vma_walk_test(start, end, walk);
+	printk(KERN_INFO "Called bpf_hmm_vma_walk_test, start=%lu, end=%lu, walk=%lu\n", 
+			start, end, (unsigned long)walk);
+	//int val = hmm_vma_walk_test(start, end, walk);
 	//printk(KERN_INFO "bpf_hmm_vma_walk_test returned %d\n", val);
-	return val;
+	return 7;
 }
 
 static const struct bpf_func_proto bpf_hmm_vma_walk_test_proto = {
@@ -344,7 +345,7 @@ static int bpf_mm_walk_ops_init_member(const struct btf_type *t,
 	moff = btf_member_bit_offset(t, member) / 8;
 	switch (moff) {
 	case offsetof(struct mm_walk_ops, name):
-		if (bpf_obj_name_cpy(khmm_policy->name, ukmm_policy->name, sizeof(khmm_policy->name)) <= 0)
+		if (bpf_obj_name_cpy(khmm_policy->name, uhmm_policy->name, sizeof(khmm_policy->name)) <= 0)
 			return -EINVAL;
 		return 1;
 	}
