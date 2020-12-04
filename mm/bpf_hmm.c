@@ -239,7 +239,8 @@ static const struct bpf_func_proto bpf_get_hmm_range_user_proto = {
 };
 
 */
-BPF_CALL_5(bpf_hmm_vma_walk_pud, void *, pudp, unsigned long, start, unsigned long, end, struct mm_walk *,walk, int __user *, ret) {
+BPF_CALL_4(bpf_hmm_vma_walk_pud, void *, pudp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
+	printk(KERN_INFO "Called bpf_hmm_vma_walk_pud\n");
 	int val = hmm_vma_walk_pud((pud_t *)pudp, start, end, walk);
 	return val;
 }
@@ -252,12 +253,11 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_pud_proto = {
 	.arg2_type	= ARG_ANYTHING,
 	.arg3_type	= ARG_ANYTHING,
 	.arg4_type	= ARG_ANYTHING,
-	.arg5_type	= ARG_ANYTHING,
 };
 
 
 BPF_CALL_4(bpf_hmm_vma_walk_pmd, void *, pmdp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
-	//printk(KERN_INFO "Called bpf_hmm_vma_walk_pmd\n");
+	printk(KERN_INFO "Called bpf_hmm_vma_walk_pmd\n");
 	return hmm_vma_walk_pmd((pmd_t *)pmdp, start, end, walk);
 }
 
@@ -273,7 +273,7 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_pmd_proto = {
 
 BPF_CALL_4(bpf_hmm_vma_walk_hole, unsigned long, addr, unsigned long, end,
 					     int, depth, struct mm_walk *,walk) {
-	//printk(KERN_INFO "Called bpf_hmm_vma_walk_hole\n");
+	printk(KERN_INFO "Called bpf_hmm_vma_walk_hole\n");
 	return hmm_vma_walk_hole(addr, end, depth, walk);
 }
 
@@ -289,7 +289,7 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_hole_proto = {
 
 
 BPF_CALL_5(bpf_hmm_vma_walk_hugetlb_entry, void *, pte, unsigned long, hmask, unsigned long, start, unsigned long, end, struct mm_walk *, walk) {
-	//printk(KERN_INFO "Called bpf_hmm_vma_walk_hugetlb_entry\n");
+	printk(KERN_INFO "Called bpf_hmm_vma_walk_hugetlb_entry\n");
 	return hmm_vma_walk_hugetlb_entry((pte_t *)pte, hmask, start, end, walk);
 }
 
@@ -308,9 +308,11 @@ BPF_CALL_3(bpf_hmm_vma_walk_test, unsigned long, start, unsigned long, end,
 						     struct mm_walk *, walk) {
 	printk(KERN_INFO "Called bpf_hmm_vma_walk_test, start=%lu, end=%lu, walk=%lu\n", 
 			start, end, (unsigned long)walk);
-	//int val = hmm_vma_walk_test(start, end, walk);
-	//printk(KERN_INFO "bpf_hmm_vma_walk_test returned %d\n", val);
-	return 7;
+	
+	int val = hmm_vma_walk_test(start, end, walk);
+	
+	printk(KERN_INFO "bpf_hmm_vma_walk_test returned %d\n", val);
+	return val;
 }
 
 static const struct bpf_func_proto bpf_hmm_vma_walk_test_proto = {

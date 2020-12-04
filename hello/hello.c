@@ -2,8 +2,10 @@
 #include <linux/printk.h>
 #include <linux/hello.h>
 
-int regular_msg_fn(int a) {
-	printk(KERN_INFO "Hello from regular_msg_fn\n");
+
+
+int regular_msg_fn(int a, struct hello_info * info) {
+	printk(KERN_INFO "Hello from regular_msg_fn, a=%d, info->a=%lu\n", a, info->a);
 	//printk(KERN_INFO "The msg is: %s\n", msg);
 	return 0;
 };
@@ -22,7 +24,14 @@ SYSCALL_DEFINE0(hello)
 //  if (copied < 0 || copied == sizeof(buf))
 //    return -EFAULT;
 //  printk(KERN_INFO "hello syscall called with \"%s\"\n", buf);
-  int val = current_hello->print_msg(1);
+  
+  struct hello_info info = {
+  	.a = 2,
+	.b = 3,
+	.c = "someinfo",
+  };
+
+  int val = current_hello->print_msg(13, &info);
   printk(KERN_INFO "hello syscall returning %d\n", val);
   return val;
 }

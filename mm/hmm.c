@@ -601,15 +601,50 @@ SYSCALL_DEFINE0(test_hmm_vma_walk_test)
 	printk(KERN_INFO "Called syscall to test hmm_vma_walk_test\n");
 	unsigned long start = 100;
 	unsigned long end = 4000;
+	int i;
+
+
+	struct hmm_range range = {
+		.start = 3300,
+		.end = 5500,
+	};
+
+	range.hmm_pfns = kvmalloc_array(13,
+					 sizeof(*range.hmm_pfns), GFP_KERNEL);
+
+	range.hmm_pfns[0] = 45;
+	range.hmm_pfns[1] = 456;
+	range.hmm_pfns[3] = 728;
+	for (i=4; i<13; i++) {
+		range.hmm_pfns[i] = i;
+	}	
+	
+	struct hmm_vma_walk hmm_vma_walk = {
+		.range = &range,
+		.last = 9999,
+	};
+
+	struct vm_area_struct vma = {
+		.vm_start = 7700,
+		.vm_end = 8800,
+		.rb_subtree_gap = 23,
+		.vm_page_prot = {
+			.pgprot = 345,
+		},
+		.vm_flags = 4,
+	};
 	
 	struct mm_walk walk = {
-		//.range = range,
-		//.last = range->start,
+		.private = &hmm_vma_walk,
+		.action = ACTION_AGAIN,
+		.vma = &vma,
 	};
+	
 	printk(KERN_INFO "start=%lu, end=%lu, walk=%lu\n", 
 			start, end, (unsigned long)&walk);
 	
 	int val = curr_walk_ops->test_walk(start, end, &walk);
 	printk(KERN_INFO "hmm_vma_walk_test returning %d\n", val);
+	kvfree(range.hmm_pfns);
 	return val;
 }
