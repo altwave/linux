@@ -3351,7 +3351,7 @@ union bpf_attr {
  * 	Return
  * 		nothing. always succeeds.
  *
- * int bpf_hmm_vma_walk_pud(void *pudp, unsigned long start, unsigned long end, struct mm_walk *walk, int *ret)
+ * int bpf_hmm_vma_walk_pud(void *pudp, unsigned long start, unsigned long end, struct mm_walk *walk)
  * 	Description
  * 		Discard reserved ring buffer sample, pointed to by *data*.
  * 		If BPF_RB_NO_WAKEUP is specified in *flags*, no notification of
