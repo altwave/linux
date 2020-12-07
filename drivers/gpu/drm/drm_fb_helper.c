@@ -325,7 +325,7 @@ static void drm_fb_helper_sysrq(int dummy1)
 
 static const struct sysrq_key_op sysrq_drm_fb_helper_restore_op = {
 	.handler = drm_fb_helper_sysrq,
-	.help_msg = "force-fb(V)",
+	.help_msg = "force-fb(v)",
 	.action_msg = "Restore framebuffer console",
 };
 #else
@@ -399,7 +399,11 @@ static void drm_fb_helper_dirty_blit_real(struct drm_fb_helper *fb_helper,
 	unsigned int y;
 
 	for (y = clip->y1; y < clip->y2; y++) {
-		memcpy(dst, src, len);
+		if (!fb_helper->dev->mode_config.fbdev_use_iomem)
+			memcpy(dst, src, len);
+		else
+			memcpy_toio((void __iomem *)dst, src, len);
+
 		src += fb->pitches[0];
 		dst += fb->pitches[0];
 	}
@@ -1819,7 +1823,7 @@ __drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper *fb_helper,
 	if (ret < 0)
 		return ret;
 
-	dev_info(dev->dev, "fb%d: %s frame buffer device\n",
+	drm_info(dev, "fb%d: %s frame buffer device\n",
 		 info->node, info->fix.id);
 
 	mutex_lock(&kernel_fb_helper_lock);

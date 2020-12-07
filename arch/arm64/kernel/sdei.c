@@ -10,6 +10,7 @@
 #include <linux/uaccess.h>
 
 #include <asm/alternative.h>
+#include <asm/exception.h>
 #include <asm/kprobes.h>
 #include <asm/mmu.h>
 #include <asm/ptrace.h>
@@ -180,7 +181,7 @@ static __kprobes unsigned long _sdei_handler(struct pt_regs *regs,
 
 	/*
 	 * We didn't take an exception to get here, set PAN. UAO will be cleared
-	 * by sdei_event_handler()s set_fs(USER_DS) call.
+	 * by sdei_event_handler()s force_uaccess_begin() call.
 	 */
 	__uaccess_enable_hw_pan();
 
@@ -223,16 +224,16 @@ static __kprobes unsigned long _sdei_handler(struct pt_regs *regs,
 }
 
 
-asmlinkage __kprobes notrace unsigned long
+asmlinkage noinstr unsigned long
 __sdei_handler(struct pt_regs *regs, struct sdei_registered_event *arg)
 {
 	unsigned long ret;
 
-	nmi_enter();
+	arm64_enter_nmi(regs);
 
 	ret = _sdei_handler(regs, arg);
 
-	nmi_exit();
+	arm64_exit_nmi(regs);
 
 	return ret;
 }
