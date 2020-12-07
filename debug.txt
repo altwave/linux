@@ -1,0 +1,1327 @@
+
+mm/mmu_notifier.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <mmu_notifier_range_update_to_read_only>:
+       0:	e8 00 00 00 00       	callq  5 <mmu_notifier_range_update_to_read_only+0x5>
+       5:	48 8b 17             	mov    (%rdi),%rdx
+       8:	31 c0                	xor    %eax,%eax
+       a:	48 85 d2             	test   %rdx,%rdx
+       d:	74 06                	je     15 <mmu_notifier_range_update_to_read_only+0x15>
+       f:	83 7f 24 02          	cmpl   $0x2,0x24(%rdi)
+      13:	74 01                	je     16 <mmu_notifier_range_update_to_read_only+0x16>
+      15:	c3                   	retq   
+      16:	48 8b 42 50          	mov    0x50(%rdx),%rax
+      1a:	83 e0 01             	and    $0x1,%eax
+      1d:	c3                   	retq   
+      1e:	66 90                	xchg   %ax,%ax
+
+0000000000000020 <mmu_interval_read_begin>:
+      20:	e8 00 00 00 00       	callq  25 <mmu_interval_read_begin+0x5>
+      25:	41 55                	push   %r13
+      27:	41 54                	push   %r12
+      29:	55                   	push   %rbp
+      2a:	48 89 fd             	mov    %rdi,%rbp
+      2d:	53                   	push   %rbx
+      2e:	48 83 ec 30          	sub    $0x30,%rsp
+      32:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+      39:	00 00 
+      3b:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+      40:	31 c0                	xor    %eax,%eax
+      42:	48 8b 47 38          	mov    0x38(%rdi),%rax
+      46:	48 c7 04 24 00 00 00 	movq   $0x0,(%rsp)
+      4d:	00 
+      4e:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
+      55:	00 00 
+      57:	48 c7 44 24 10 00 00 	movq   $0x0,0x10(%rsp)
+      5e:	00 00 
+      60:	48 8b 98 a8 03 00 00 	mov    0x3a8(%rax),%rbx
+      67:	48 c7 44 24 18 00 00 	movq   $0x0,0x18(%rsp)
+      6e:	00 00 
+      70:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+      77:	00 00 
+      79:	4c 8d 63 0c          	lea    0xc(%rbx),%r12
+      7d:	4c 89 e7             	mov    %r12,%rdi
+      80:	e8 00 00 00 00       	callq  85 <mmu_interval_read_begin+0x65>
+      85:	48 8b 6d 50          	mov    0x50(%rbp),%rbp
+      89:	4c 8b 6b 10          	mov    0x10(%rbx),%r13
+      8d:	4c 89 e7             	mov    %r12,%rdi
+      90:	e8 00 00 00 00       	callq  95 <mmu_interval_read_begin+0x75>
+      95:	49 39 ed             	cmp    %rbp,%r13
+      98:	74 1e                	je     b8 <mmu_interval_read_begin+0x98>
+      9a:	48 8b 4c 24 28       	mov    0x28(%rsp),%rcx
+      9f:	65 48 33 0c 25 28 00 	xor    %gs:0x28,%rcx
+      a6:	00 00 
+      a8:	48 89 e8             	mov    %rbp,%rax
+      ab:	75 4f                	jne    fc <mmu_interval_read_begin+0xdc>
+      ad:	48 83 c4 30          	add    $0x30,%rsp
+      b1:	5b                   	pop    %rbx
+      b2:	5d                   	pop    %rbp
+      b3:	41 5c                	pop    %r12
+      b5:	41 5d                	pop    %r13
+      b7:	c3                   	retq   
+      b8:	48 8b 43 10          	mov    0x10(%rbx),%rax
+      bc:	48 39 c5             	cmp    %rax,%rbp
+      bf:	75 d9                	jne    9a <mmu_interval_read_begin+0x7a>
+      c1:	31 f6                	xor    %esi,%esi
+      c3:	48 89 e7             	mov    %rsp,%rdi
+      c6:	4c 8d 63 30          	lea    0x30(%rbx),%r12
+      ca:	e8 00 00 00 00       	callq  cf <mmu_interval_read_begin+0xaf>
+      cf:	eb 05                	jmp    d6 <mmu_interval_read_begin+0xb6>
+      d1:	e8 00 00 00 00       	callq  d6 <mmu_interval_read_begin+0xb6>
+      d6:	ba 02 00 00 00       	mov    $0x2,%edx
+      db:	48 89 e6             	mov    %rsp,%rsi
+      de:	4c 89 e7             	mov    %r12,%rdi
+      e1:	e8 00 00 00 00       	callq  e6 <mmu_interval_read_begin+0xc6>
+      e6:	48 8b 43 10          	mov    0x10(%rbx),%rax
+      ea:	48 39 c5             	cmp    %rax,%rbp
+      ed:	74 e2                	je     d1 <mmu_interval_read_begin+0xb1>
+      ef:	48 89 e6             	mov    %rsp,%rsi
+      f2:	4c 89 e7             	mov    %r12,%rdi
+      f5:	e8 00 00 00 00       	callq  fa <mmu_interval_read_begin+0xda>
+      fa:	eb 9e                	jmp    9a <mmu_interval_read_begin+0x7a>
+      fc:	e8 00 00 00 00       	callq  101 <mmu_interval_read_begin+0xe1>
+     101:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     108:	00 00 00 00 
+     10c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000000110 <__mmu_interval_notifier_insert>:
+     110:	e8 00 00 00 00       	callq  115 <__mmu_interval_notifier_insert+0x5>
+     115:	48 89 77 38          	mov    %rsi,0x38(%rdi)
+     119:	4c 89 4f 30          	mov    %r9,0x30(%rdi)
+     11d:	48 89 3f             	mov    %rdi,(%rdi)
+     120:	48 89 4f 18          	mov    %rcx,0x18(%rdi)
+     124:	4d 85 c0             	test   %r8,%r8
+     127:	0f 84 ba 00 00 00    	je     1e7 <__mmu_interval_notifier_insert+0xd7>
+     12d:	49 83 e8 01          	sub    $0x1,%r8
+     131:	4c 01 c1             	add    %r8,%rcx
+     134:	48 89 4f 20          	mov    %rcx,0x20(%rdi)
+     138:	0f 82 a9 00 00 00    	jb     1e7 <__mmu_interval_notifier_insert+0xd7>
+     13e:	41 54                	push   %r12
+     140:	55                   	push   %rbp
+     141:	53                   	push   %rbx
+     142:	8b 46 60             	mov    0x60(%rsi),%eax
+     145:	85 c0                	test   %eax,%eax
+     147:	0f 8e 8d 00 00 00    	jle    1da <__mmu_interval_notifier_insert+0xca>
+     14d:	48 89 d5             	mov    %rdx,%rbp
+     150:	48 89 fb             	mov    %rdi,%rbx
+     153:	f0 ff 46 60          	lock incl 0x60(%rsi)
+     157:	4c 8d 62 0c          	lea    0xc(%rdx),%r12
+     15b:	4c 89 e7             	mov    %r12,%rdi
+     15e:	e8 00 00 00 00       	callq  163 <__mmu_interval_notifier_insert+0x53>
+     163:	48 83 7d 18 00       	cmpq   $0x0,0x18(%rbp)
+     168:	48 8b 45 10          	mov    0x10(%rbp),%rax
+     16c:	74 2f                	je     19d <__mmu_interval_notifier_insert+0x8d>
+     16e:	a8 01                	test   $0x1,%al
+     170:	74 52                	je     1c4 <__mmu_interval_notifier_insert+0xb4>
+     172:	48 8b 45 48          	mov    0x48(%rbp),%rax
+     176:	48 8d 53 40          	lea    0x40(%rbx),%rdx
+     17a:	48 89 43 40          	mov    %rax,0x40(%rbx)
+     17e:	48 85 c0             	test   %rax,%rax
+     181:	74 04                	je     187 <__mmu_interval_notifier_insert+0x77>
+     183:	48 89 50 08          	mov    %rdx,0x8(%rax)
+     187:	48 8d 45 48          	lea    0x48(%rbp),%rax
+     18b:	48 89 55 48          	mov    %rdx,0x48(%rbp)
+     18f:	48 89 43 48          	mov    %rax,0x48(%rbx)
+     193:	48 8b 45 10          	mov    0x10(%rbp),%rax
+     197:	48 89 43 50          	mov    %rax,0x50(%rbx)
+     19b:	eb 18                	jmp    1b5 <__mmu_interval_notifier_insert+0xa5>
+     19d:	a8 01                	test   $0x1,%al
+     19f:	75 42                	jne    1e3 <__mmu_interval_notifier_insert+0xd3>
+     1a1:	48 83 e8 01          	sub    $0x1,%rax
+     1a5:	48 8d 75 20          	lea    0x20(%rbp),%rsi
+     1a9:	48 89 df             	mov    %rbx,%rdi
+     1ac:	48 89 43 50          	mov    %rax,0x50(%rbx)
+     1b0:	e8 00 00 00 00       	callq  1b5 <__mmu_interval_notifier_insert+0xa5>
+     1b5:	4c 89 e7             	mov    %r12,%rdi
+     1b8:	e8 00 00 00 00       	callq  1bd <__mmu_interval_notifier_insert+0xad>
+     1bd:	31 c0                	xor    %eax,%eax
+     1bf:	5b                   	pop    %rbx
+     1c0:	5d                   	pop    %rbp
+     1c1:	41 5c                	pop    %r12
+     1c3:	c3                   	retq   
+     1c4:	48 83 c8 01          	or     $0x1,%rax
+     1c8:	48 8d 75 20          	lea    0x20(%rbp),%rsi
+     1cc:	48 89 df             	mov    %rbx,%rdi
+     1cf:	48 89 45 10          	mov    %rax,0x10(%rbp)
+     1d3:	e8 00 00 00 00       	callq  1d8 <__mmu_interval_notifier_insert+0xc8>
+     1d8:	eb b9                	jmp    193 <__mmu_interval_notifier_insert+0x83>
+     1da:	0f 0b                	ud2    
+     1dc:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+     1e1:	eb dc                	jmp    1bf <__mmu_interval_notifier_insert+0xaf>
+     1e3:	0f 0b                	ud2    
+     1e5:	eb ba                	jmp    1a1 <__mmu_interval_notifier_insert+0x91>
+     1e7:	b8 b5 ff ff ff       	mov    $0xffffffb5,%eax
+     1ec:	c3                   	retq   
+     1ed:	0f 1f 00             	nopl   (%rax)
+
+00000000000001f0 <mn_itree_inv_end>:
+     1f0:	e8 00 00 00 00       	callq  1f5 <mn_itree_inv_end+0x5>
+     1f5:	41 57                	push   %r15
+     1f7:	48 8d 47 0c          	lea    0xc(%rdi),%rax
+     1fb:	41 56                	push   %r14
+     1fd:	41 55                	push   %r13
+     1ff:	41 54                	push   %r12
+     201:	55                   	push   %rbp
+     202:	48 89 fd             	mov    %rdi,%rbp
+     205:	48 89 c7             	mov    %rax,%rdi
+     208:	53                   	push   %rbx
+     209:	48 83 ec 08          	sub    $0x8,%rsp
+     20d:	48 89 04 24          	mov    %rax,(%rsp)
+     211:	e8 00 00 00 00       	callq  216 <mn_itree_inv_end+0x26>
+     216:	48 83 6d 18 01       	subq   $0x1,0x18(%rbp)
+     21b:	0f 85 b1 00 00 00    	jne    2d2 <mn_itree_inv_end+0xe2>
+     221:	48 8b 45 10          	mov    0x10(%rbp),%rax
+     225:	a8 01                	test   $0x1,%al
+     227:	0f 84 a5 00 00 00    	je     2d2 <mn_itree_inv_end+0xe2>
+     22d:	48 8b 5d 48          	mov    0x48(%rbp),%rbx
+     231:	48 83 c0 01          	add    $0x1,%rax
+     235:	48 89 45 10          	mov    %rax,0x10(%rbp)
+     239:	48 85 db             	test   %rbx,%rbx
+     23c:	74 6b                	je     2a9 <mn_itree_inv_end+0xb9>
+     23e:	48 83 eb 40          	sub    $0x40,%rbx
+     242:	74 65                	je     2a9 <mn_itree_inv_end+0xb9>
+     244:	49 bd 00 01 00 00 00 	movabs $0xdead000000000100,%r13
+     24b:	00 ad de 
+     24e:	4c 8d 7d 20          	lea    0x20(%rbp),%r15
+     252:	49 bc 22 01 00 00 00 	movabs $0xdead000000000122,%r12
+     259:	00 ad de 
+     25c:	eb 35                	jmp    293 <mn_itree_inv_end+0xa3>
+     25e:	4c 89 fe             	mov    %r15,%rsi
+     261:	48 89 df             	mov    %rbx,%rdi
+     264:	e8 00 00 00 00       	callq  269 <mn_itree_inv_end+0x79>
+     269:	48 8b 53 40          	mov    0x40(%rbx),%rdx
+     26d:	48 8b 4b 48          	mov    0x48(%rbx),%rcx
+     271:	48 89 11             	mov    %rdx,(%rcx)
+     274:	48 85 d2             	test   %rdx,%rdx
+     277:	74 04                	je     27d <mn_itree_inv_end+0x8d>
+     279:	48 89 4a 08          	mov    %rcx,0x8(%rdx)
+     27d:	4c 89 6b 40          	mov    %r13,0x40(%rbx)
+     281:	4c 89 63 48          	mov    %r12,0x48(%rbx)
+     285:	4d 85 f6             	test   %r14,%r14
+     288:	74 1f                	je     2a9 <mn_itree_inv_end+0xb9>
+     28a:	4c 89 f3             	mov    %r14,%rbx
+     28d:	48 83 eb 40          	sub    $0x40,%rbx
+     291:	74 16                	je     2a9 <mn_itree_inv_end+0xb9>
+     293:	4c 8b 73 40          	mov    0x40(%rbx),%r14
+     297:	48 3b 1b             	cmp    (%rbx),%rbx
+     29a:	75 c2                	jne    25e <mn_itree_inv_end+0x6e>
+     29c:	4c 89 fe             	mov    %r15,%rsi
+     29f:	48 89 df             	mov    %rbx,%rdi
+     2a2:	e8 00 00 00 00       	callq  2a7 <mn_itree_inv_end+0xb7>
+     2a7:	eb c0                	jmp    269 <mn_itree_inv_end+0x79>
+     2a9:	48 8b 3c 24          	mov    (%rsp),%rdi
+     2ad:	e8 00 00 00 00       	callq  2b2 <mn_itree_inv_end+0xc2>
+     2b2:	48 8d 7d 30          	lea    0x30(%rbp),%rdi
+     2b6:	31 c9                	xor    %ecx,%ecx
+     2b8:	31 d2                	xor    %edx,%edx
+     2ba:	48 83 c4 08          	add    $0x8,%rsp
+     2be:	be 03 00 00 00       	mov    $0x3,%esi
+     2c3:	5b                   	pop    %rbx
+     2c4:	5d                   	pop    %rbp
+     2c5:	41 5c                	pop    %r12
+     2c7:	41 5d                	pop    %r13
+     2c9:	41 5e                	pop    %r14
+     2cb:	41 5f                	pop    %r15
+     2cd:	e9 00 00 00 00       	jmpq   2d2 <mn_itree_inv_end+0xe2>
+     2d2:	48 8b 3c 24          	mov    (%rsp),%rdi
+     2d6:	48 83 c4 08          	add    $0x8,%rsp
+     2da:	5b                   	pop    %rbx
+     2db:	5d                   	pop    %rbp
+     2dc:	41 5c                	pop    %r12
+     2de:	41 5d                	pop    %r13
+     2e0:	41 5e                	pop    %r14
+     2e2:	41 5f                	pop    %r15
+     2e4:	e9 00 00 00 00       	jmpq   2e9 <mn_itree_inv_end+0xf9>
+     2e9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+00000000000002f0 <mmu_notifier_synchronize>:
+     2f0:	e8 00 00 00 00       	callq  2f5 <mmu_notifier_synchronize+0x5>
+     2f5:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     2fc:	e9 00 00 00 00       	jmpq   301 <mmu_notifier_synchronize+0x11>
+     301:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     308:	00 00 00 00 
+     30c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000000310 <__mmu_notifier_register>:
+     310:	e8 00 00 00 00       	callq  315 <__mmu_notifier_register+0x5>
+     315:	41 55                	push   %r13
+     317:	41 54                	push   %r12
+     319:	55                   	push   %rbp
+     31a:	53                   	push   %rbx
+     31b:	48 83 ec 08          	sub    $0x8,%rsp
+     31f:	8b 46 5c             	mov    0x5c(%rsi),%eax
+     322:	85 c0                	test   %eax,%eax
+     324:	0f 8e 22 01 00 00    	jle    44c <__mmu_notifier_register+0x13c>
+     32a:	48 83 be a8 03 00 00 	cmpq   $0x0,0x3a8(%rsi)
+     331:	00 
+     332:	48 89 f3             	mov    %rsi,%rbx
+     335:	48 89 fd             	mov    %rdi,%rbp
+     338:	0f 84 8f 00 00 00    	je     3cd <__mmu_notifier_register+0xbd>
+     33e:	48 89 f7             	mov    %rsi,%rdi
+     341:	e8 00 00 00 00       	callq  346 <__mmu_notifier_register+0x36>
+     346:	85 c0                	test   %eax,%eax
+     348:	0f 85 00 01 00 00    	jne    44e <__mmu_notifier_register+0x13e>
+     34e:	48 85 ed             	test   %rbp,%rbp
+     351:	74 6d                	je     3c0 <__mmu_notifier_register+0xb0>
+     353:	f0 ff 43 60          	lock incl 0x60(%rbx)
+     357:	48 89 5d 18          	mov    %rbx,0x18(%rbp)
+     35b:	c7 45 30 01 00 00 00 	movl   $0x1,0x30(%rbp)
+     362:	48 8b 83 a8 03 00 00 	mov    0x3a8(%rbx),%rax
+     369:	48 8d 78 0c          	lea    0xc(%rax),%rdi
+     36d:	e8 00 00 00 00       	callq  372 <__mmu_notifier_register+0x62>
+     372:	48 8b 83 a8 03 00 00 	mov    0x3a8(%rbx),%rax
+     379:	48 8b 10             	mov    (%rax),%rdx
+     37c:	48 89 45 08          	mov    %rax,0x8(%rbp)
+     380:	48 89 55 00          	mov    %rdx,0x0(%rbp)
+     384:	48 89 28             	mov    %rbp,(%rax)
+     387:	48 85 d2             	test   %rdx,%rdx
+     38a:	74 04                	je     390 <__mmu_notifier_register+0x80>
+     38c:	48 89 6a 08          	mov    %rbp,0x8(%rdx)
+     390:	48 8b 83 a8 03 00 00 	mov    0x3a8(%rbx),%rax
+     397:	48 8d 78 0c          	lea    0xc(%rax),%rdi
+     39b:	e8 00 00 00 00       	callq  3a0 <__mmu_notifier_register+0x90>
+     3a0:	48 89 df             	mov    %rbx,%rdi
+     3a3:	e8 00 00 00 00       	callq  3a8 <__mmu_notifier_register+0x98>
+     3a8:	8b 53 5c             	mov    0x5c(%rbx),%edx
+     3ab:	31 c0                	xor    %eax,%eax
+     3ad:	85 d2                	test   %edx,%edx
+     3af:	0f 8e b1 00 00 00    	jle    466 <__mmu_notifier_register+0x156>
+     3b5:	48 83 c4 08          	add    $0x8,%rsp
+     3b9:	5b                   	pop    %rbx
+     3ba:	5d                   	pop    %rbp
+     3bb:	41 5c                	pop    %r12
+     3bd:	41 5d                	pop    %r13
+     3bf:	c3                   	retq   
+     3c0:	48 8b 83 a8 03 00 00 	mov    0x3a8(%rbx),%rax
+     3c7:	c6 40 08 01          	movb   $0x1,0x8(%rax)
+     3cb:	eb d3                	jmp    3a0 <__mmu_notifier_register+0x90>
+     3cd:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 3d4 <__mmu_notifier_register+0xc4>
+     3d4:	ba 50 00 00 00       	mov    $0x50,%edx
+     3d9:	be c0 0d 00 00       	mov    $0xdc0,%esi
+     3de:	e8 00 00 00 00       	callq  3e3 <__mmu_notifier_register+0xd3>
+     3e3:	49 89 c4             	mov    %rax,%r12
+     3e6:	49 89 c5             	mov    %rax,%r13
+     3e9:	48 85 c0             	test   %rax,%rax
+     3ec:	74 7a                	je     468 <__mmu_notifier_register+0x158>
+     3ee:	48 c7 00 00 00 00 00 	movq   $0x0,(%rax)
+     3f5:	48 8d 78 30          	lea    0x30(%rax),%rdi
+     3f9:	48 c7 c2 00 00 00 00 	mov    $0x0,%rdx
+     400:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+     407:	c7 40 0c 00 00 00 00 	movl   $0x0,0xc(%rax)
+     40e:	48 c7 40 10 02 00 00 	movq   $0x2,0x10(%rax)
+     415:	00 
+     416:	48 c7 40 20 00 00 00 	movq   $0x0,0x20(%rax)
+     41d:	00 
+     41e:	48 c7 40 28 00 00 00 	movq   $0x0,0x28(%rax)
+     425:	00 
+     426:	e8 00 00 00 00       	callq  42b <__mmu_notifier_register+0x11b>
+     42b:	48 89 df             	mov    %rbx,%rdi
+     42e:	49 c7 44 24 48 00 00 	movq   $0x0,0x48(%r12)
+     435:	00 00 
+     437:	e8 00 00 00 00       	callq  43c <__mmu_notifier_register+0x12c>
+     43c:	85 c0                	test   %eax,%eax
+     43e:	75 11                	jne    451 <__mmu_notifier_register+0x141>
+     440:	4c 89 a3 a8 03 00 00 	mov    %r12,0x3a8(%rbx)
+     447:	e9 02 ff ff ff       	jmpq   34e <__mmu_notifier_register+0x3e>
+     44c:	0f 0b                	ud2    
+     44e:	45 31 ed             	xor    %r13d,%r13d
+     451:	4c 89 ef             	mov    %r13,%rdi
+     454:	89 44 24 04          	mov    %eax,0x4(%rsp)
+     458:	e8 00 00 00 00       	callq  45d <__mmu_notifier_register+0x14d>
+     45d:	8b 44 24 04          	mov    0x4(%rsp),%eax
+     461:	e9 4f ff ff ff       	jmpq   3b5 <__mmu_notifier_register+0xa5>
+     466:	0f 0b                	ud2    
+     468:	b8 f4 ff ff ff       	mov    $0xfffffff4,%eax
+     46d:	e9 43 ff ff ff       	jmpq   3b5 <__mmu_notifier_register+0xa5>
+     472:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     479:	00 00 00 00 
+     47d:	0f 1f 00             	nopl   (%rax)
+
+0000000000000480 <mmu_notifier_get_locked>:
+     480:	e8 00 00 00 00       	callq  485 <mmu_notifier_get_locked+0x5>
+     485:	41 54                	push   %r12
+     487:	49 89 fc             	mov    %rdi,%r12
+     48a:	55                   	push   %rbp
+     48b:	48 89 f5             	mov    %rsi,%rbp
+     48e:	53                   	push   %rbx
+     48f:	48 8b be a8 03 00 00 	mov    0x3a8(%rsi),%rdi
+     496:	48 85 ff             	test   %rdi,%rdi
+     499:	74 2f                	je     4ca <mmu_notifier_get_locked+0x4a>
+     49b:	48 83 c7 0c          	add    $0xc,%rdi
+     49f:	e8 00 00 00 00       	callq  4a4 <mmu_notifier_get_locked+0x24>
+     4a4:	48 8b bd a8 03 00 00 	mov    0x3a8(%rbp),%rdi
+     4ab:	48 8b 1f             	mov    (%rdi),%rbx
+     4ae:	48 85 db             	test   %rbx,%rbx
+     4b1:	74 0e                	je     4c1 <mmu_notifier_get_locked+0x41>
+     4b3:	4c 3b 63 10          	cmp    0x10(%rbx),%r12
+     4b7:	74 61                	je     51a <mmu_notifier_get_locked+0x9a>
+     4b9:	48 8b 1b             	mov    (%rbx),%rbx
+     4bc:	48 85 db             	test   %rbx,%rbx
+     4bf:	75 f2                	jne    4b3 <mmu_notifier_get_locked+0x33>
+     4c1:	48 83 c7 0c          	add    $0xc,%rdi
+     4c5:	e8 00 00 00 00       	callq  4ca <mmu_notifier_get_locked+0x4a>
+     4ca:	49 8b 44 24 40       	mov    0x40(%r12),%rax
+     4cf:	48 89 ef             	mov    %rbp,%rdi
+     4d2:	e8 00 00 00 00       	callq  4d7 <mmu_notifier_get_locked+0x57>
+     4d7:	48 89 c3             	mov    %rax,%rbx
+     4da:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+     4e0:	76 08                	jbe    4ea <mmu_notifier_get_locked+0x6a>
+     4e2:	48 89 d8             	mov    %rbx,%rax
+     4e5:	5b                   	pop    %rbx
+     4e6:	5d                   	pop    %rbp
+     4e7:	41 5c                	pop    %r12
+     4e9:	c3                   	retq   
+     4ea:	4c 89 60 10          	mov    %r12,0x10(%rax)
+     4ee:	48 89 ee             	mov    %rbp,%rsi
+     4f1:	48 89 c7             	mov    %rax,%rdi
+     4f4:	e8 00 00 00 00       	callq  4f9 <mmu_notifier_get_locked+0x79>
+     4f9:	89 c5                	mov    %eax,%ebp
+     4fb:	85 c0                	test   %eax,%eax
+     4fd:	74 e3                	je     4e2 <mmu_notifier_get_locked+0x62>
+     4ff:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     503:	48 89 df             	mov    %rbx,%rdi
+     506:	48 63 dd             	movslq %ebp,%rbx
+     509:	48 8b 40 48          	mov    0x48(%rax),%rax
+     50d:	e8 00 00 00 00       	callq  512 <mmu_notifier_get_locked+0x92>
+     512:	48 89 d8             	mov    %rbx,%rax
+     515:	5b                   	pop    %rbx
+     516:	5d                   	pop    %rbp
+     517:	41 5c                	pop    %r12
+     519:	c3                   	retq   
+     51a:	8b 43 30             	mov    0x30(%rbx),%eax
+     51d:	83 f8 ff             	cmp    $0xffffffff,%eax
+     520:	74 1e                	je     540 <mmu_notifier_get_locked+0xc0>
+     522:	83 c0 01             	add    $0x1,%eax
+     525:	89 43 30             	mov    %eax,0x30(%rbx)
+     528:	48 8b bd a8 03 00 00 	mov    0x3a8(%rbp),%rdi
+     52f:	48 83 c7 0c          	add    $0xc,%rdi
+     533:	e8 00 00 00 00       	callq  538 <mmu_notifier_get_locked+0xb8>
+     538:	48 89 d8             	mov    %rbx,%rax
+     53b:	5b                   	pop    %rbx
+     53c:	5d                   	pop    %rbp
+     53d:	41 5c                	pop    %r12
+     53f:	c3                   	retq   
+     540:	48 83 c7 0c          	add    $0xc,%rdi
+     544:	48 c7 c3 b5 ff ff ff 	mov    $0xffffffffffffffb5,%rbx
+     54b:	e8 00 00 00 00       	callq  550 <mmu_notifier_get_locked+0xd0>
+     550:	eb 90                	jmp    4e2 <mmu_notifier_get_locked+0x62>
+     552:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     559:	00 00 00 00 
+     55d:	0f 1f 00             	nopl   (%rax)
+
+0000000000000560 <mmu_interval_notifier_insert_locked>:
+     560:	e8 00 00 00 00       	callq  565 <mmu_interval_notifier_insert_locked+0x5>
+     565:	41 56                	push   %r14
+     567:	4d 89 c6             	mov    %r8,%r14
+     56a:	41 55                	push   %r13
+     56c:	49 89 cd             	mov    %rcx,%r13
+     56f:	41 54                	push   %r12
+     571:	49 89 d4             	mov    %rdx,%r12
+     574:	55                   	push   %rbp
+     575:	48 89 fd             	mov    %rdi,%rbp
+     578:	53                   	push   %rbx
+     579:	48 8b 96 a8 03 00 00 	mov    0x3a8(%rsi),%rdx
+     580:	48 89 f3             	mov    %rsi,%rbx
+     583:	48 85 d2             	test   %rdx,%rdx
+     586:	74 06                	je     58e <mmu_interval_notifier_insert_locked+0x2e>
+     588:	80 7a 08 00          	cmpb   $0x0,0x8(%rdx)
+     58c:	75 15                	jne    5a3 <mmu_interval_notifier_insert_locked+0x43>
+     58e:	31 ff                	xor    %edi,%edi
+     590:	48 89 de             	mov    %rbx,%rsi
+     593:	e8 00 00 00 00       	callq  598 <mmu_interval_notifier_insert_locked+0x38>
+     598:	85 c0                	test   %eax,%eax
+     59a:	75 23                	jne    5bf <mmu_interval_notifier_insert_locked+0x5f>
+     59c:	48 8b 93 a8 03 00 00 	mov    0x3a8(%rbx),%rdx
+     5a3:	4d 89 f1             	mov    %r14,%r9
+     5a6:	4d 89 e8             	mov    %r13,%r8
+     5a9:	4c 89 e1             	mov    %r12,%rcx
+     5ac:	48 89 de             	mov    %rbx,%rsi
+     5af:	48 89 ef             	mov    %rbp,%rdi
+     5b2:	5b                   	pop    %rbx
+     5b3:	5d                   	pop    %rbp
+     5b4:	41 5c                	pop    %r12
+     5b6:	41 5d                	pop    %r13
+     5b8:	41 5e                	pop    %r14
+     5ba:	e9 51 fb ff ff       	jmpq   110 <__mmu_interval_notifier_insert>
+     5bf:	5b                   	pop    %rbx
+     5c0:	5d                   	pop    %rbp
+     5c1:	41 5c                	pop    %r12
+     5c3:	41 5d                	pop    %r13
+     5c5:	41 5e                	pop    %r14
+     5c7:	c3                   	retq   
+     5c8:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     5cf:	00 
+
+00000000000005d0 <mmu_notifier_register>:
+     5d0:	e8 00 00 00 00       	callq  5d5 <mmu_notifier_register+0x5>
+     5d5:	41 54                	push   %r12
+     5d7:	49 89 fc             	mov    %rdi,%r12
+     5da:	55                   	push   %rbp
+     5db:	48 89 f5             	mov    %rsi,%rbp
+     5de:	53                   	push   %rbx
+     5df:	48 8d 5e 78          	lea    0x78(%rsi),%rbx
+     5e3:	48 89 df             	mov    %rbx,%rdi
+     5e6:	e8 00 00 00 00       	callq  5eb <mmu_notifier_register+0x1b>
+     5eb:	48 89 ee             	mov    %rbp,%rsi
+     5ee:	4c 89 e7             	mov    %r12,%rdi
+     5f1:	e8 00 00 00 00       	callq  5f6 <mmu_notifier_register+0x26>
+     5f6:	48 89 df             	mov    %rbx,%rdi
+     5f9:	89 c5                	mov    %eax,%ebp
+     5fb:	e8 00 00 00 00       	callq  600 <mmu_notifier_register+0x30>
+     600:	89 e8                	mov    %ebp,%eax
+     602:	5b                   	pop    %rbx
+     603:	5d                   	pop    %rbp
+     604:	41 5c                	pop    %r12
+     606:	c3                   	retq   
+     607:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     60e:	00 00 
+
+0000000000000610 <mmu_interval_notifier_insert>:
+     610:	e8 00 00 00 00       	callq  615 <mmu_interval_notifier_insert+0x5>
+     615:	41 56                	push   %r14
+     617:	4d 89 c6             	mov    %r8,%r14
+     61a:	41 55                	push   %r13
+     61c:	49 89 cd             	mov    %rcx,%r13
+     61f:	41 54                	push   %r12
+     621:	49 89 d4             	mov    %rdx,%r12
+     624:	55                   	push   %rbp
+     625:	48 89 fd             	mov    %rdi,%rbp
+     628:	53                   	push   %rbx
+     629:	48 89 f3             	mov    %rsi,%rbx
+     62c:	48 8b 96 a8 03 00 00 	mov    0x3a8(%rsi),%rdx
+     633:	48 85 d2             	test   %rdx,%rdx
+     636:	74 06                	je     63e <mmu_interval_notifier_insert+0x2e>
+     638:	80 7a 08 00          	cmpb   $0x0,0x8(%rdx)
+     63c:	75 15                	jne    653 <mmu_interval_notifier_insert+0x43>
+     63e:	31 ff                	xor    %edi,%edi
+     640:	48 89 de             	mov    %rbx,%rsi
+     643:	e8 00 00 00 00       	callq  648 <mmu_interval_notifier_insert+0x38>
+     648:	85 c0                	test   %eax,%eax
+     64a:	75 23                	jne    66f <mmu_interval_notifier_insert+0x5f>
+     64c:	48 8b 93 a8 03 00 00 	mov    0x3a8(%rbx),%rdx
+     653:	4d 89 f1             	mov    %r14,%r9
+     656:	4d 89 e8             	mov    %r13,%r8
+     659:	4c 89 e1             	mov    %r12,%rcx
+     65c:	48 89 de             	mov    %rbx,%rsi
+     65f:	48 89 ef             	mov    %rbp,%rdi
+     662:	5b                   	pop    %rbx
+     663:	5d                   	pop    %rbp
+     664:	41 5c                	pop    %r12
+     666:	41 5d                	pop    %r13
+     668:	41 5e                	pop    %r14
+     66a:	e9 a1 fa ff ff       	jmpq   110 <__mmu_interval_notifier_insert>
+     66f:	5b                   	pop    %rbx
+     670:	5d                   	pop    %rbp
+     671:	41 5c                	pop    %r12
+     673:	41 5d                	pop    %r13
+     675:	41 5e                	pop    %r14
+     677:	c3                   	retq   
+     678:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+     67f:	00 
+
+0000000000000680 <mmu_notifier_put>:
+     680:	e8 00 00 00 00       	callq  685 <mmu_notifier_put+0x5>
+     685:	55                   	push   %rbp
+     686:	53                   	push   %rbx
+     687:	48 8b 6f 18          	mov    0x18(%rdi),%rbp
+     68b:	48 89 fb             	mov    %rdi,%rbx
+     68e:	48 8b 85 a8 03 00 00 	mov    0x3a8(%rbp),%rax
+     695:	48 8d 78 0c          	lea    0xc(%rax),%rdi
+     699:	e8 00 00 00 00       	callq  69e <mmu_notifier_put+0x1e>
+     69e:	8b 43 30             	mov    0x30(%rbx),%eax
+     6a1:	85 c0                	test   %eax,%eax
+     6a3:	74 51                	je     6f6 <mmu_notifier_put+0x76>
+     6a5:	83 e8 01             	sub    $0x1,%eax
+     6a8:	89 43 30             	mov    %eax,0x30(%rbx)
+     6ab:	75 4b                	jne    6f8 <mmu_notifier_put+0x78>
+     6ad:	48 8b 43 08          	mov    0x8(%rbx),%rax
+     6b1:	48 85 c0             	test   %rax,%rax
+     6b4:	74 17                	je     6cd <mmu_notifier_put+0x4d>
+     6b6:	48 8b 13             	mov    (%rbx),%rdx
+     6b9:	48 89 10             	mov    %rdx,(%rax)
+     6bc:	48 85 d2             	test   %rdx,%rdx
+     6bf:	74 04                	je     6c5 <mmu_notifier_put+0x45>
+     6c1:	48 89 42 08          	mov    %rax,0x8(%rdx)
+     6c5:	48 c7 43 08 00 00 00 	movq   $0x0,0x8(%rbx)
+     6cc:	00 
+     6cd:	48 8b bd a8 03 00 00 	mov    0x3a8(%rbp),%rdi
+     6d4:	48 83 c7 0c          	add    $0xc,%rdi
+     6d8:	e8 00 00 00 00       	callq  6dd <mmu_notifier_put+0x5d>
+     6dd:	48 8d 73 20          	lea    0x20(%rbx),%rsi
+     6e1:	5b                   	pop    %rbx
+     6e2:	5d                   	pop    %rbp
+     6e3:	48 c7 c2 00 00 00 00 	mov    $0x0,%rdx
+     6ea:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     6f1:	e9 00 00 00 00       	jmpq   6f6 <mmu_notifier_put+0x76>
+     6f6:	0f 0b                	ud2    
+     6f8:	48 8b bd a8 03 00 00 	mov    0x3a8(%rbp),%rdi
+     6ff:	5b                   	pop    %rbx
+     700:	5d                   	pop    %rbp
+     701:	48 83 c7 0c          	add    $0xc,%rdi
+     705:	e9 00 00 00 00       	jmpq   70a <mmu_notifier_put+0x8a>
+     70a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+
+0000000000000710 <mmu_notifier_free_rcu>:
+     710:	e8 00 00 00 00       	callq  715 <mmu_notifier_free_rcu+0x5>
+     715:	48 89 f8             	mov    %rdi,%rax
+     718:	53                   	push   %rbx
+     719:	48 83 ef 20          	sub    $0x20,%rdi
+     71d:	48 8b 5f 18          	mov    0x18(%rdi),%rbx
+     721:	48 8b 40 f0          	mov    -0x10(%rax),%rax
+     725:	48 8b 40 48          	mov    0x48(%rax),%rax
+     729:	e8 00 00 00 00       	callq  72e <mmu_notifier_free_rcu+0x1e>
+     72e:	f0 ff 4b 60          	lock decl 0x60(%rbx)
+     732:	74 02                	je     736 <mmu_notifier_free_rcu+0x26>
+     734:	5b                   	pop    %rbx
+     735:	c3                   	retq   
+     736:	48 89 df             	mov    %rbx,%rdi
+     739:	5b                   	pop    %rbx
+     73a:	e9 00 00 00 00       	jmpq   73f <mmu_notifier_free_rcu+0x2f>
+     73f:	90                   	nop
+
+0000000000000740 <mmu_interval_notifier_remove>:
+     740:	e8 00 00 00 00       	callq  745 <mmu_interval_notifier_remove+0x5>
+     745:	41 55                	push   %r13
+     747:	41 54                	push   %r12
+     749:	55                   	push   %rbp
+     74a:	48 89 fd             	mov    %rdi,%rbp
+     74d:	53                   	push   %rbx
+     74e:	48 83 ec 30          	sub    $0x30,%rsp
+     752:	4c 8b 67 38          	mov    0x38(%rdi),%r12
+     756:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+     75d:	00 00 
+     75f:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+     764:	31 c0                	xor    %eax,%eax
+     766:	48 c7 04 24 00 00 00 	movq   $0x0,(%rsp)
+     76d:	00 
+     76e:	49 8b 9c 24 a8 03 00 	mov    0x3a8(%r12),%rbx
+     775:	00 
+     776:	48 c7 44 24 08 00 00 	movq   $0x0,0x8(%rsp)
+     77d:	00 00 
+     77f:	48 c7 44 24 10 00 00 	movq   $0x0,0x10(%rsp)
+     786:	00 00 
+     788:	48 c7 44 24 18 00 00 	movq   $0x0,0x18(%rsp)
+     78f:	00 00 
+     791:	4c 8d 6b 0c          	lea    0xc(%rbx),%r13
+     795:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
+     79c:	00 00 
+     79e:	4c 89 ef             	mov    %r13,%rdi
+     7a1:	e8 00 00 00 00       	callq  7a6 <mmu_interval_notifier_remove+0x66>
+     7a6:	f6 43 10 01          	testb  $0x1,0x10(%rbx)
+     7aa:	74 70                	je     81c <mmu_interval_notifier_remove+0xdc>
+     7ac:	48 39 6d 00          	cmp    %rbp,0x0(%rbp)
+     7b0:	0f 84 86 00 00 00    	je     83c <mmu_interval_notifier_remove+0xfc>
+     7b6:	48 8b 43 48          	mov    0x48(%rbx),%rax
+     7ba:	48 8d 55 40          	lea    0x40(%rbp),%rdx
+     7be:	48 89 45 40          	mov    %rax,0x40(%rbp)
+     7c2:	48 85 c0             	test   %rax,%rax
+     7c5:	74 04                	je     7cb <mmu_interval_notifier_remove+0x8b>
+     7c7:	48 89 50 08          	mov    %rdx,0x8(%rax)
+     7cb:	48 8d 43 48          	lea    0x48(%rbx),%rax
+     7cf:	48 89 53 48          	mov    %rdx,0x48(%rbx)
+     7d3:	4c 89 ef             	mov    %r13,%rdi
+     7d6:	48 89 45 48          	mov    %rax,0x48(%rbp)
+     7da:	48 8b 6b 10          	mov    0x10(%rbx),%rbp
+     7de:	e8 00 00 00 00       	callq  7e3 <mmu_interval_notifier_remove+0xa3>
+     7e3:	48 85 ed             	test   %rbp,%rbp
+     7e6:	74 09                	je     7f1 <mmu_interval_notifier_remove+0xb1>
+     7e8:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     7ec:	48 39 c5             	cmp    %rax,%rbp
+     7ef:	74 7f                	je     870 <mmu_interval_notifier_remove+0x130>
+     7f1:	f0 41 ff 4c 24 60    	lock decl 0x60(%r12)
+     7f7:	0f 84 b1 00 00 00    	je     8ae <mmu_interval_notifier_remove+0x16e>
+     7fd:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+     802:	65 48 33 04 25 28 00 	xor    %gs:0x28,%rax
+     809:	00 00 
+     80b:	0f 85 b1 00 00 00    	jne    8c2 <mmu_interval_notifier_remove+0x182>
+     811:	48 83 c4 30          	add    $0x30,%rsp
+     815:	5b                   	pop    %rbx
+     816:	5d                   	pop    %rbp
+     817:	41 5c                	pop    %r12
+     819:	41 5d                	pop    %r13
+     81b:	c3                   	retq   
+     81c:	48 39 6d 00          	cmp    %rbp,0x0(%rbp)
+     820:	0f 84 95 00 00 00    	je     8bb <mmu_interval_notifier_remove+0x17b>
+     826:	48 89 ef             	mov    %rbp,%rdi
+     829:	48 8d 73 20          	lea    0x20(%rbx),%rsi
+     82d:	e8 00 00 00 00       	callq  832 <mmu_interval_notifier_remove+0xf2>
+     832:	4c 89 ef             	mov    %r13,%rdi
+     835:	e8 00 00 00 00       	callq  83a <mmu_interval_notifier_remove+0xfa>
+     83a:	eb b5                	jmp    7f1 <mmu_interval_notifier_remove+0xb1>
+     83c:	48 8b 45 40          	mov    0x40(%rbp),%rax
+     840:	48 8b 55 48          	mov    0x48(%rbp),%rdx
+     844:	48 89 02             	mov    %rax,(%rdx)
+     847:	48 85 c0             	test   %rax,%rax
+     84a:	74 04                	je     850 <mmu_interval_notifier_remove+0x110>
+     84c:	48 89 50 08          	mov    %rdx,0x8(%rax)
+     850:	48 b8 00 01 00 00 00 	movabs $0xdead000000000100,%rax
+     857:	00 ad de 
+     85a:	4c 89 ef             	mov    %r13,%rdi
+     85d:	48 89 45 40          	mov    %rax,0x40(%rbp)
+     861:	48 83 c0 22          	add    $0x22,%rax
+     865:	48 89 45 48          	mov    %rax,0x48(%rbp)
+     869:	e8 00 00 00 00       	callq  86e <mmu_interval_notifier_remove+0x12e>
+     86e:	eb 81                	jmp    7f1 <mmu_interval_notifier_remove+0xb1>
+     870:	31 f6                	xor    %esi,%esi
+     872:	48 89 e7             	mov    %rsp,%rdi
+     875:	4c 8d 6b 30          	lea    0x30(%rbx),%r13
+     879:	e8 00 00 00 00       	callq  87e <mmu_interval_notifier_remove+0x13e>
+     87e:	eb 05                	jmp    885 <mmu_interval_notifier_remove+0x145>
+     880:	e8 00 00 00 00       	callq  885 <mmu_interval_notifier_remove+0x145>
+     885:	ba 02 00 00 00       	mov    $0x2,%edx
+     88a:	48 89 e6             	mov    %rsp,%rsi
+     88d:	4c 89 ef             	mov    %r13,%rdi
+     890:	e8 00 00 00 00       	callq  895 <mmu_interval_notifier_remove+0x155>
+     895:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     899:	48 39 c5             	cmp    %rax,%rbp
+     89c:	74 e2                	je     880 <mmu_interval_notifier_remove+0x140>
+     89e:	48 89 e6             	mov    %rsp,%rsi
+     8a1:	4c 89 ef             	mov    %r13,%rdi
+     8a4:	e8 00 00 00 00       	callq  8a9 <mmu_interval_notifier_remove+0x169>
+     8a9:	e9 43 ff ff ff       	jmpq   7f1 <mmu_interval_notifier_remove+0xb1>
+     8ae:	4c 89 e7             	mov    %r12,%rdi
+     8b1:	e8 00 00 00 00       	callq  8b6 <mmu_interval_notifier_remove+0x176>
+     8b6:	e9 42 ff ff ff       	jmpq   7fd <mmu_interval_notifier_remove+0xbd>
+     8bb:	0f 0b                	ud2    
+     8bd:	e9 64 ff ff ff       	jmpq   826 <mmu_interval_notifier_remove+0xe6>
+     8c2:	e8 00 00 00 00       	callq  8c7 <mmu_interval_notifier_remove+0x187>
+     8c7:	66 0f 1f 84 00 00 00 	nopw   0x0(%rax,%rax,1)
+     8ce:	00 00 
+
+00000000000008d0 <mmu_notifier_unregister>:
+     8d0:	e8 00 00 00 00       	callq  8d5 <mmu_notifier_unregister+0x5>
+     8d5:	41 54                	push   %r12
+     8d7:	55                   	push   %rbp
+     8d8:	53                   	push   %rbx
+     8d9:	8b 46 60             	mov    0x60(%rsi),%eax
+     8dc:	85 c0                	test   %eax,%eax
+     8de:	0f 8e aa 00 00 00    	jle    98e <mmu_notifier_unregister+0xbe>
+     8e4:	48 83 7f 08 00       	cmpq   $0x0,0x8(%rdi)
+     8e9:	48 89 f3             	mov    %rsi,%rbx
+     8ec:	48 89 fd             	mov    %rdi,%rbp
+     8ef:	74 7f                	je     970 <mmu_notifier_unregister+0xa0>
+     8f1:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     8f8:	e8 00 00 00 00       	callq  8fd <mmu_notifier_unregister+0x2d>
+     8fd:	41 89 c4             	mov    %eax,%r12d
+     900:	48 8b 45 10          	mov    0x10(%rbp),%rax
+     904:	48 8b 00             	mov    (%rax),%rax
+     907:	48 85 c0             	test   %rax,%rax
+     90a:	74 0b                	je     917 <mmu_notifier_unregister+0x47>
+     90c:	48 89 de             	mov    %rbx,%rsi
+     90f:	48 89 ef             	mov    %rbp,%rdi
+     912:	e8 00 00 00 00       	callq  917 <mmu_notifier_unregister+0x47>
+     917:	41 f7 c4 fe ff ff ff 	test   $0xfffffffe,%r12d
+     91e:	75 7e                	jne    99e <mmu_notifier_unregister+0xce>
+     920:	44 89 e6             	mov    %r12d,%esi
+     923:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     92a:	e8 00 00 00 00       	callq  92f <mmu_notifier_unregister+0x5f>
+     92f:	48 8b 83 a8 03 00 00 	mov    0x3a8(%rbx),%rax
+     936:	48 8d 78 0c          	lea    0xc(%rax),%rdi
+     93a:	e8 00 00 00 00       	callq  93f <mmu_notifier_unregister+0x6f>
+     93f:	48 8b 45 08          	mov    0x8(%rbp),%rax
+     943:	48 85 c0             	test   %rax,%rax
+     946:	74 18                	je     960 <mmu_notifier_unregister+0x90>
+     948:	48 8b 55 00          	mov    0x0(%rbp),%rdx
+     94c:	48 89 10             	mov    %rdx,(%rax)
+     94f:	48 85 d2             	test   %rdx,%rdx
+     952:	74 04                	je     958 <mmu_notifier_unregister+0x88>
+     954:	48 89 42 08          	mov    %rax,0x8(%rdx)
+     958:	48 c7 45 08 00 00 00 	movq   $0x0,0x8(%rbp)
+     95f:	00 
+     960:	48 8b 83 a8 03 00 00 	mov    0x3a8(%rbx),%rax
+     967:	48 8d 78 0c          	lea    0xc(%rax),%rdi
+     96b:	e8 00 00 00 00       	callq  970 <mmu_notifier_unregister+0xa0>
+     970:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     977:	e8 00 00 00 00       	callq  97c <mmu_notifier_unregister+0xac>
+     97c:	8b 43 60             	mov    0x60(%rbx),%eax
+     97f:	85 c0                	test   %eax,%eax
+     981:	7e 0d                	jle    990 <mmu_notifier_unregister+0xc0>
+     983:	f0 ff 4b 60          	lock decl 0x60(%rbx)
+     987:	74 09                	je     992 <mmu_notifier_unregister+0xc2>
+     989:	5b                   	pop    %rbx
+     98a:	5d                   	pop    %rbp
+     98b:	41 5c                	pop    %r12
+     98d:	c3                   	retq   
+     98e:	0f 0b                	ud2    
+     990:	0f 0b                	ud2    
+     992:	48 89 df             	mov    %rbx,%rdi
+     995:	5b                   	pop    %rbx
+     996:	5d                   	pop    %rbp
+     997:	41 5c                	pop    %r12
+     999:	e9 00 00 00 00       	jmpq   99e <mmu_notifier_unregister+0xce>
+     99e:	0f 0b                	ud2    
+     9a0:	e9 7b ff ff ff       	jmpq   920 <mmu_notifier_unregister+0x50>
+     9a5:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     9ac:	00 00 00 00 
+
+00000000000009b0 <__mmu_notifier_release>:
+     9b0:	e8 00 00 00 00       	callq  9b5 <__mmu_notifier_release+0x5>
+     9b5:	41 56                	push   %r14
+     9b7:	41 55                	push   %r13
+     9b9:	41 54                	push   %r12
+     9bb:	49 89 fc             	mov    %rdi,%r12
+     9be:	55                   	push   %rbp
+     9bf:	53                   	push   %rbx
+     9c0:	48 83 ec 30          	sub    $0x30,%rsp
+     9c4:	48 8b 9f a8 03 00 00 	mov    0x3a8(%rdi),%rbx
+     9cb:	65 48 8b 04 25 28 00 	mov    %gs:0x28,%rax
+     9d2:	00 00 
+     9d4:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
+     9d9:	31 c0                	xor    %eax,%eax
+     9db:	80 7b 08 00          	cmpb   $0x0,0x8(%rbx)
+     9df:	75 2d                	jne    a0e <__mmu_notifier_release+0x5e>
+     9e1:	48 8b 03             	mov    (%rbx),%rax
+     9e4:	48 85 c0             	test   %rax,%rax
+     9e7:	0f 85 ec 00 00 00    	jne    ad9 <__mmu_notifier_release+0x129>
+     9ed:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+     9f2:	65 48 33 04 25 28 00 	xor    %gs:0x28,%rax
+     9f9:	00 00 
+     9fb:	0f 85 7d 01 00 00    	jne    b7e <__mmu_notifier_release+0x1ce>
+     a01:	48 83 c4 30          	add    $0x30,%rsp
+     a05:	5b                   	pop    %rbx
+     a06:	5d                   	pop    %rbp
+     a07:	41 5c                	pop    %r12
+     a09:	41 5d                	pop    %r13
+     a0b:	41 5e                	pop    %r14
+     a0d:	c3                   	retq   
+     a0e:	4c 8d 73 0c          	lea    0xc(%rbx),%r14
+     a12:	48 89 7c 24 08       	mov    %rdi,0x8(%rsp)
+     a17:	48 b8 01 00 00 00 05 	movabs $0x500000001,%rax
+     a1e:	00 00 00 
+     a21:	4c 89 f7             	mov    %r14,%rdi
+     a24:	48 89 44 24 20       	mov    %rax,0x20(%rsp)
+     a29:	48 c7 04 24 00 00 00 	movq   $0x0,(%rsp)
+     a30:	00 
+     a31:	48 c7 44 24 10 00 00 	movq   $0x0,0x10(%rsp)
+     a38:	00 00 
+     a3a:	48 c7 44 24 18 ff ff 	movq   $0xffffffffffffffff,0x18(%rsp)
+     a41:	ff ff 
+     a43:	e8 00 00 00 00       	callq  a48 <__mmu_notifier_release+0x98>
+     a48:	48 83 43 18 01       	addq   $0x1,0x18(%rbx)
+     a4d:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+     a52:	48 8d 7b 20          	lea    0x20(%rbx),%rdi
+     a56:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
+     a5b:	48 8d 50 ff          	lea    -0x1(%rax),%rdx
+     a5f:	e8 00 00 00 00       	callq  a64 <__mmu_notifier_release+0xb4>
+     a64:	48 89 c5             	mov    %rax,%rbp
+     a67:	48 85 c0             	test   %rax,%rax
+     a6a:	74 51                	je     abd <__mmu_notifier_release+0x10d>
+     a6c:	4c 8b 6b 10          	mov    0x10(%rbx),%r13
+     a70:	4c 89 f7             	mov    %r14,%rdi
+     a73:	49 83 cd 01          	or     $0x1,%r13
+     a77:	4c 89 6b 10          	mov    %r13,0x10(%rbx)
+     a7b:	e8 00 00 00 00       	callq  a80 <__mmu_notifier_release+0xd0>
+     a80:	eb 1e                	jmp    aa0 <__mmu_notifier_release+0xf0>
+     a82:	48 8b 44 24 18       	mov    0x18(%rsp),%rax
+     a87:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
+     a8c:	48 89 ef             	mov    %rbp,%rdi
+     a8f:	48 8d 50 ff          	lea    -0x1(%rax),%rdx
+     a93:	e8 00 00 00 00       	callq  a98 <__mmu_notifier_release+0xe8>
+     a98:	48 89 c5             	mov    %rax,%rbp
+     a9b:	48 85 c0             	test   %rax,%rax
+     a9e:	74 25                	je     ac5 <__mmu_notifier_release+0x115>
+     aa0:	48 8b 45 30          	mov    0x30(%rbp),%rax
+     aa4:	4c 89 ea             	mov    %r13,%rdx
+     aa7:	48 89 e6             	mov    %rsp,%rsi
+     aaa:	48 89 ef             	mov    %rbp,%rdi
+     aad:	48 8b 00             	mov    (%rax),%rax
+     ab0:	e8 00 00 00 00       	callq  ab5 <__mmu_notifier_release+0x105>
+     ab5:	84 c0                	test   %al,%al
+     ab7:	75 c9                	jne    a82 <__mmu_notifier_release+0xd2>
+     ab9:	0f 0b                	ud2    
+     abb:	eb c5                	jmp    a82 <__mmu_notifier_release+0xd2>
+     abd:	4c 89 f7             	mov    %r14,%rdi
+     ac0:	e8 00 00 00 00       	callq  ac5 <__mmu_notifier_release+0x115>
+     ac5:	48 89 df             	mov    %rbx,%rdi
+     ac8:	e8 23 f7 ff ff       	callq  1f0 <mn_itree_inv_end>
+     acd:	48 8b 03             	mov    (%rbx),%rax
+     ad0:	48 85 c0             	test   %rax,%rax
+     ad3:	0f 84 14 ff ff ff    	je     9ed <__mmu_notifier_release+0x3d>
+     ad9:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     ae0:	e8 00 00 00 00       	callq  ae5 <__mmu_notifier_release+0x135>
+     ae5:	48 8b 2b             	mov    (%rbx),%rbp
+     ae8:	41 89 c5             	mov    %eax,%r13d
+     aeb:	48 85 ed             	test   %rbp,%rbp
+     aee:	74 20                	je     b10 <__mmu_notifier_release+0x160>
+     af0:	48 8b 45 10          	mov    0x10(%rbp),%rax
+     af4:	48 8b 00             	mov    (%rax),%rax
+     af7:	48 85 c0             	test   %rax,%rax
+     afa:	74 0b                	je     b07 <__mmu_notifier_release+0x157>
+     afc:	4c 89 e6             	mov    %r12,%rsi
+     aff:	48 89 ef             	mov    %rbp,%rdi
+     b02:	e8 00 00 00 00       	callq  b07 <__mmu_notifier_release+0x157>
+     b07:	48 8b 6d 00          	mov    0x0(%rbp),%rbp
+     b0b:	48 85 ed             	test   %rbp,%rbp
+     b0e:	75 e0                	jne    af0 <__mmu_notifier_release+0x140>
+     b10:	48 8d 6b 0c          	lea    0xc(%rbx),%rbp
+     b14:	48 89 ef             	mov    %rbp,%rdi
+     b17:	e8 00 00 00 00       	callq  b1c <__mmu_notifier_release+0x16c>
+     b1c:	48 8b 03             	mov    (%rbx),%rax
+     b1f:	48 85 c0             	test   %rax,%rax
+     b22:	75 31                	jne    b55 <__mmu_notifier_release+0x1a5>
+     b24:	48 89 ef             	mov    %rbp,%rdi
+     b27:	e8 00 00 00 00       	callq  b2c <__mmu_notifier_release+0x17c>
+     b2c:	41 f7 c5 fe ff ff ff 	test   $0xfffffffe,%r13d
+     b33:	75 45                	jne    b7a <__mmu_notifier_release+0x1ca>
+     b35:	44 89 ee             	mov    %r13d,%esi
+     b38:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     b3f:	e8 00 00 00 00       	callq  b44 <__mmu_notifier_release+0x194>
+     b44:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     b4b:	e8 00 00 00 00       	callq  b50 <__mmu_notifier_release+0x1a0>
+     b50:	e9 98 fe ff ff       	jmpq   9ed <__mmu_notifier_release+0x3d>
+     b55:	48 8b 03             	mov    (%rbx),%rax
+     b58:	48 8b 50 08          	mov    0x8(%rax),%rdx
+     b5c:	48 85 d2             	test   %rdx,%rdx
+     b5f:	74 bb                	je     b1c <__mmu_notifier_release+0x16c>
+     b61:	48 8b 08             	mov    (%rax),%rcx
+     b64:	48 89 0a             	mov    %rcx,(%rdx)
+     b67:	48 85 c9             	test   %rcx,%rcx
+     b6a:	74 04                	je     b70 <__mmu_notifier_release+0x1c0>
+     b6c:	48 89 51 08          	mov    %rdx,0x8(%rcx)
+     b70:	48 c7 40 08 00 00 00 	movq   $0x0,0x8(%rax)
+     b77:	00 
+     b78:	eb a2                	jmp    b1c <__mmu_notifier_release+0x16c>
+     b7a:	0f 0b                	ud2    
+     b7c:	eb b7                	jmp    b35 <__mmu_notifier_release+0x185>
+     b7e:	e8 00 00 00 00       	callq  b83 <__mmu_notifier_release+0x1d3>
+     b83:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     b8a:	00 00 00 00 
+     b8e:	66 90                	xchg   %ax,%ax
+
+0000000000000b90 <__mmu_notifier_clear_flush_young>:
+     b90:	e8 00 00 00 00       	callq  b95 <__mmu_notifier_clear_flush_young+0x5>
+     b95:	41 57                	push   %r15
+     b97:	41 56                	push   %r14
+     b99:	49 89 d6             	mov    %rdx,%r14
+     b9c:	41 55                	push   %r13
+     b9e:	49 89 f5             	mov    %rsi,%r13
+     ba1:	41 54                	push   %r12
+     ba3:	49 89 fc             	mov    %rdi,%r12
+     ba6:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     bad:	55                   	push   %rbp
+     bae:	31 ed                	xor    %ebp,%ebp
+     bb0:	53                   	push   %rbx
+     bb1:	e8 00 00 00 00       	callq  bb6 <__mmu_notifier_clear_flush_young+0x26>
+     bb6:	41 89 c7             	mov    %eax,%r15d
+     bb9:	49 8b 84 24 a8 03 00 	mov    0x3a8(%r12),%rax
+     bc0:	00 
+     bc1:	48 8b 18             	mov    (%rax),%rbx
+     bc4:	48 85 db             	test   %rbx,%rbx
+     bc7:	74 28                	je     bf1 <__mmu_notifier_clear_flush_young+0x61>
+     bc9:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     bcd:	48 8b 40 08          	mov    0x8(%rax),%rax
+     bd1:	48 85 c0             	test   %rax,%rax
+     bd4:	74 13                	je     be9 <__mmu_notifier_clear_flush_young+0x59>
+     bd6:	4c 89 f1             	mov    %r14,%rcx
+     bd9:	4c 89 ea             	mov    %r13,%rdx
+     bdc:	4c 89 e6             	mov    %r12,%rsi
+     bdf:	48 89 df             	mov    %rbx,%rdi
+     be2:	e8 00 00 00 00       	callq  be7 <__mmu_notifier_clear_flush_young+0x57>
+     be7:	09 c5                	or     %eax,%ebp
+     be9:	48 8b 1b             	mov    (%rbx),%rbx
+     bec:	48 85 db             	test   %rbx,%rbx
+     bef:	75 d8                	jne    bc9 <__mmu_notifier_clear_flush_young+0x39>
+     bf1:	41 f7 c7 fe ff ff ff 	test   $0xfffffffe,%r15d
+     bf8:	75 1c                	jne    c16 <__mmu_notifier_clear_flush_young+0x86>
+     bfa:	44 89 fe             	mov    %r15d,%esi
+     bfd:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     c04:	e8 00 00 00 00       	callq  c09 <__mmu_notifier_clear_flush_young+0x79>
+     c09:	89 e8                	mov    %ebp,%eax
+     c0b:	5b                   	pop    %rbx
+     c0c:	5d                   	pop    %rbp
+     c0d:	41 5c                	pop    %r12
+     c0f:	41 5d                	pop    %r13
+     c11:	41 5e                	pop    %r14
+     c13:	41 5f                	pop    %r15
+     c15:	c3                   	retq   
+     c16:	0f 0b                	ud2    
+     c18:	eb e0                	jmp    bfa <__mmu_notifier_clear_flush_young+0x6a>
+     c1a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+
+0000000000000c20 <__mmu_notifier_clear_young>:
+     c20:	e8 00 00 00 00       	callq  c25 <__mmu_notifier_clear_young+0x5>
+     c25:	41 57                	push   %r15
+     c27:	41 56                	push   %r14
+     c29:	49 89 d6             	mov    %rdx,%r14
+     c2c:	41 55                	push   %r13
+     c2e:	49 89 f5             	mov    %rsi,%r13
+     c31:	41 54                	push   %r12
+     c33:	49 89 fc             	mov    %rdi,%r12
+     c36:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     c3d:	55                   	push   %rbp
+     c3e:	31 ed                	xor    %ebp,%ebp
+     c40:	53                   	push   %rbx
+     c41:	e8 00 00 00 00       	callq  c46 <__mmu_notifier_clear_young+0x26>
+     c46:	41 89 c7             	mov    %eax,%r15d
+     c49:	49 8b 84 24 a8 03 00 	mov    0x3a8(%r12),%rax
+     c50:	00 
+     c51:	48 8b 18             	mov    (%rax),%rbx
+     c54:	48 85 db             	test   %rbx,%rbx
+     c57:	74 28                	je     c81 <__mmu_notifier_clear_young+0x61>
+     c59:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     c5d:	48 8b 40 10          	mov    0x10(%rax),%rax
+     c61:	48 85 c0             	test   %rax,%rax
+     c64:	74 13                	je     c79 <__mmu_notifier_clear_young+0x59>
+     c66:	4c 89 f1             	mov    %r14,%rcx
+     c69:	4c 89 ea             	mov    %r13,%rdx
+     c6c:	4c 89 e6             	mov    %r12,%rsi
+     c6f:	48 89 df             	mov    %rbx,%rdi
+     c72:	e8 00 00 00 00       	callq  c77 <__mmu_notifier_clear_young+0x57>
+     c77:	09 c5                	or     %eax,%ebp
+     c79:	48 8b 1b             	mov    (%rbx),%rbx
+     c7c:	48 85 db             	test   %rbx,%rbx
+     c7f:	75 d8                	jne    c59 <__mmu_notifier_clear_young+0x39>
+     c81:	41 f7 c7 fe ff ff ff 	test   $0xfffffffe,%r15d
+     c88:	75 1c                	jne    ca6 <__mmu_notifier_clear_young+0x86>
+     c8a:	44 89 fe             	mov    %r15d,%esi
+     c8d:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     c94:	e8 00 00 00 00       	callq  c99 <__mmu_notifier_clear_young+0x79>
+     c99:	89 e8                	mov    %ebp,%eax
+     c9b:	5b                   	pop    %rbx
+     c9c:	5d                   	pop    %rbp
+     c9d:	41 5c                	pop    %r12
+     c9f:	41 5d                	pop    %r13
+     ca1:	41 5e                	pop    %r14
+     ca3:	41 5f                	pop    %r15
+     ca5:	c3                   	retq   
+     ca6:	0f 0b                	ud2    
+     ca8:	eb e0                	jmp    c8a <__mmu_notifier_clear_young+0x6a>
+     caa:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+
+0000000000000cb0 <__mmu_notifier_test_young>:
+     cb0:	e8 00 00 00 00       	callq  cb5 <__mmu_notifier_test_young+0x5>
+     cb5:	41 55                	push   %r13
+     cb7:	41 54                	push   %r12
+     cb9:	49 89 f4             	mov    %rsi,%r12
+     cbc:	55                   	push   %rbp
+     cbd:	48 89 fd             	mov    %rdi,%rbp
+     cc0:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     cc7:	53                   	push   %rbx
+     cc8:	48 83 ec 08          	sub    $0x8,%rsp
+     ccc:	e8 00 00 00 00       	callq  cd1 <__mmu_notifier_test_young+0x21>
+     cd1:	41 89 c5             	mov    %eax,%r13d
+     cd4:	48 8b 85 a8 03 00 00 	mov    0x3a8(%rbp),%rax
+     cdb:	48 8b 18             	mov    (%rax),%rbx
+     cde:	48 85 db             	test   %rbx,%rbx
+     ce1:	74 27                	je     d0a <__mmu_notifier_test_young+0x5a>
+     ce3:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     ce7:	48 8b 40 18          	mov    0x18(%rax),%rax
+     ceb:	48 85 c0             	test   %rax,%rax
+     cee:	74 12                	je     d02 <__mmu_notifier_test_young+0x52>
+     cf0:	4c 89 e2             	mov    %r12,%rdx
+     cf3:	48 89 ee             	mov    %rbp,%rsi
+     cf6:	48 89 df             	mov    %rbx,%rdi
+     cf9:	e8 00 00 00 00       	callq  cfe <__mmu_notifier_test_young+0x4e>
+     cfe:	85 c0                	test   %eax,%eax
+     d00:	75 0a                	jne    d0c <__mmu_notifier_test_young+0x5c>
+     d02:	48 8b 1b             	mov    (%rbx),%rbx
+     d05:	48 85 db             	test   %rbx,%rbx
+     d08:	75 d9                	jne    ce3 <__mmu_notifier_test_young+0x33>
+     d0a:	31 c0                	xor    %eax,%eax
+     d0c:	41 f7 c5 fe ff ff ff 	test   $0xfffffffe,%r13d
+     d13:	75 22                	jne    d37 <__mmu_notifier_test_young+0x87>
+     d15:	44 89 ee             	mov    %r13d,%esi
+     d18:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     d1f:	89 44 24 04          	mov    %eax,0x4(%rsp)
+     d23:	e8 00 00 00 00       	callq  d28 <__mmu_notifier_test_young+0x78>
+     d28:	8b 44 24 04          	mov    0x4(%rsp),%eax
+     d2c:	48 83 c4 08          	add    $0x8,%rsp
+     d30:	5b                   	pop    %rbx
+     d31:	5d                   	pop    %rbp
+     d32:	41 5c                	pop    %r12
+     d34:	41 5d                	pop    %r13
+     d36:	c3                   	retq   
+     d37:	0f 0b                	ud2    
+     d39:	eb da                	jmp    d15 <__mmu_notifier_test_young+0x65>
+     d3b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+
+0000000000000d40 <__mmu_notifier_change_pte>:
+     d40:	e8 00 00 00 00       	callq  d45 <__mmu_notifier_change_pte+0x5>
+     d45:	41 56                	push   %r14
+     d47:	41 55                	push   %r13
+     d49:	49 89 d5             	mov    %rdx,%r13
+     d4c:	41 54                	push   %r12
+     d4e:	49 89 f4             	mov    %rsi,%r12
+     d51:	55                   	push   %rbp
+     d52:	48 89 fd             	mov    %rdi,%rbp
+     d55:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     d5c:	53                   	push   %rbx
+     d5d:	e8 00 00 00 00       	callq  d62 <__mmu_notifier_change_pte+0x22>
+     d62:	41 89 c6             	mov    %eax,%r14d
+     d65:	48 8b 85 a8 03 00 00 	mov    0x3a8(%rbp),%rax
+     d6c:	48 8b 18             	mov    (%rax),%rbx
+     d6f:	48 85 db             	test   %rbx,%rbx
+     d72:	74 26                	je     d9a <__mmu_notifier_change_pte+0x5a>
+     d74:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     d78:	48 8b 40 20          	mov    0x20(%rax),%rax
+     d7c:	48 85 c0             	test   %rax,%rax
+     d7f:	74 11                	je     d92 <__mmu_notifier_change_pte+0x52>
+     d81:	4c 89 e9             	mov    %r13,%rcx
+     d84:	4c 89 e2             	mov    %r12,%rdx
+     d87:	48 89 ee             	mov    %rbp,%rsi
+     d8a:	48 89 df             	mov    %rbx,%rdi
+     d8d:	e8 00 00 00 00       	callq  d92 <__mmu_notifier_change_pte+0x52>
+     d92:	48 8b 1b             	mov    (%rbx),%rbx
+     d95:	48 85 db             	test   %rbx,%rbx
+     d98:	75 da                	jne    d74 <__mmu_notifier_change_pte+0x34>
+     d9a:	41 f7 c6 fe ff ff ff 	test   $0xfffffffe,%r14d
+     da1:	75 17                	jne    dba <__mmu_notifier_change_pte+0x7a>
+     da3:	5b                   	pop    %rbx
+     da4:	44 89 f6             	mov    %r14d,%esi
+     da7:	5d                   	pop    %rbp
+     da8:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     daf:	41 5c                	pop    %r12
+     db1:	41 5d                	pop    %r13
+     db3:	41 5e                	pop    %r14
+     db5:	e9 00 00 00 00       	jmpq   dba <__mmu_notifier_change_pte+0x7a>
+     dba:	0f 0b                	ud2    
+     dbc:	eb e5                	jmp    da3 <__mmu_notifier_change_pte+0x63>
+     dbe:	66 90                	xchg   %ax,%ax
+
+0000000000000dc0 <__mmu_notifier_invalidate_range_start>:
+     dc0:	e8 00 00 00 00       	callq  dc5 <__mmu_notifier_invalidate_range_start+0x5>
+     dc5:	41 57                	push   %r15
+     dc7:	41 56                	push   %r14
+     dc9:	49 89 fe             	mov    %rdi,%r14
+     dcc:	41 55                	push   %r13
+     dce:	41 54                	push   %r12
+     dd0:	55                   	push   %rbp
+     dd1:	53                   	push   %rbx
+     dd2:	48 83 ec 08          	sub    $0x8,%rsp
+     dd6:	48 8b 47 08          	mov    0x8(%rdi),%rax
+     dda:	48 8b 98 a8 03 00 00 	mov    0x3a8(%rax),%rbx
+     de1:	80 7b 08 00          	cmpb   $0x0,0x8(%rbx)
+     de5:	75 1f                	jne    e06 <__mmu_notifier_invalidate_range_start+0x46>
+     de7:	48 8b 03             	mov    (%rbx),%rax
+     dea:	31 ed                	xor    %ebp,%ebp
+     dec:	48 85 c0             	test   %rax,%rax
+     def:	0f 85 ac 00 00 00    	jne    ea1 <__mmu_notifier_invalidate_range_start+0xe1>
+     df5:	48 83 c4 08          	add    $0x8,%rsp
+     df9:	89 e8                	mov    %ebp,%eax
+     dfb:	5b                   	pop    %rbx
+     dfc:	5d                   	pop    %rbp
+     dfd:	41 5c                	pop    %r12
+     dff:	41 5d                	pop    %r13
+     e01:	41 5e                	pop    %r14
+     e03:	41 5f                	pop    %r15
+     e05:	c3                   	retq   
+     e06:	4c 8d 6b 0c          	lea    0xc(%rbx),%r13
+     e0a:	4c 89 ef             	mov    %r13,%rdi
+     e0d:	e8 00 00 00 00       	callq  e12 <__mmu_notifier_invalidate_range_start+0x52>
+     e12:	48 83 43 18 01       	addq   $0x1,0x18(%rbx)
+     e17:	49 8b 46 18          	mov    0x18(%r14),%rax
+     e1b:	48 8d 7b 20          	lea    0x20(%rbx),%rdi
+     e1f:	49 8b 76 10          	mov    0x10(%r14),%rsi
+     e23:	48 8d 50 ff          	lea    -0x1(%rax),%rdx
+     e27:	e8 00 00 00 00       	callq  e2c <__mmu_notifier_invalidate_range_start+0x6c>
+     e2c:	48 89 c5             	mov    %rax,%rbp
+     e2f:	48 85 c0             	test   %rax,%rax
+     e32:	0f 84 d0 00 00 00    	je     f08 <__mmu_notifier_invalidate_range_start+0x148>
+     e38:	4c 8b 63 10          	mov    0x10(%rbx),%r12
+     e3c:	4c 89 ef             	mov    %r13,%rdi
+     e3f:	49 83 cc 01          	or     $0x1,%r12
+     e43:	4c 89 63 10          	mov    %r12,0x10(%rbx)
+     e47:	e8 00 00 00 00       	callq  e4c <__mmu_notifier_invalidate_range_start+0x8c>
+     e4c:	48 8b 45 30          	mov    0x30(%rbp),%rax
+     e50:	4c 89 e2             	mov    %r12,%rdx
+     e53:	4c 89 f6             	mov    %r14,%rsi
+     e56:	48 89 ef             	mov    %rbp,%rdi
+     e59:	48 8b 00             	mov    (%rax),%rax
+     e5c:	e8 00 00 00 00       	callq  e61 <__mmu_notifier_invalidate_range_start+0xa1>
+     e61:	84 c0                	test   %al,%al
+     e63:	75 1b                	jne    e80 <__mmu_notifier_invalidate_range_start+0xc0>
+     e65:	41 f6 46 20 01       	testb  $0x1,0x20(%r14)
+     e6a:	75 12                	jne    e7e <__mmu_notifier_invalidate_range_start+0xbe>
+     e6c:	48 89 df             	mov    %rbx,%rdi
+     e6f:	bd f5 ff ff ff       	mov    $0xfffffff5,%ebp
+     e74:	e8 77 f3 ff ff       	callq  1f0 <mn_itree_inv_end>
+     e79:	e9 77 ff ff ff       	jmpq   df5 <__mmu_notifier_invalidate_range_start+0x35>
+     e7e:	0f 0b                	ud2    
+     e80:	49 8b 46 18          	mov    0x18(%r14),%rax
+     e84:	49 8b 76 10          	mov    0x10(%r14),%rsi
+     e88:	48 89 ef             	mov    %rbp,%rdi
+     e8b:	48 8d 50 ff          	lea    -0x1(%rax),%rdx
+     e8f:	e8 00 00 00 00       	callq  e94 <__mmu_notifier_invalidate_range_start+0xd4>
+     e94:	48 89 c5             	mov    %rax,%rbp
+     e97:	48 85 c0             	test   %rax,%rax
+     e9a:	75 b0                	jne    e4c <__mmu_notifier_invalidate_range_start+0x8c>
+     e9c:	e9 46 ff ff ff       	jmpq   de7 <__mmu_notifier_invalidate_range_start+0x27>
+     ea1:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     ea8:	e8 00 00 00 00       	callq  ead <__mmu_notifier_invalidate_range_start+0xed>
+     ead:	48 8b 1b             	mov    (%rbx),%rbx
+     eb0:	41 89 c4             	mov    %eax,%r12d
+     eb3:	48 85 db             	test   %rbx,%rbx
+     eb6:	74 2f                	je     ee7 <__mmu_notifier_invalidate_range_start+0x127>
+     eb8:	49 c7 c7 00 00 00 00 	mov    $0x0,%r15
+     ebf:	4c 8b 6b 10          	mov    0x10(%rbx),%r13
+     ec3:	49 8b 45 28          	mov    0x28(%r13),%rax
+     ec7:	48 85 c0             	test   %rax,%rax
+     eca:	74 13                	je     edf <__mmu_notifier_invalidate_range_start+0x11f>
+     ecc:	4c 89 f6             	mov    %r14,%rsi
+     ecf:	48 89 df             	mov    %rbx,%rdi
+     ed2:	e8 00 00 00 00       	callq  ed7 <__mmu_notifier_invalidate_range_start+0x117>
+     ed7:	85 c0                	test   %eax,%eax
+     ed9:	0f 85 00 00 00 00    	jne    edf <__mmu_notifier_invalidate_range_start+0x11f>
+     edf:	48 8b 1b             	mov    (%rbx),%rbx
+     ee2:	48 85 db             	test   %rbx,%rbx
+     ee5:	75 d8                	jne    ebf <__mmu_notifier_invalidate_range_start+0xff>
+     ee7:	41 f7 c4 fe ff ff ff 	test   $0xfffffffe,%r12d
+     eee:	75 14                	jne    f04 <__mmu_notifier_invalidate_range_start+0x144>
+     ef0:	44 89 e6             	mov    %r12d,%esi
+     ef3:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     efa:	e8 00 00 00 00       	callq  eff <__mmu_notifier_invalidate_range_start+0x13f>
+     eff:	e9 f1 fe ff ff       	jmpq   df5 <__mmu_notifier_invalidate_range_start+0x35>
+     f04:	0f 0b                	ud2    
+     f06:	eb e8                	jmp    ef0 <__mmu_notifier_invalidate_range_start+0x130>
+     f08:	4c 89 ef             	mov    %r13,%rdi
+     f0b:	e8 00 00 00 00       	callq  f10 <__mmu_notifier_invalidate_range_start+0x150>
+     f10:	e9 d2 fe ff ff       	jmpq   de7 <__mmu_notifier_invalidate_range_start+0x27>
+     f15:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+     f1c:	00 00 00 00 
+
+0000000000000f20 <__mmu_notifier_invalidate_range_end>:
+     f20:	e8 00 00 00 00       	callq  f25 <__mmu_notifier_invalidate_range_end+0x5>
+     f25:	41 55                	push   %r13
+     f27:	41 54                	push   %r12
+     f29:	41 89 f4             	mov    %esi,%r12d
+     f2c:	55                   	push   %rbp
+     f2d:	48 89 fd             	mov    %rdi,%rbp
+     f30:	53                   	push   %rbx
+     f31:	48 8b 47 08          	mov    0x8(%rdi),%rax
+     f35:	48 8b 98 a8 03 00 00 	mov    0x3a8(%rax),%rbx
+     f3c:	80 7b 08 00          	cmpb   $0x0,0x8(%rbx)
+     f40:	75 0f                	jne    f51 <__mmu_notifier_invalidate_range_end+0x31>
+     f42:	48 8b 03             	mov    (%rbx),%rax
+     f45:	48 85 c0             	test   %rax,%rax
+     f48:	75 17                	jne    f61 <__mmu_notifier_invalidate_range_end+0x41>
+     f4a:	5b                   	pop    %rbx
+     f4b:	5d                   	pop    %rbp
+     f4c:	41 5c                	pop    %r12
+     f4e:	41 5d                	pop    %r13
+     f50:	c3                   	retq   
+     f51:	48 89 df             	mov    %rbx,%rdi
+     f54:	e8 97 f2 ff ff       	callq  1f0 <mn_itree_inv_end>
+     f59:	48 8b 03             	mov    (%rbx),%rax
+     f5c:	48 85 c0             	test   %rax,%rax
+     f5f:	74 e9                	je     f4a <__mmu_notifier_invalidate_range_end+0x2a>
+     f61:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     f68:	e8 00 00 00 00       	callq  f6d <__mmu_notifier_invalidate_range_end+0x4d>
+     f6d:	41 89 c5             	mov    %eax,%r13d
+     f70:	48 8b 1b             	mov    (%rbx),%rbx
+     f73:	48 85 db             	test   %rbx,%rbx
+     f76:	74 46                	je     fbe <__mmu_notifier_invalidate_range_end+0x9e>
+     f78:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     f7c:	45 84 e4             	test   %r12b,%r12b
+     f7f:	75 21                	jne    fa2 <__mmu_notifier_invalidate_range_end+0x82>
+     f81:	4c 8b 40 38          	mov    0x38(%rax),%r8
+     f85:	4d 85 c0             	test   %r8,%r8
+     f88:	74 18                	je     fa2 <__mmu_notifier_invalidate_range_end+0x82>
+     f8a:	48 8b 4d 18          	mov    0x18(%rbp),%rcx
+     f8e:	48 8b 55 10          	mov    0x10(%rbp),%rdx
+     f92:	48 89 df             	mov    %rbx,%rdi
+     f95:	48 8b 75 08          	mov    0x8(%rbp),%rsi
+     f99:	e8 00 00 00 00       	callq  f9e <__mmu_notifier_invalidate_range_end+0x7e>
+     f9e:	48 8b 43 10          	mov    0x10(%rbx),%rax
+     fa2:	48 8b 40 30          	mov    0x30(%rax),%rax
+     fa6:	48 85 c0             	test   %rax,%rax
+     fa9:	74 c5                	je     f70 <__mmu_notifier_invalidate_range_end+0x50>
+     fab:	48 89 df             	mov    %rbx,%rdi
+     fae:	48 89 ee             	mov    %rbp,%rsi
+     fb1:	e8 00 00 00 00       	callq  fb6 <__mmu_notifier_invalidate_range_end+0x96>
+     fb6:	48 8b 1b             	mov    (%rbx),%rbx
+     fb9:	48 85 db             	test   %rbx,%rbx
+     fbc:	75 ba                	jne    f78 <__mmu_notifier_invalidate_range_end+0x58>
+     fbe:	41 f7 c5 fe ff ff ff 	test   $0xfffffffe,%r13d
+     fc5:	75 15                	jne    fdc <__mmu_notifier_invalidate_range_end+0xbc>
+     fc7:	5b                   	pop    %rbx
+     fc8:	44 89 ee             	mov    %r13d,%esi
+     fcb:	5d                   	pop    %rbp
+     fcc:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     fd3:	41 5c                	pop    %r12
+     fd5:	41 5d                	pop    %r13
+     fd7:	e9 00 00 00 00       	jmpq   fdc <__mmu_notifier_invalidate_range_end+0xbc>
+     fdc:	0f 0b                	ud2    
+     fde:	eb e7                	jmp    fc7 <__mmu_notifier_invalidate_range_end+0xa7>
+
+0000000000000fe0 <__mmu_notifier_invalidate_range>:
+     fe0:	e8 00 00 00 00       	callq  fe5 <__mmu_notifier_invalidate_range+0x5>
+     fe5:	41 56                	push   %r14
+     fe7:	41 55                	push   %r13
+     fe9:	49 89 d5             	mov    %rdx,%r13
+     fec:	41 54                	push   %r12
+     fee:	49 89 f4             	mov    %rsi,%r12
+     ff1:	55                   	push   %rbp
+     ff2:	48 89 fd             	mov    %rdi,%rbp
+     ff5:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+     ffc:	53                   	push   %rbx
+     ffd:	e8 00 00 00 00       	callq  1002 <__mmu_notifier_invalidate_range+0x22>
+    1002:	41 89 c6             	mov    %eax,%r14d
+    1005:	48 8b 85 a8 03 00 00 	mov    0x3a8(%rbp),%rax
+    100c:	48 8b 18             	mov    (%rax),%rbx
+    100f:	48 85 db             	test   %rbx,%rbx
+    1012:	74 26                	je     103a <__mmu_notifier_invalidate_range+0x5a>
+    1014:	48 8b 43 10          	mov    0x10(%rbx),%rax
+    1018:	48 8b 40 38          	mov    0x38(%rax),%rax
+    101c:	48 85 c0             	test   %rax,%rax
+    101f:	74 11                	je     1032 <__mmu_notifier_invalidate_range+0x52>
+    1021:	4c 89 e9             	mov    %r13,%rcx
+    1024:	4c 89 e2             	mov    %r12,%rdx
+    1027:	48 89 ee             	mov    %rbp,%rsi
+    102a:	48 89 df             	mov    %rbx,%rdi
+    102d:	e8 00 00 00 00       	callq  1032 <__mmu_notifier_invalidate_range+0x52>
+    1032:	48 8b 1b             	mov    (%rbx),%rbx
+    1035:	48 85 db             	test   %rbx,%rbx
+    1038:	75 da                	jne    1014 <__mmu_notifier_invalidate_range+0x34>
+    103a:	41 f7 c6 fe ff ff ff 	test   $0xfffffffe,%r14d
+    1041:	75 17                	jne    105a <__mmu_notifier_invalidate_range+0x7a>
+    1043:	5b                   	pop    %rbx
+    1044:	44 89 f6             	mov    %r14d,%esi
+    1047:	5d                   	pop    %rbp
+    1048:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+    104f:	41 5c                	pop    %r12
+    1051:	41 5d                	pop    %r13
+    1053:	41 5e                	pop    %r14
+    1055:	e9 00 00 00 00       	jmpq   105a <__mmu_notifier_invalidate_range+0x7a>
+    105a:	0f 0b                	ud2    
+    105c:	eb e5                	jmp    1043 <__mmu_notifier_invalidate_range+0x63>
+    105e:	66 90                	xchg   %ax,%ax
+
+0000000000001060 <__mmu_notifier_subscriptions_destroy>:
+    1060:	e8 00 00 00 00       	callq  1065 <__mmu_notifier_subscriptions_destroy+0x5>
+    1065:	53                   	push   %rbx
+    1066:	48 89 fb             	mov    %rdi,%rbx
+    1069:	48 8b bf a8 03 00 00 	mov    0x3a8(%rdi),%rdi
+    1070:	48 8b 17             	mov    (%rdi),%rdx
+    1073:	48 85 d2             	test   %rdx,%rdx
+    1076:	75 18                	jne    1090 <__mmu_notifier_subscriptions_destroy+0x30>
+    1078:	e8 00 00 00 00       	callq  107d <__mmu_notifier_subscriptions_destroy+0x1d>
+    107d:	48 b8 00 01 00 00 00 	movabs $0xdead000000000100,%rax
+    1084:	00 ad de 
+    1087:	48 89 83 a8 03 00 00 	mov    %rax,0x3a8(%rbx)
+    108e:	5b                   	pop    %rbx
+    108f:	c3                   	retq   
+    1090:	0f 0b                	ud2    
+
+Disassembly of section .text.unlikely:
+
+0000000000000000 <__mmu_notifier_invalidate_range_start.cold.10>:
+   0:	41 f6 46 20 01       	testb  $0x1,0x20(%r14)
+   5:	49 8b 75 28          	mov    0x28(%r13),%rsi
+   9:	89 c2                	mov    %eax,%edx
+   b:	89 44 24 04          	mov    %eax,0x4(%rsp)
+   f:	48 c7 c1 00 00 00 00 	mov    $0x0,%rcx
+  16:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  1d:	49 0f 44 cf          	cmove  %r15,%rcx
+  21:	e8 00 00 00 00       	callq  26 <__mmu_notifier_invalidate_range_start.cold.10+0x26>
+  26:	41 f6 46 20 01       	testb  $0x1,0x20(%r14)
+  2b:	44 8b 4c 24 04       	mov    0x4(%rsp),%r9d
+  30:	75 0e                	jne    40 <__mmu_notifier_invalidate_range_start.cold.10+0x40>
+  32:	bd f5 ff ff ff       	mov    $0xfffffff5,%ebp
+  37:	41 39 e9             	cmp    %ebp,%r9d
+  3a:	0f 84 00 00 00 00    	je     40 <__mmu_notifier_invalidate_range_start.cold.10+0x40>
+  40:	0f 0b                	ud2    
+  42:	44 89 cd             	mov    %r9d,%ebp
+  45:	e9 00 00 00 00       	jmpq   4a <__kstrtab_mmu_notifier_get_locked+0x1>

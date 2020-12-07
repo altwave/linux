@@ -6,4 +6,6 @@
 #include <net/tcp.h>
 BPF_STRUCT_OPS_TYPE(tcp_congestion_ops)
 #endif
+#include <linux/hello.h>
+BPF_STRUCT_OPS_TYPE(hello_struct)
 #endif

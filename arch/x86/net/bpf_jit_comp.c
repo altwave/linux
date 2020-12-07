@@ -1533,6 +1533,8 @@ static int invoke_bpf_prog(const struct btf_func_model *m, u8 **pprog,
 	u8 *prog = *pprog;
 	int cnt = 0;
 
+	printk(KERN_INFO "invoke_bpf_prog called\n");
+
 	if (p->aux->sleepable) {
 		if (emit_call(&prog, __bpf_prog_enter_sleepable, prog))
 			return -EINVAL;
@@ -1632,7 +1634,7 @@ static int invoke_bpf(const struct btf_func_model *m, u8 **pprog,
 	u8 *prog = *pprog;
 
 	for (i = 0; i < tp->nr_progs; i++) {
-		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size, false))
+		if (invoke_bpf_prog(m, &prog, tp->progs[i], stack_size, true))  //Cathlyn change
 			return -EINVAL;
 	}
 	*pprog = prog;
@@ -1748,6 +1750,7 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
 	u8 **branches = NULL;
 	u8 *prog;
 
+	printk(KERN_INFO "arch_prepare_bpf_trampoline called\n");
 	/* x86-64 supports up to 6 arguments. 7+ can be added in the future */
 	if (nr_args > 6)
 		return -ENOTSUPP;
@@ -1832,9 +1835,10 @@ int arch_prepare_bpf_trampoline(void *image, void *image_end,
 	 * the return value is only updated on the stack and still needs to be
 	 * restored to R0.
 	 */
-	if (flags & BPF_TRAMP_F_CALL_ORIG)
-		/* restore original return value back into RAX */
-		emit_ldx(&prog, BPF_DW, BPF_REG_0, BPF_REG_FP, -8);
+	//if (flags & BPF_TRAMP_F_CALL_ORIG)
+	
+	/* restore original return value back into RAX */
+	emit_ldx(&prog, BPF_DW, BPF_REG_0, BPF_REG_FP, -8);
 
 	EMIT1(0x5B); /* pop rbx */
 	EMIT1(0xC9); /* leave */

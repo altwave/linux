@@ -553,6 +553,7 @@ static struct bpf_func_state *func(struct bpf_verifier_env *env,
 {
 	struct bpf_verifier_state *cur = env->cur_state;
 
+	printk(KERN_INFO "Called func()\n");
 	return cur->frame[reg->frameno];
 }
 
@@ -1725,6 +1726,7 @@ static int check_reg_arg(struct bpf_verifier_env *env, u32 regno,
 	struct bpf_reg_state *reg, *regs = state->regs;
 	bool rw64;
 
+	printk(KERN_INFO "Called check_reg_arg called with regno=%u, type=%d\n", regno, t);
 	if (regno >= MAX_BPF_REG) {
 		verbose(env, "R%d is invalid\n", regno);
 		return -EINVAL;
@@ -2280,6 +2282,7 @@ static int check_stack_write(struct bpf_verifier_env *env,
 	u32 dst_reg = env->prog->insnsi[insn_idx].dst_reg;
 	struct bpf_reg_state *reg = NULL;
 
+	printk(KERN_INFO "check_stack_write called\n");
 	err = realloc_func_state(state, round_up(slot + 1, BPF_REG_SIZE),
 				 state->acquired_refs, true);
 	if (err)
@@ -2409,6 +2412,7 @@ static int check_stack_read(struct bpf_verifier_env *env,
 	struct bpf_reg_state *reg;
 	u8 *stype;
 
+	printk(KERN_INFO "check_stack_read called\n");
 	if (reg_state->allocated_stack <= slot) {
 		verbose(env, "invalid read from stack off %d+0 size %d\n",
 			off, size);
@@ -2508,6 +2512,7 @@ static int check_stack_access(struct bpf_verifier_env *env,
 	 * can determine what type of data were returned. See
 	 * check_stack_read().
 	 */
+	printk(KERN_INFO "check_stack_access called\n");
 	if (!tnum_is_const(reg->var_off)) {
 		char tn_buf[48];
 
@@ -2769,6 +2774,7 @@ static int check_ctx_access(struct bpf_verifier_env *env, int insn_idx, int off,
 		.log = &env->log,
 	};
 
+	printk(KERN_INFO "Called check_ctx_access\n");
 	if (env->ops->is_valid_access &&
 	    env->ops->is_valid_access(off, size, t, env->prog, &info)) {
 		/* A non zero info.ctx_field_size indicates that this field is a
@@ -3300,6 +3306,7 @@ static int check_ptr_to_btf_access(struct bpf_verifier_env *env,
 	u32 btf_id;
 	int ret;
 
+	printk(KERN_INFO "check_ptr_to_btf_access called\n");
 	if (off < 0) {
 		verbose(env,
 			"R%d is ptr_%s invalid negative access: off=%d\n",
@@ -3351,6 +3358,8 @@ static int check_ptr_to_map_access(struct bpf_verifier_env *env,
 	u32 btf_id;
 	int ret;
 
+	printk(KERN_INFO "check_ptr_to_map_access called\n");
+	
 	if (!btf_vmlinux) {
 		verbose(env, "map_ptr access not supported without CONFIG_DEBUG_INFO_BTF\n");
 		return -ENOTSUPP;
@@ -3409,6 +3418,7 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
 	struct bpf_func_state *state;
 	int size, err = 0;
 
+	printk(KERN_INFO "Called check_mem_access, reg->type is %d\n", reg->type);
 	size = bpf_size_to_bytes(bpf_size);
 	if (size < 0)
 		return size;
@@ -3421,6 +3431,7 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
 	/* for access checks, reg->off is just part of off */
 	off += reg->off;
 
+	printk(KERN_INFO "Called check_mem_access, off is now %d\n", off);
 	if (reg->type == PTR_TO_MAP_VALUE) {
 		if (t == BPF_WRITE && value_regno >= 0 &&
 		    is_pointer_value(env, value_regno)) {
@@ -3505,6 +3516,8 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
 		}
 
 	} else if (reg->type == PTR_TO_STACK) {
+		printk(KERN_INFO "reg->type is PTR_TO_STACK\n");
+		
 		off += reg->var_off.value;
 		err = check_stack_access(env, reg, off, size);
 		if (err)
@@ -3521,6 +3534,9 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
 		else
 			err = check_stack_read(env, state, off, size,
 					       value_regno);
+
+		printk(KERN_INFO "err is now %d\n", err);
+
 	} else if (reg_is_pkt_pointer(reg)) {
 		if (t == BPF_WRITE && !may_access_direct_pkt_data(env, NULL, t)) {
 			verbose(env, "cannot write into packet\n");
@@ -7787,11 +7803,15 @@ static int check_return_code(struct bpf_verifier_env *env)
 	enum bpf_prog_type prog_type = resolve_prog_type(env->prog);
 	int err;
 
+	printk(KERN_INFO "Called check_return_code\n");
+
 	/* LSM and struct_ops func-ptr's return type could be "void" */
 	if ((prog_type == BPF_PROG_TYPE_STRUCT_OPS ||
 	     prog_type == BPF_PROG_TYPE_LSM) &&
-	    !prog->aux->attach_func_proto->type)
+	    !prog->aux->attach_func_proto->type) {
+		printk(KERN_INFO "check_return_code going to return 0\n");
 		return 0;
+	}
 
 	/* eBPF calling convetion is such that R0 is used
 	 * to return the value from eBPF program.
@@ -7808,6 +7828,7 @@ static int check_return_code(struct bpf_verifier_env *env)
 		return -EACCES;
 	}
 
+	printk(KERN_INFO "check_return_code going to switch prog_type\n");
 	switch (prog_type) {
 	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
 		if (env->prog->expected_attach_type == BPF_CGROUP_UDP4_RECVMSG ||
@@ -7858,6 +7879,7 @@ static int check_return_code(struct bpf_verifier_env *env)
 		 * depends on the to-be-replaced kernel func or bpf program.
 		 */
 	default:
+		printk(KERN_INFO "check_return_code going to return 0 from switch\n");
 		return 0;
 	}
 
@@ -9254,6 +9276,7 @@ static int do_check(struct bpf_verifier_env *env)
 	bool do_print_state = false;
 	int prev_insn_idx = -1;
 
+	printk(KERN_INFO "Called do_check\n");
 	for (;;) {
 		struct bpf_insn *insn;
 		u8 class;
@@ -9689,6 +9712,8 @@ static int check_map_prog_compatibility(struct bpf_verifier_env *env,
 
 {
 	enum bpf_prog_type prog_type = resolve_prog_type(prog);
+	
+	printk(KERN_INFO "Called check_map_prog_compatibility, prog_type is %d\n", prog_type);
 	/*
 	 * Validate that trace type programs use preallocated hash maps.
 	 *
@@ -11402,6 +11427,8 @@ static int check_struct_ops_btf_id(struct bpf_verifier_env *env)
 	const char *mname;
 
 	btf_id = prog->aux->attach_btf_id;
+	printk(KERN_INFO "Called check_struct_ops_btf_id with id = %d\n", btf_id);
+
 	st_ops = bpf_struct_ops_find(btf_id);
 	if (!st_ops) {
 		verbose(env, "attach_btf_id %u is not a supported struct\n",
@@ -11729,6 +11756,7 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
 	int ret;
 	u64 key;
 
+	printk(KERN_INFO "Called check_attach_btf_id, prog->type is %d\n", prog->type);
 	if (prog->aux->sleepable && prog->type != BPF_PROG_TYPE_TRACING &&
 	    prog->type != BPF_PROG_TYPE_LSM) {
 		verbose(env, "Only fentry/fexit/fmod_ret and lsm programs can be sleepable\n");

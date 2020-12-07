@@ -4932,6 +4932,7 @@ int btf_distill_func_proto(struct bpf_verifier_log *log,
 	u32 i, nargs;
 	int ret;
 
+	printk(KERN_INFO "Called btf_distill_func_proto for %s\n", tname);
 	if (!func) {
 		/* BTF function prototype doesn't match the verifier types.
 		 * Fall back to 5 u64 args.
@@ -4958,6 +4959,7 @@ int btf_distill_func_proto(struct bpf_verifier_log *log,
 		return -EINVAL;
 	}
 	m->ret_size = ret;
+	printk(KERN_INFO "Called btf_distill_func_proto, ret_size is %d\n", ret);
 
 	for (i = 0; i < nargs; i++) {
 		ret = __get_type_size(btf, args[i].type, &t);

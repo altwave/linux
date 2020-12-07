@@ -331,6 +331,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 	if (*(u32 *)key != 0)
 		return -E2BIG;
 
+	printk(KERN_INFO "Called bpf_struct_ops_map_update_elem\n");
 	err = check_zero_holes(st_ops->value_type, value);
 	if (err)
 		return err;
@@ -340,6 +341,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 	if (err)
 		return err;
 
+	printk(KERN_INFO "Called bpf_struct_ops_map_update_elem 1\n");
 	if (uvalue->state || refcount_read(&uvalue->refcnt))
 		return -EINVAL;
 
@@ -347,6 +349,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 	if (!tprogs)
 		return -ENOMEM;
 
+	printk(KERN_INFO "Called bpf_struct_ops_map_update_elem 2\n");
 	uvalue = (struct bpf_struct_ops_value *)st_map->uvalue;
 	kvalue = (struct bpf_struct_ops_value *)&st_map->kvalue;
 
@@ -362,8 +365,10 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 	udata = &uvalue->data;
 	kdata = &kvalue->data;
 	image = st_map->image;
+	printk(KERN_INFO "Called bpf_struct_ops_map_update_elem 3\n");
 
 	for_each_member(i, t, member) {
+		printk(KERN_INFO "Called bpf_struct_ops_map_update_elem iter member %d\n", i);
 		const struct btf_type *mtype, *ptype;
 		struct bpf_prog *prog;
 		u32 moff;
@@ -377,10 +382,12 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 			continue;
 		}
 
+		printk(KERN_INFO "Called bpf_struct_ops_map_update_elem iter memeber calling init_member\n");
 		err = st_ops->init_member(t, member, kdata, udata);
 		if (err < 0)
 			goto reset_unlock;
 
+		printk(KERN_INFO "Called bpf_struct_ops_map_update_elem iter memeber called init_member OK\n");
 		/* The ->init_member() has handled this member */
 		if (err > 0)
 			continue;
@@ -411,6 +418,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 
 		prog_fd = (int)(*(unsigned long *)(udata + moff));
 		/* Similar check as the attr->attach_prog_fd */
+		printk(KERN_INFO "Called bpf_struct_ops_map_update_elem iter member prog_fd is %d\n", prog_fd);
 		if (!prog_fd)
 			continue;
 
@@ -421,6 +429,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 		}
 		st_map->progs[i] = prog;
 
+		printk(KERN_INFO "Called bpf_struct_ops_map_update_elem iter member 6\n");
 		if (prog->type != BPF_PROG_TYPE_STRUCT_OPS ||
 		    prog->aux->attach_btf_id != st_ops->type_id ||
 		    prog->expected_attach_type != i) {
@@ -428,12 +437,21 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 			goto reset_unlock;
 		}
 
-		tprogs[BPF_TRAMP_FENTRY].progs[0] = prog;
+		printk(KERN_INFO "Called bpf_struct_ops_map_update_elem iter member 7\n");
+
+ 		tprogs[BPF_TRAMP_FENTRY].progs[0] = prog;
 		tprogs[BPF_TRAMP_FENTRY].nr_progs = 1;
 		err = arch_prepare_bpf_trampoline(image,
 						  st_map->image + PAGE_SIZE,
 						  &st_ops->func_models[i], 0,
 						  tprogs, NULL);
+	
+		/*
+		err = arch_prepare_bpf_trampoline(image,
+						  st_map->image + PAGE_SIZE,
+						  &st_ops->func_models[i], BPF_TRAMP_F_CALL_ORIG,
+						  tprogs, NULL);
+		*/
 		if (err < 0)
 			goto reset_unlock;
 
@@ -442,11 +460,13 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
 
 		/* put prog_id to udata */
 		*(unsigned long *)(udata + moff) = prog->aux->id;
+		printk(KERN_INFO "Called bpf_struct_ops_map_update_elem iter member 8\n");
 	}
 
 	refcount_set(&kvalue->refcnt, 1);
 	bpf_map_inc(map);
 
+	printk(KERN_INFO "Called bpf_struct_ops_map_update_elem 9\n");
 	set_memory_ro((long)st_map->image, 1);
 	set_memory_x((long)st_map->image, 1);
 	err = st_ops->reg(kdata);
@@ -555,6 +575,7 @@ static struct bpf_map *bpf_struct_ops_map_alloc(union bpf_attr *attr)
 	struct bpf_map *map;
 	int err;
 
+	printk(KERN_INFO "bpf_struct_ops_map_alloc\n");
 	if (!bpf_capable())
 		return ERR_PTR(-EPERM);
 
@@ -629,6 +650,8 @@ const struct bpf_map_ops bpf_struct_ops_map_ops = {
 bool bpf_struct_ops_get(const void *kdata)
 {
 	struct bpf_struct_ops_value *kvalue;
+
+	printk(KERN_INFO "Called bpf_struct_ops get\n");
 
 	kvalue = container_of(kdata, struct bpf_struct_ops_value, data);
 
