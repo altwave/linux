@@ -127,6 +127,9 @@ int hmm_range_fault(struct hmm_range *range);
 int hmm_register_mm_walk_ops(struct mm_walk_ops * ops);
 void hmm_unregister_mm_walk_ops(struct mm_walk_ops * ops);
 
+int hmm_pfns_fill(unsigned long addr, unsigned long end,
+			 struct hmm_range *range, unsigned long cpu_flags);
+
 int hmm_vma_walk_hole(unsigned long addr, unsigned long end, int depth, struct mm_walk *walk);
 int hmm_vma_walk_pmd(pmd_t *pmdp, unsigned long start,unsigned long end,struct mm_walk *walk);
 int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,struct mm_walk *walk);

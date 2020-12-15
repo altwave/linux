@@ -15,8 +15,8 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_hole_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_vma_walk_hugetlb_entry_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_vma_walk_test_proto __read_mostly;
 
-static const struct bpf_func_proto bpf_get_mm_walk_vma_proto __read_mostly;
-static const struct bpf_func_proto bpf_get_hmm_vma_walk_proto __read_mostly;
+
+static const struct bpf_func_proto bpf_hmm_pfns_fill_proto __read_mostly;
 
 static const struct bpf_func_proto bpf_hmm_policy_fault_proto __read_mostly;
 
@@ -25,10 +25,6 @@ static const struct bpf_func_proto bpf_hmm_is_device_private_entry_proto __read_
 static const struct bpf_func_proto bpf_hmm_spin_unlock_proto __read_mostly;
 static const struct bpf_func_proto bpf_handle_mm_fault_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_update_walk_last_proto __read_mostly;
-
-
-static const struct bpf_func_proto bpf_hmm_call_fn_proto __read_mostly;
-
 
 static const struct bpf_func_proto bpf_hmm_huge_pte_lock_proto __read_mostly;
 static const struct bpf_func_proto bpf_hmm_huge_ptep_get_proto __read_mostly;
@@ -49,10 +45,6 @@ static bool bpf_hmm_policy_is_valid_access(int off, int size,
 static const struct bpf_func_proto * bpf_hmm_policy_get_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
 {
 	switch (func_id) {	
-	case BPF_FUNC_get_mm_walk_vma:
-		return &bpf_get_mm_walk_vma_proto;
-	case BPF_FUNC_get_hmm_vma_walk:
-		return &bpf_get_hmm_vma_walk_proto;
 	case BPF_FUNC_hmm_vma_walk_pud:
 		return &bpf_hmm_vma_walk_pud_proto;
 	case BPF_FUNC_hmm_vma_walk_pmd:
@@ -63,6 +55,9 @@ static const struct bpf_func_proto * bpf_hmm_policy_get_func_proto(enum bpf_func
 		return &bpf_hmm_vma_walk_hugetlb_entry_proto;
 	case BPF_FUNC_hmm_vma_walk_test:
 		return &bpf_hmm_vma_walk_test_proto;
+	
+	case BPF_FUNC_hmm_pfns_fill:
+		return &bpf_hmm_pfns_fill_proto;
 	
 	case BPF_FUNC_hmm_is_device_private_entry:
 		return &bpf_hmm_is_device_private_entry_proto;
@@ -147,7 +142,7 @@ static const struct bpf_func_proto bpf_hmm_spin_unlock_proto = {
 
 BPF_CALL_3(bpf_handle_mm_fault, struct vm_area_struct *, vma, unsigned long, address,
 			 unsigned int, flags) {
-	return handle_mm_fault(vma, address, flags);	
+	return 0; //handle_mm_fault(vma, address, flags);	
 }
 static const struct bpf_func_proto bpf_handle_mm_fault_proto = {
 	.func		= bpf_handle_mm_fault,
@@ -174,71 +169,6 @@ static const struct bpf_func_proto bpf_hmm_update_walk_last_proto = {
 	.arg2_type	= ARG_ANYTHING,
 };
 
-BPF_CALL_1(bpf_get_mm_walk_vma, struct mm_walk *, walk) {
-	//printk(KERN_INFO "Called bpf_get_mm_walk_vma, vm_flags are %lu\n", walk->vma->vm_flags);
-
-	return (long) walk->vma;
-}
-static const struct bpf_func_proto bpf_get_mm_walk_vma_proto = {
-	.func		= bpf_get_mm_walk_vma,
-	.gpl_only	= false,
-	/* In case we want to report error later */
-	.ret_type	= RET_INTEGER,
-	.arg1_type	= ARG_ANYTHING,
-	/*.arg3_type	= ARG_ANYTHING,
-	.arg4_type	= ARG_ANYTHING,
-	.arg5_type	= ARG_ANYTHING, */
-	//.btf_id		= &mm_struct_id,
-};
-
-BPF_CALL_1(bpf_get_hmm_vma_walk, struct mm_walk *, walk) {
-	return (long)walk->private;
-}
-
-static const struct bpf_func_proto bpf_get_hmm_vma_walk_proto = {
-	.func		= bpf_get_hmm_vma_walk,
-	.gpl_only	= false,
-	/* In case we want to report error later */
-	.ret_type	= RET_INTEGER,
-	.arg1_type	= ARG_ANYTHING,
-	/*.arg3_type	= ARG_ANYTHING,
-	.arg4_type	= ARG_ANYTHING,
-	.arg5_type	= ARG_ANYTHING, */
-	//.btf_id		= &mm_struct_id,
-};
-/*
-BPF_CALL_1(bpf_get_hmm_range_user, struct hmm_vma_walk *, walk) {
-//	struct bpf_hmm_storage *stab;
-	struct hmm_range *range_user;
-	
-	struct hmm_range *range = walk->range;
-	unsigned long npages = (range->end - range->start) >> PAGE_SHIFT;
-	size_t pfns_size = (sizeof(unsigned long)) * npages;
-
-
-	//printk(KERN_INFO "Called bpf_get_hmm_range_user, npages = %lu\n", npages);
-
-	range_user = kzalloc(sizeof(*range_user), GFP_USER);
-
-	memcpy(&range_user->start, &range->start, sizeof(range_user->start));
-	memcpy(&range_user->end, &range->end, sizeof(range_user->end));
-	memcpy(&range_user->default_flags, &range->default_flags, sizeof(range_user->default_flags));
-	memcpy(&range_user->pfn_flags_mask, &range->pfn_flags_mask, sizeof(range_user->pfn_flags_mask));
-		
-	range_user->hmm_pfns = kzalloc(pfns_size, GFP_USER);
-	memcpy(range_user->hmm_pfns, range->hmm_pfns, pfns_size);
-	
-	return (unsigned long)range_user;
-};
-
-static const struct bpf_func_proto bpf_get_hmm_range_user_proto = {
-	.func		= bpf_get_hmm_range_user,
-	.gpl_only	= false,
-	.ret_type	= RET_PTR_TO_ALLOC_MEM_OR_NULL,
-	.arg1_type	= ARG_ANYTHING,
-};
-
-*/
 BPF_CALL_4(bpf_hmm_vma_walk_pud, void *, pudp, unsigned long, start, unsigned long, end, struct mm_walk *,walk) {
 	printk(KERN_INFO "Called bpf_hmm_vma_walk_pud\n");
 	int val = hmm_vma_walk_pud((pud_t *)pudp, start, end, walk);
@@ -309,8 +239,8 @@ BPF_CALL_3(bpf_hmm_vma_walk_test, unsigned long, start, unsigned long, end,
 	printk(KERN_INFO "Called bpf_hmm_vma_walk_test, start=%lu, end=%lu, walk=%lu\n", 
 			start, end, (unsigned long)walk);
 	
-	int val = hmm_vma_walk_test(start, end, walk);
-	
+	//int val = hmm_vma_walk_test(start, end, walk);
+	int val = 99;
 	printk(KERN_INFO "bpf_hmm_vma_walk_test returned %d\n", val);
 	return val;
 }
@@ -324,6 +254,26 @@ static const struct bpf_func_proto bpf_hmm_vma_walk_test_proto = {
 	.arg3_type	= ARG_ANYTHING,
 };
 
+
+BPF_CALL_4(bpf_hmm_pfns_fill, unsigned long, addr, unsigned long, end,
+						     struct hmm_range *, range, unsigned long, cpu_flags) {
+	printk(KERN_INFO "Called bpf_hmm_pfns_fill, addr=%lu, end=%lu, range=%lu, flags=%lu\n", 
+			addr, end, (unsigned long)range, cpu_flags);
+	
+	int val = hmm_pfns_fill(addr, end, range, cpu_flags);
+	printk(KERN_INFO "bpf_hmm_pfns_fill returning %d\n", val);
+	return val;
+}
+
+static const struct bpf_func_proto bpf_hmm_pfns_fill_proto = {
+	.func		= bpf_hmm_pfns_fill,
+	.gpl_only	= false,
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_ANYTHING,
+	.arg2_type	= ARG_ANYTHING,
+	.arg3_type	= ARG_ANYTHING,
+	.arg4_type	= ARG_ANYTHING,
+};
 
 static const struct bpf_verifier_ops bpf_hmm_verifier_ops = {
 	.get_func_proto		= bpf_hmm_policy_get_func_proto,

@@ -313,6 +313,8 @@ struct vm_area_struct {
 	struct vm_area_struct *vm_next, *vm_prev;
 
 	struct rb_node vm_rb;
+	
+	unsigned long vm_flags;		/* Flags, see mm.h. */
 
 	/*
 	 * Largest free memory gap in bytes to the left of this VMA.
@@ -326,12 +328,12 @@ struct vm_area_struct {
 
 	struct mm_struct *vm_mm;	/* The address space we belong to. */
 
+	
 	/*
 	 * Access permissions of this VMA.
 	 * See vmf_insert_mixed_prot() for discussion.
 	 */
 	pgprot_t vm_page_prot;
-	unsigned long vm_flags;		/* Flags, see mm.h. */
 
 	/*
 	 * For areas with an address space and backing store,

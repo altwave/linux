@@ -33,7 +33,7 @@ enum {
 	HMM_NEED_ALL_BITS = HMM_NEED_FAULT | HMM_NEED_WRITE_FAULT,
 };
 
-static int hmm_pfns_fill(unsigned long addr, unsigned long end,
+int hmm_pfns_fill(unsigned long addr, unsigned long end,
 			 struct hmm_range *range, unsigned long cpu_flags)
 {
 	unsigned long i = (addr - range->start) >> PAGE_SHIFT;
@@ -630,6 +630,10 @@ SYSCALL_DEFINE0(test_hmm_vma_walk_test)
 		range.hmm_pfns[i] = i;
 	}	
 	
+	printk(KERN_INFO "Addresses of range.hmm_pfns...\n \
+			range.hmm_pfns=%lu, range.hmm_pfns[0]=%lu, range.hmm_pfns[1]=%lu\n", \
+			(unsigned long)&range.hmm_pfns, (unsigned long)&range.hmm_pfns[0], (unsigned long)&range.hmm_pfns[1]);
+	
 	struct hmm_vma_walk hmm_vma_walk = {
 		.range = &range,
 		.last = 9999,
@@ -639,10 +643,11 @@ SYSCALL_DEFINE0(test_hmm_vma_walk_test)
 		.vm_start = 7700,
 		.vm_end = 8800,
 		.rb_subtree_gap = 23,
-		.vm_page_prot = {
-			.pgprot = 345,
-		},
+//		.vm_page_prot = {
+//			.pgprot = 345,
+//		},
 		.vm_flags = 4,
+		.vm_pgoff = 12,
 	};
 	
 	struct mm_walk walk = {
@@ -651,10 +656,15 @@ SYSCALL_DEFINE0(test_hmm_vma_walk_test)
 		.vma = &vma,
 	};
 	
-	printk(KERN_INFO "start=%lu, end=%lu, walk=%lu\n", 
+	printk(KERN_INFO "BEFORE CALL: start=%lu, end=%lu, walk=%lu\n", 
 			start, end, (unsigned long)&walk);
 	
 	int val = curr_walk_ops->test_walk(start, end, &walk);
+	
+	printk(KERN_INFO "AFTER CALL: start=%lu, end=%lu, walk=%lu\n", 
+			start, end, (unsigned long)&walk);
+	printk(KERN_INFO "range[0]=%lu, range[1]=%lu\n", range.hmm_pfns[0], range.hmm_pfns[1]);
+	
 	printk(KERN_INFO "hmm_vma_walk_test returning %d\n", val);
 	kvfree(range.hmm_pfns);
 	return val;
